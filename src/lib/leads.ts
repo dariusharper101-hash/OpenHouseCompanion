@@ -3,7 +3,11 @@ import path from "path";
 import { randomUUID } from "crypto";
 import type { Lead, LeadFormData, LeadStatus } from "@/types/lead";
 
-const LEADS_FILE = path.join(process.cwd(), "data", "leads.json");
+// On Vercel the project filesystem is read-only; only /tmp is writable.
+// Locally we persist to ./data. Note: /tmp is ephemeral per serverless
+// instance, so the hosted preview is for demoing the UI, not durable storage.
+const DATA_DIR = process.env.VERCEL ? "/tmp" : path.join(process.cwd(), "data");
+const LEADS_FILE = path.join(DATA_DIR, "leads.json");
 
 export async function readLeads(): Promise<Lead[]> {
   try {
