@@ -49,6 +49,16 @@ export type InvestorStrategy =
 
 export type MortgageStatus = "paid-off" | "has-mortgage" | "underwater";
 
+export type LeadStatus = "new" | "contacted" | "active" | "closed" | "lost";
+
+export const LEAD_STATUSES: LeadStatus[] = [
+  "new",
+  "contacted",
+  "active",
+  "closed",
+  "lost",
+];
+
 export interface LeadFormData {
   // Identity
   role: ClientRole;
@@ -101,4 +111,5 @@ export interface LeadFormData {
 export interface Lead extends LeadFormData {
   id: string;
   createdAt: string;
+  status: LeadStatus;
 }
