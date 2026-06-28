@@ -13,13 +13,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Open House Companion — Find Your Dream Home",
+  title: "Open House Companion — Real Estate Done Right",
   description:
-    "Tell us what you're looking for and we'll match you with the perfect property. Connect with our team today.",
+    "Expert real estate guidance for buyers, sellers, and investors. Know your programs, understand the process, and work with an agent who has your back.",
   openGraph: {
-    title: "Open House Companion — Find Your Dream Home",
+    title: "Open House Companion — Real Estate Done Right",
     description:
-      "Tell us what you're looking for and we'll match you with the perfect property.",
+      "Expert real estate guidance for buyers, sellers, and investors. Know your programs, understand the process, and work with an agent who has your back.",
     type: "website",
   },
 };
@@ -34,7 +34,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col bg-slate-900 text-white">{children}</body>
     </html>
   );
 }
