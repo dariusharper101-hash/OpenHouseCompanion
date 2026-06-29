@@ -30,7 +30,11 @@ export async function POST(req: NextRequest) {
 
     const lead = await addLead(body);
     return NextResponse.json({ success: true, id: lead.id }, { status: 201 });
-  } catch {
+  } catch (err) {
+    // Surface the real reason in the server logs (visible in Vercel → Logs) so
+    // misconfiguration (missing table, bad key) is diagnosable, while keeping
+    // the client-facing message generic.
+    console.error("Lead submission failed:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
