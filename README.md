@@ -1,57 +1,40 @@
 # Open House Companion
 
-A real estate lead capture app with a public-facing social media form and a private admin dashboard.
+A real-estate lead-generation and client-education web app for buyers, sellers,
+and investors. Built with Next.js 16 (App Router), React 19, and Tailwind v4.
 
----
+## What it does
 
-## Run locally (copy & paste this)
+- **Lead capture** (`/start`) — an adaptive multi-step form that branches for
+  buyers, sellers, or both, with client-type, program-qualifier, and legal
+  acknowledgment steps (IABS + Buyer Representation).
+- **Program matching** (`/thank-you`) — suggests likely loan programs (FHA, VA,
+  USDA, Conventional, plus Texas TSAHC/TDHCA) based on the lead's answers.
+- **Education hub** (`/learn`) — guides on the buying/selling process, county
+  property taxes, insurance, warranties, inspections, and contracts.
+- **Agent dashboard** (`/admin`) — stats, search/filter, lead detail, status
+  tracking, and CSV export. Protected by HTTP Basic Auth via `src/proxy.ts`.
+
+## Getting started
 
 ```bash
-git clone https://github.com/dariusharper101-hash/OpenHouseCompanion.git
-cd OpenHouseCompanion
-git checkout claude/social-media-lead-form-l2db9o
 npm install
 npm run dev
 ```
 
-Open **http://localhost:3000**
+Open [http://localhost:3000](http://localhost:3000).
 
----
+## Configuration
 
-## What's built
+| Env var          | Purpose                          | Default      |
+| ---------------- | -------------------------------- | ------------ |
+| `ADMIN_USER`     | Username for the `/admin` gate   | `admin`      |
+| `ADMIN_PASSWORD` | Password for the `/admin` gate   | `openhouse`  |
 
-| URL | Description |
-|---|---|
-| `http://localhost:3000` | Public lead capture form (share this on social media) |
-| `http://localhost:3000/admin` | Private leads dashboard — redirects to login |
-| `http://localhost:3000/admin/login` | Admin login page |
+> Leads are stored on disk under `./data` locally, and in `/tmp` on Vercel
+> (ephemeral). A durable database is the next step before production use.
 
-**Default admin password (local only):** `admin123`
+## Deployment
 
-The form collects:
-- Contact info (name, email, phone)
-- Buying timeline + mortgage pre-approval status
-- Budget range, property type, beds/baths, neighborhoods
-- Optional notes
-- Referral source (auto-detected from `?utm_source=` or `?src=` in the URL)
-
-Leads are saved to `data/leads.json` on your machine.
-
----
-
-## What's left before going live
-
-- [ ] **Database** — `data/leads.json` won't persist on Vercel (serverless resets the filesystem on each deploy). Swap in Vercel Postgres, Supabase, or Vercel KV before deploying.
-- [ ] **Admin password** — Set the `ADMIN_PASSWORD` environment variable in Vercel project settings before deploying. Do not leave it as `admin123` in production.
-- [ ] **Custom domain** — Optional, but recommended before sharing the link on social media.
-- [ ] **Vercel Deployment Protection** — In Vercel → Project Settings → Deployment Protection, disable "Vercel Authentication" so visitors can reach the form without being asked to log into Vercel.
-
----
-
-## Env vars
-
-| Variable | Required | Description |
-|---|---|---|
-| `ADMIN_PASSWORD` | Production only | Password for `/admin`. Defaults to `admin123` in dev. |
-
-Copy `.env.local.example` to `.env.local` to set it locally.
+Connected to Vercel via Git — every push to the production branch deploys
+automatically, and every other branch gets a preview deployment.

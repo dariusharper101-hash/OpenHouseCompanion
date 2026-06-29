@@ -1,534 +1,237 @@
-"use client";
+import Link from "next/link";
+import Nav from "@/components/nav";
 
-import { useState, useEffect, useRef } from "react";
-import type { LeadFormData, BuyerTimeline, PropertyType } from "@/types/lead";
-
-const TIMELINE_LABELS: Record<BuyerTimeline, string> = {
-  asap: "As soon as possible",
-  "1-3-months": "1 – 3 months",
-  "3-6-months": "3 – 6 months",
-  "6-12-months": "6 – 12 months",
-  "just-browsing": "Just browsing",
-};
-
-const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
-  { value: "any", label: "Any" },
-  { value: "house", label: "House" },
-  { value: "condo", label: "Condo" },
-  { value: "townhouse", label: "Townhouse" },
-  { value: "multi-family", label: "Multi-Family" },
-  { value: "land", label: "Land" },
+const TOPICS = [
+  {
+    slug: "programs",
+    icon: "💰",
+    title: "Loan Programs",
+    desc: "FHA, VA, USDA, and Texas-specific programs you may qualify for.",
+  },
+  {
+    slug: "taxes",
+    icon: "📋",
+    title: "County Property Taxes",
+    desc: "How Texas property taxes work and what they mean for your payment.",
+  },
+  {
+    slug: "insurance",
+    icon: "🛡️",
+    title: "Homeowners Insurance",
+    desc: "HO-3, flood, windstorm, and what's actually covered.",
+  },
+  {
+    slug: "warranties",
+    icon: "🔧",
+    title: "Home Warranties",
+    desc: "Builder warranties vs. third-party and what they protect.",
+  },
+  {
+    slug: "inspections",
+    icon: "🔍",
+    title: "Inspections",
+    desc: "Every inspection type, who pays, and how to use findings.",
+  },
+  {
+    slug: "contracts",
+    icon: "✍️",
+    title: "Contracts & Signing",
+    desc: "TREC forms, earnest money, option periods, and closing costs.",
+  },
 ];
 
-const BUDGET_OPTIONS = [
-  "Under $200k",
-  "$200k – $300k",
-  "$300k – $400k",
-  "$400k – $500k",
-  "$500k – $750k",
-  "$750k – $1M",
-  "$1M+",
-];
-
-const BEDROOM_OPTIONS = ["Studio", "1", "2", "3", "4", "5+"];
-const BATHROOM_OPTIONS = ["1", "1.5", "2", "2.5", "3", "3.5", "4+"];
-
-type Step = "contact" | "intent" | "preferences" | "done";
-
-const STEPS: Step[] = ["contact", "intent", "preferences"];
-
-function getSource() {
-  if (typeof window === "undefined") return "";
-  const params = new URLSearchParams(window.location.search);
-  return params.get("src") || params.get("utm_source") || "direct";
-}
-
-const empty: LeadFormData = {
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  timeline: "3-6-months",
-  isPreApproved: false,
-  budgetMin: "",
-  budgetMax: "",
-  propertyType: "any",
-  bedrooms: "",
-  bathrooms: "",
-  neighborhoods: "",
-  notes: "",
-  source: "",
-};
-
-function inputCls(error?: string) {
-  return [
-    "w-full bg-slate-700/60 border rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500",
-    "focus:outline-none focus:ring-2 focus:ring-blue-500/60 focus:border-blue-500/60 transition-all",
-    error ? "border-red-500/70" : "border-slate-600",
-  ].join(" ");
-}
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
+export default function HomePage() {
   return (
-    <div className="space-y-1.5">
-      <label className="block text-xs font-medium text-slate-400 uppercase tracking-wide">
-        {label}
-      </label>
-      {children}
-      {error && <p className="text-red-400 text-xs">{error}</p>}
-    </div>
-  );
-}
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+      <Nav />
 
-export default function LeadCapturePage() {
-  const [step, setStep] = useState<Step>("contact");
-  const [form, setForm] = useState<LeadFormData>({ ...empty });
-  const [errors, setErrors] = useState<Partial<Record<keyof LeadFormData, string>>>({});
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState("");
-  const topRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    setForm((f) => ({ ...f, source: getSource() }));
-  }, []);
-
-  useEffect(() => {
-    topRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [step]);
-
-  function set<K extends keyof LeadFormData>(key: K, value: LeadFormData[K]) {
-    setForm((f) => ({ ...f, [key]: value }));
-    setErrors((e) => ({ ...e, [key]: undefined }));
-  }
-
-  function validateContact(): boolean {
-    const e: Partial<Record<keyof LeadFormData, string>> = {};
-    if (!form.firstName.trim()) e.firstName = "First name is required";
-    if (!form.lastName.trim()) e.lastName = "Last name is required";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = "Valid email required";
-    if (!form.phone.trim()) e.phone = "Phone number is required";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  }
-
-  function validateIntent(): boolean {
-    const e: Partial<Record<keyof LeadFormData, string>> = {};
-    if (!form.timeline) e.timeline = "Please select a timeline";
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  }
-
-  async function handleSubmit() {
-    setSubmitting(true);
-    setServerError("");
-    try {
-      const res = await fetch("/api/leads", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Something went wrong");
-      }
-      setStep("done");
-    } catch (err) {
-      setServerError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  function nextStep() {
-    if (step === "contact" && !validateContact()) return;
-    if (step === "intent" && !validateIntent()) return;
-    if (step === "preferences") {
-      handleSubmit();
-      return;
-    }
-    const idx = STEPS.indexOf(step);
-    setStep(STEPS[idx + 1]);
-  }
-
-  function prevStep() {
-    const idx = STEPS.indexOf(step as Step);
-    if (idx > 0) setStep(STEPS[idx - 1]);
-  }
-
-  const stepIndex = STEPS.indexOf(step as Step);
-  const progress =
-    step === "done" ? 100 : Math.round(((stepIndex + 1) / STEPS.length) * 100);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 flex flex-col items-center justify-start py-10 px-4">
-      <div ref={topRef} className="w-full max-w-lg">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1.5 mb-4">
+      {/* Hero */}
+      <section className="pt-32 pb-20 px-4 text-center">
+        <div className="max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1.5 mb-6">
             <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-            <span className="text-blue-300 text-sm font-medium tracking-wide">
-              Open House Companion
+            <span className="text-blue-300 text-sm font-medium">
+              Real estate, the way it should be done
             </span>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2 leading-tight">
-            Find Your <span className="text-blue-400">Dream Home</span>
+
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
+            Your Home.{" "}
+            <span className="text-blue-400">Your Future.</span>
+            <br />
+            Your Agent.
           </h1>
-          <p className="text-slate-400 text-sm max-w-sm mx-auto">
-            Tell us what you&apos;re looking for and we&apos;ll connect you with the
-            right listings and agent in minutes.
+
+          <p className="text-lg text-slate-300 max-w-xl mx-auto mb-10 leading-relaxed">
+            Whether you&apos;re buying your first home, selling a property, or growing an investment
+            portfolio — you deserve an agent who knows the process cold and will tell you
+            everything you need to know before you sign a single line.
           </p>
-        </div>
 
-        {/* Card */}
-        <div className="bg-slate-800/70 backdrop-blur border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden">
-          {step !== "done" && (
-            <div className="px-6 pt-5">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs text-slate-400 font-medium">
-                  Step {stepIndex + 1} of {STEPS.length}
-                </span>
-                <span className="text-xs text-blue-400 font-semibold">{progress}%</span>
-              </div>
-              <div className="h-1.5 rounded-full bg-slate-700 mb-5">
-                <div
-                  className="h-1.5 rounded-full bg-blue-500 transition-all duration-500"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
-          )}
-
-          <div className="px-6 pb-6">
-            {/* ── STEP 1: Contact ── */}
-            {step === "contact" && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-white mb-1">Your Contact Info</h2>
-                <p className="text-slate-400 text-sm mb-4">
-                  We&apos;ll use this to send you matching listings and updates.
-                </p>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="First Name" error={errors.firstName}>
-                    <input
-                      type="text"
-                      placeholder="Jane"
-                      value={form.firstName}
-                      onChange={(e) => set("firstName", e.target.value)}
-                      className={inputCls(errors.firstName)}
-                    />
-                  </Field>
-                  <Field label="Last Name" error={errors.lastName}>
-                    <input
-                      type="text"
-                      placeholder="Smith"
-                      value={form.lastName}
-                      onChange={(e) => set("lastName", e.target.value)}
-                      className={inputCls(errors.lastName)}
-                    />
-                  </Field>
-                </div>
-
-                <Field label="Email Address" error={errors.email}>
-                  <input
-                    type="email"
-                    placeholder="jane@example.com"
-                    value={form.email}
-                    onChange={(e) => set("email", e.target.value)}
-                    className={inputCls(errors.email)}
-                  />
-                </Field>
-
-                <Field label="Phone Number" error={errors.phone}>
-                  <input
-                    type="tel"
-                    placeholder="(555) 000-0000"
-                    value={form.phone}
-                    onChange={(e) => set("phone", e.target.value)}
-                    className={inputCls(errors.phone)}
-                  />
-                </Field>
-              </div>
-            )}
-
-            {/* ── STEP 2: Buyer Intent ── */}
-            {step === "intent" && (
-              <div className="space-y-5">
-                <h2 className="text-lg font-semibold text-white mb-1">
-                  Your Buying Timeline
-                </h2>
-                <p className="text-slate-400 text-sm mb-4">
-                  Help us prioritize so we can serve you best.
-                </p>
-
-                <Field label="When are you looking to buy?" error={errors.timeline}>
-                  <div className="grid grid-cols-1 gap-2">
-                    {(Object.entries(TIMELINE_LABELS) as [BuyerTimeline, string][]).map(
-                      ([val, label]) => (
-                        <button
-                          key={val}
-                          type="button"
-                          onClick={() => set("timeline", val)}
-                          className={[
-                            "flex items-center gap-3 px-4 py-3 rounded-xl border text-left text-sm font-medium transition-all",
-                            form.timeline === val
-                              ? "bg-blue-600 border-blue-500 text-white"
-                              : "bg-slate-700/50 border-slate-600 text-slate-300 hover:border-blue-500/60 hover:bg-slate-700",
-                          ].join(" ")}
-                        >
-                          <span
-                            className={[
-                              "w-4 h-4 rounded-full border-2 flex-shrink-0",
-                              form.timeline === val
-                                ? "bg-white border-white"
-                                : "border-slate-500",
-                            ].join(" ")}
-                          />
-                          {label}
-                        </button>
-                      )
-                    )}
-                  </div>
-                </Field>
-
-                <div className="flex items-center gap-3 bg-slate-700/40 rounded-xl px-4 py-3 border border-slate-600">
-                  <input
-                    id="preapproved"
-                    type="checkbox"
-                    checked={form.isPreApproved}
-                    onChange={(e) => set("isPreApproved", e.target.checked)}
-                    className="w-4 h-4 rounded accent-blue-500 cursor-pointer"
-                  />
-                  <label
-                    htmlFor="preapproved"
-                    className="text-slate-300 text-sm cursor-pointer"
-                  >
-                    I&apos;m already{" "}
-                    <span className="text-blue-400 font-medium">pre-approved</span> for a
-                    mortgage
-                  </label>
-                </div>
-              </div>
-            )}
-
-            {/* ── STEP 3: Preferences ── */}
-            {step === "preferences" && (
-              <div className="space-y-4">
-                <h2 className="text-lg font-semibold text-white mb-1">
-                  Property Preferences
-                </h2>
-                <p className="text-slate-400 text-sm mb-4">
-                  All fields are optional — share as much or as little as you like.
-                </p>
-
-                <Field label="Property Type">
-                  <div className="grid grid-cols-3 gap-2">
-                    {PROPERTY_TYPES.map(({ value, label }) => (
-                      <button
-                        key={value}
-                        type="button"
-                        onClick={() => set("propertyType", value)}
-                        className={[
-                          "py-2 px-2 rounded-lg border text-xs font-medium transition-all",
-                          form.propertyType === value
-                            ? "bg-blue-600 border-blue-500 text-white"
-                            : "bg-slate-700/50 border-slate-600 text-slate-300 hover:border-blue-500/60",
-                        ].join(" ")}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-                </Field>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Min Budget">
-                    <select
-                      value={form.budgetMin}
-                      onChange={(e) => set("budgetMin", e.target.value)}
-                      className={inputCls()}
-                    >
-                      <option value="">No min</option>
-                      {BUDGET_OPTIONS.map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label="Max Budget">
-                    <select
-                      value={form.budgetMax}
-                      onChange={(e) => set("budgetMax", e.target.value)}
-                      className={inputCls()}
-                    >
-                      <option value="">No max</option>
-                      {BUDGET_OPTIONS.map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <Field label="Bedrooms">
-                    <select
-                      value={form.bedrooms}
-                      onChange={(e) => set("bedrooms", e.target.value)}
-                      className={inputCls()}
-                    >
-                      <option value="">Any</option>
-                      {BEDROOM_OPTIONS.map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                  <Field label="Bathrooms">
-                    <select
-                      value={form.bathrooms}
-                      onChange={(e) => set("bathrooms", e.target.value)}
-                      className={inputCls()}
-                    >
-                      <option value="">Any</option>
-                      {BATHROOM_OPTIONS.map((o) => (
-                        <option key={o} value={o}>
-                          {o}
-                        </option>
-                      ))}
-                    </select>
-                  </Field>
-                </div>
-
-                <Field label="Preferred Neighborhoods / Zip Codes">
-                  <input
-                    type="text"
-                    placeholder="e.g. Downtown, Midtown, 30303"
-                    value={form.neighborhoods}
-                    onChange={(e) => set("neighborhoods", e.target.value)}
-                    className={inputCls()}
-                  />
-                </Field>
-
-                <Field label="Anything else we should know? (optional)">
-                  <textarea
-                    rows={3}
-                    placeholder="School districts, HOA preferences, must-haves…"
-                    value={form.notes}
-                    onChange={(e) => set("notes", e.target.value)}
-                    className={inputCls() + " resize-none"}
-                  />
-                </Field>
-
-                {serverError && (
-                  <p className="text-red-400 text-sm text-center">{serverError}</p>
-                )}
-              </div>
-            )}
-
-            {/* ── DONE ── */}
-            {step === "done" && (
-              <div className="text-center py-8 space-y-4">
-                <div className="w-16 h-16 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center mx-auto mb-2">
-                  <svg
-                    className="w-8 h-8 text-blue-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-bold text-white">You&apos;re on the list!</h2>
-                <p className="text-slate-400 text-sm max-w-xs mx-auto">
-                  Thanks,{" "}
-                  <span className="text-white font-medium">{form.firstName}</span>! We&apos;ll
-                  review your preferences and reach out via{" "}
-                  <span className="text-blue-400">{form.email}</span> shortly with matched
-                  listings.
-                </p>
-                <div className="bg-slate-700/40 border border-slate-600 rounded-xl px-4 py-3 mt-4 text-left text-sm text-slate-300 space-y-1">
-                  <p>
-                    <span className="text-slate-500">Timeline:</span>{" "}
-                    {TIMELINE_LABELS[form.timeline]}
-                  </p>
-                  {form.budgetMax && (
-                    <p>
-                      <span className="text-slate-500">Budget:</span>{" "}
-                      {form.budgetMin || "—"} – {form.budgetMax}
-                    </p>
-                  )}
-                  {form.propertyType !== "any" && (
-                    <p>
-                      <span className="text-slate-500">Property:</span>{" "}
-                      {PROPERTY_TYPES.find((p) => p.value === form.propertyType)?.label}
-                    </p>
-                  )}
-                  {form.isPreApproved && (
-                    <p className="text-green-400">&#10003; Pre-approved</p>
-                  )}
-                </div>
-                <button
-                  onClick={() => {
-                    setForm({ ...empty, source: getSource() });
-                    setStep("contact");
-                  }}
-                  className="mt-4 text-sm text-blue-400 underline underline-offset-2 hover:text-blue-300"
-                >
-                  Submit another response
-                </button>
-              </div>
-            )}
-
-            {/* Navigation */}
-            {step !== "done" && (
-              <div className="flex gap-3 mt-6">
-                {stepIndex > 0 && (
-                  <button
-                    type="button"
-                    onClick={prevStep}
-                    className="flex-1 py-3 rounded-xl border border-slate-600 text-slate-300 text-sm font-medium hover:bg-slate-700/50 transition-all"
-                  >
-                    Back
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={nextStep}
-                  disabled={submitting}
-                  className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-60 text-white text-sm font-semibold transition-all shadow-lg shadow-blue-900/40"
-                >
-                  {submitting
-                    ? "Submitting…"
-                    : step === "preferences"
-                    ? "Submit"
-                    : "Continue →"}
-                </button>
-              </div>
-            )}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/start?role=buying"
+              className="px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base transition-all shadow-xl shadow-blue-900/50 hover:shadow-blue-800/60 hover:-translate-y-0.5"
+            >
+              I&apos;m Buying a Home
+            </Link>
+            <Link
+              href="/start?role=selling"
+              className="px-8 py-4 rounded-xl bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white font-semibold text-base transition-all hover:-translate-y-0.5"
+            >
+              I&apos;m Selling a Home
+            </Link>
+            <Link
+              href="/start?role=both"
+              className="px-8 py-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white font-semibold text-base transition-all hover:-translate-y-0.5"
+            >
+              Buying &amp; Selling
+            </Link>
           </div>
         </div>
+      </section>
 
-        {/* Footer */}
-        <p className="text-center text-slate-600 text-xs mt-6">
-          Your information is private and will never be sold.
-        </p>
-      </div>
+      {/* Trust signals */}
+      <section className="py-12 px-4 border-y border-slate-800">
+        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { label: "All Client Types", sub: "First-time to investor" },
+            { label: "Full Transparency", sub: "No surprises, ever" },
+            { label: "Legal Compliance", sub: "IABS & buyer rep ready" },
+            { label: "Texas Expert", sub: "Every county, every program" },
+          ].map(({ label, sub }) => (
+            <div key={label} className="space-y-1">
+              <p className="text-white font-semibold text-sm">{label}</p>
+              <p className="text-slate-500 text-xs">{sub}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* What you'll learn */}
+      <section className="py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-3">
+              Everything you need to know
+            </h2>
+            <p className="text-slate-400 max-w-lg mx-auto">
+              Real estate is full of surprises — most of them avoidable. My job is to make
+              sure you&apos;re informed before every decision, not after.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {TOPICS.map(({ slug, icon, title, desc }) => (
+              <Link
+                key={slug}
+                href={`/learn/${slug}`}
+                className="group bg-slate-800/60 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-6 transition-all hover:-translate-y-0.5"
+              >
+                <div className="text-2xl mb-3">{icon}</div>
+                <h3 className="text-white font-semibold mb-1 group-hover:text-blue-400 transition-colors">
+                  {title}
+                </h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Link
+              href="/learn"
+              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+            >
+              View all education topics
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Who I work with */}
+      <section className="py-20 px-4 bg-slate-800/30 border-y border-slate-800">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-white mb-3">
+              I work with every type of client
+            </h2>
+            <p className="text-slate-400 max-w-lg mx-auto">
+              No matter where you are in your real estate journey, I have the knowledge and
+              resources to guide you to the right outcome.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                type: "First-Time Buyers",
+                desc: "Learn what programs you qualify for, how to get pre-approved, and what every step of the process looks like.",
+                href: "/start?type=first-time-buyer",
+              },
+              {
+                type: "Move-Up Buyers",
+                desc: "Buying and selling at the same time takes coordination. I'll walk you through the bridge strategy that makes it work.",
+                href: "/start?type=move-up-buyer",
+              },
+              {
+                type: "Investors",
+                desc: "Whether you flip, hold, or BRRRR — I speak your language. Cap rates, 1031s, cash-on-cash return.",
+                href: "/start?type=investor",
+              },
+              {
+                type: "Sellers",
+                desc: "Pricing strategy, disclosure requirements, staging, negotiation — I'll position your home to sell at the right price.",
+                href: "/start?role=selling",
+              },
+            ].map(({ type, desc, href }) => (
+              <Link
+                key={type}
+                href={href}
+                className="group bg-slate-800/60 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-6 transition-all"
+              >
+                <h3 className="text-white font-semibold mb-2 group-hover:text-blue-400 transition-colors">
+                  {type}
+                </h3>
+                <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 px-4">
+        <div className="max-w-2xl mx-auto text-center">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Ready to get started?
+          </h2>
+          <p className="text-slate-400 mb-8">
+            Fill out a quick form and I&apos;ll reach out to walk you through your options —
+            no pressure, no obligation.
+          </p>
+          <Link
+            href="/start"
+            className="inline-block px-10 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base transition-all shadow-xl shadow-blue-900/50 hover:-translate-y-0.5"
+          >
+            Tell Me About Your Situation →
+          </Link>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-800 py-8 px-4">
+        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">
+          <p>© {new Date().getFullYear()} Open House Companion. All rights reserved.</p>
+          <p className="text-center max-w-lg">
+            By using this site you acknowledge receipt of the Texas Information About Brokerage
+            Services (IABS). This is not a guarantee of representation. A written buyer
+            representation agreement is required before agent services begin.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
