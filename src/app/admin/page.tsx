@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { LEAD_STATUSES, type Lead, type LeadStatus } from "@/types/lead";
+import {
+  LEAD_STATUSES,
+  LEAD_PRODUCTS,
+  PRODUCT_LABELS,
+  type Lead,
+  type LeadStatus,
+  type LeadProduct,
+} from "@/types/lead";
 
 // ─── Display helpers ──────────────────────────────────────────────────────────
 
@@ -11,6 +18,11 @@ const STATUS_STYLES: Record<LeadStatus, string> = {
   active: "bg-purple-500/20 text-purple-300 border-purple-500/40",
   closed: "bg-green-500/20 text-green-300 border-green-500/40",
   lost: "bg-slate-600/30 text-slate-400 border-slate-600",
+};
+
+const PRODUCT_STYLES: Record<LeadProduct, string> = {
+  "open-house": "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  social: "bg-pink-500/15 text-pink-300 border-pink-500/30",
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -138,6 +150,7 @@ function LeadDrawer({
           <div>
             <h3 className="text-white font-semibold text-sm mb-2">Situation</h3>
             <div className="space-y-0">
+              <DetailRow label="Product" value={PRODUCT_LABELS[lead.product] ?? lead.product} />
               <DetailRow label="Role" value={ROLE_LABELS[lead.role]} />
               {isBuyer && <DetailRow label="Client Type" value={CLIENT_TYPE_LABELS[lead.clientType]} />}
             </div>
@@ -220,6 +233,7 @@ export default function AdminPage() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [productFilter, setProductFilter] = useState<string>("all");
 
   useEffect(() => {
     loadLeads();
@@ -259,6 +273,7 @@ export default function AdminPage() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return leads.filter((l) => {
+      if (productFilter !== "all" && l.product !== productFilter) return false;
       if (roleFilter !== "all" && l.role !== roleFilter) return false;
       if (statusFilter !== "all" && l.status !== statusFilter) return false;
       if (q) {
@@ -267,7 +282,7 @@ export default function AdminPage() {
       }
       return true;
     });
-  }, [leads, search, roleFilter, statusFilter]);
+  }, [leads, search, roleFilter, statusFilter, productFilter]);
 
   const stats = useMemo(() => {
     return {
@@ -328,6 +343,16 @@ export default function AdminPage() {
             className="flex-1 min-w-[200px] bg-slate-800 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/60"
           />
           <select
+            value={productFilter}
+            onChange={(e) => setProductFilter(e.target.value)}
+            className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/60"
+          >
+            <option value="all">All Products</option>
+            {LEAD_PRODUCTS.map((p) => (
+              <option key={p} value={p}>{PRODUCT_LABELS[p]}</option>
+            ))}
+          </select>
+          <select
             value={roleFilter}
             onChange={(e) => setRoleFilter(e.target.value)}
             className="bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500/60"
@@ -380,7 +405,18 @@ export default function AdminPage() {
                       className="border-b border-slate-700/50 hover:bg-slate-700/30 cursor-pointer transition-colors"
                     >
                       <td className="px-4 py-3">
-                        <p className="text-white font-medium">{lead.firstName} {lead.lastName}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-white font-medium">{lead.firstName} {lead.lastName}</p>
+                          <span
+                            className={cls(
+                              "inline-block px-1.5 py-0.5 rounded border text-[10px] font-medium whitespace-nowrap",
+                              PRODUCT_STYLES[lead.product] ?? PRODUCT_STYLES["open-house"]
+                            )}
+                            title={PRODUCT_LABELS[lead.product] ?? lead.product}
+                          >
+                            {lead.product === "social" ? "Social" : "Open House"}
+                          </span>
+                        </div>
                         {(lead.role === "buying" || lead.role === "both") && (
                           <p className="text-slate-500 text-xs">{CLIENT_TYPE_LABELS[lead.clientType]}</p>
                         )}

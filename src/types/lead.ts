@@ -59,6 +59,17 @@ export const LEAD_STATUSES: LeadStatus[] = [
   "lost",
 ];
 
+// Which front-end product captured the lead. Both products write to the same
+// shared database; this tag is how the dashboard segments them.
+export type LeadProduct = "open-house" | "social";
+
+export const LEAD_PRODUCTS: LeadProduct[] = ["open-house", "social"];
+
+export const PRODUCT_LABELS: Record<LeadProduct, string> = {
+  "open-house": "Open House Companion",
+  social: "Social Media",
+};
+
 export interface LeadFormData {
   // Identity
   role: ClientRole;
@@ -106,6 +117,7 @@ export interface LeadFormData {
   // Notes & meta
   notes: string;
   source: string;
+  product: LeadProduct;
 }
 
 export interface Lead extends LeadFormData {
