@@ -646,6 +646,108 @@ const CONTENT: Record<string, TopicContent> = {
   },
 };
 
+// ─── External resource links ──────────────────────────────────────────────────
+// Official / authoritative sources where clients can research programs, verify
+// professionals, and (where applicable) apply. Provided for convenience — these
+// are resources, not endorsements. Government/agency links are favored over
+// specific commercial lenders to steer clear of RESPA/steering concerns.
+
+type ResourceLink = { label: string; url: string; note?: string };
+
+const RESOURCES: Record<string, ResourceLink[]> = {
+  programs: [
+    { label: "CFPB — Compare Loan Options", url: "https://www.consumerfinance.gov/owning-a-home/loan-options/", note: "Neutral overview of FHA, VA, USDA & conventional loans" },
+    { label: "VA Home Loans — VA.gov", url: "https://www.va.gov/housing-assistance/home-loans/", note: "Check eligibility & request your Certificate of Eligibility" },
+    { label: "USDA Single-Family Housing", url: "https://www.rd.usda.gov/programs-services/single-family-housing-programs", note: "0% down in eligible rural/suburban areas" },
+    { label: "USDA Property Eligibility Map", url: "https://eligibility.sc.egov.usda.gov/eligibility/", note: "Check whether a specific address qualifies" },
+    { label: "FHA / HUD Homebuyer Resources", url: "https://www.hud.gov/buying", note: "Federal Housing Administration program info" },
+    { label: "Fannie Mae — HomeReady & buyer tools", url: "https://yourhome.fanniemae.com/", note: "3% down conventional option" },
+    { label: "Freddie Mac — Home Possible & buyer tools", url: "https://myhome.freddiemac.com/", note: "3% down conventional option" },
+    { label: "My First Texas Home (TDHCA)", url: "https://www.tdhca.texas.gov/homeownership", note: "Texas down-payment & closing-cost assistance" },
+    { label: "TSAHC Homebuyer Programs", url: "https://www.tsahc.org/homebuyers-renters/loans-down-payment-assistance", note: "Grants for Texas buyers & 'Texas Heroes'" },
+  ],
+  taxes: [
+    { label: "Texas Comptroller — Property Tax", url: "https://comptroller.texas.gov/taxes/property-tax/", note: "Statewide rules, deadlines, and taxpayer rights" },
+    { label: "Find Your County Appraisal District", url: "https://comptroller.texas.gov/taxes/property-tax/county-directory/", note: "Look up assessed value, tax rates & protest info" },
+    { label: "Homestead & Other Exemptions", url: "https://comptroller.texas.gov/taxes/property-tax/exemptions/", note: "File after you move in to lower your taxable value" },
+  ],
+  insurance: [
+    { label: "Texas Department of Insurance (TDI)", url: "https://www.tdi.texas.gov/", note: "Consumer guides, complaints, and company lookup" },
+    { label: "TDI HelpInsure — Compare Policies", url: "https://www.helpinsure.com/", note: "Compare home & windstorm coverage across insurers" },
+    { label: "FloodSmart / NFIP", url: "https://www.floodsmart.gov/", note: "Flood insurance (a separate policy from HO-3)" },
+    { label: "FEMA Flood Map Service Center", url: "https://msc.fema.gov/portal/home", note: "Check a property's flood zone" },
+    { label: "Texas Windstorm Insurance Assoc. (TWIA)", url: "https://www.twia.org/", note: "Coastal windstorm/hail coverage" },
+  ],
+  warranties: [
+    { label: "Texas Property Code, Ch. 27 (Residential Construction)", url: "https://statutes.capitol.texas.gov/Docs/PR/htm/PR.27.htm", note: "Your rights on new-construction defects" },
+    { label: "BBB — Research Home Warranty Companies", url: "https://www.bbb.org/", note: "Check ratings & complaints before buying a plan" },
+  ],
+  inspections: [
+    { label: "TREC — Verify a Licensed Inspector", url: "https://www.trec.texas.gov/apps/license-holder-search/", note: "Confirm any inspector's license before hiring" },
+    { label: "InterNACHI — Find an Inspector", url: "https://www.nachi.org/", note: "Directory of certified inspectors" },
+    { label: "ASHI — American Society of Home Inspectors", url: "https://www.homeinspector.org/", note: "Directory & standards of practice" },
+  ],
+  contracts: [
+    { label: "TREC — Contracts & Forms", url: "https://www.trec.texas.gov/forms", note: "Read the actual One-to-Four Family Contract & addenda" },
+    { label: "TREC — Information About Brokerage Services (IABS)", url: "https://www.trec.texas.gov/forms/information-about-brokerage-services", note: "The disclosure I'm required to give you" },
+    { label: "TREC — Consumer Information", url: "https://www.trec.texas.gov/education/consumers", note: "Your rights and how to file a complaint" },
+  ],
+  selling: [
+    { label: "TREC — Seller's Disclosure & Listing Forms", url: "https://www.trec.texas.gov/forms", note: "The disclosure notice you'll complete as a seller" },
+    { label: "TREC — Consumer Information", url: "https://www.trec.texas.gov/education/consumers", note: "Your rights in the transaction" },
+    { label: "HAR.com — Texas Market Data", url: "https://www.har.com/", note: "Public listing and neighborhood market data" },
+  ],
+};
+
+// Step-specific links for the buying process, keyed by section index (steps 1–3).
+const PROCESS_STEP_LINKS: Record<number, ResourceLink[]> = {
+  0: [
+    { label: "CFPB — Owning a Home (mortgage shopping toolkit)", url: "https://www.consumerfinance.gov/owning-a-home/", note: "Checklists, loan-estimate explainers, and what to prep" },
+    { label: "CFPB — Explore Interest Rates", url: "https://www.consumerfinance.gov/owning-a-home/explore-rates/", note: "See realistic rate ranges before you apply" },
+  ],
+  1: [
+    { label: "TREC — Information About Brokerage Services (IABS)", url: "https://www.trec.texas.gov/forms/information-about-brokerage-services", note: "Read the disclosure before we begin" },
+    { label: "TREC — Consumer Information", url: "https://www.trec.texas.gov/education/consumers", note: "Understand agency and your protections" },
+  ],
+  2: [
+    { label: "Realtor.com", url: "https://www.realtor.com/", note: "MLS-sourced listings" },
+    { label: "HAR.com", url: "https://www.har.com/", note: "Texas MLS public search" },
+    { label: "Redfin", url: "https://www.redfin.com/", note: "Listings & sold-price history" },
+  ],
+};
+
+function ExternalLinkList({ links }: { links: ResourceLink[] }) {
+  return (
+    <div className="space-y-2.5">
+      {links.map((l) => (
+        <a
+          key={l.url}
+          href={l.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-start gap-2.5 group"
+        >
+          <svg
+            className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5 group-hover:text-blue-300 transition-colors"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+          </svg>
+          <span>
+            <span className="text-blue-300 group-hover:text-blue-200 text-sm font-medium transition-colors underline-offset-2 group-hover:underline">
+              {l.label}
+            </span>
+            {l.note && <span className="block text-slate-500 text-xs mt-0.5">{l.note}</span>}
+          </span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
@@ -701,9 +803,31 @@ export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
                   </p>
                 </div>
               )}
+
+              {topic === "process" && PROCESS_STEP_LINKS[i] && (
+                <div className="mt-5 border-t border-slate-700/60 pt-4">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2.5">
+                    Apply / Learn more
+                  </p>
+                  <ExternalLinkList links={PROCESS_STEP_LINKS[i]} />
+                </div>
+              )}
             </div>
           ))}
         </div>
+
+        {/* Resource links for this topic */}
+        {RESOURCES[topic] && (
+          <div className="mt-8 bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
+            <h3 className="text-white font-bold text-lg mb-1">Helpful Links &amp; Where to Apply</h3>
+            <p className="text-slate-500 text-xs mb-4 leading-relaxed">
+              Official and third-party resources for research and applications — provided for your
+              convenience, not as endorsements. Confirm current terms directly with each provider,
+              and reach out to me anytime for a trusted referral.
+            </p>
+            <ExternalLinkList links={RESOURCES[topic]} />
+          </div>
+        )}
 
         {/* CTA */}
         <div className="mt-10 bg-blue-600/10 border border-blue-500/30 rounded-2xl p-6 text-center">
