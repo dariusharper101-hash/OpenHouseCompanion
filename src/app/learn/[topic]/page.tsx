@@ -560,6 +560,11 @@ const CONTENT: Record<string, TopicContent> = {
         ],
         callout: "The SDN is not a guarantee — it's a disclosure of what the seller knows. Inspections are still essential.",
       },
+      {
+        heading: "When & Where You'll Actually Sign",
+        body: "This site is your starting point — where you learn the process and tell me about your goals. When it's time to sign the real documents (IABS, Buyer Representation Agreement, the TREC contract, and disclosures), I'll send them to you through a secure, legally-compliant e-signature process provided through my brokerage. Your signed paperwork is handled inside that protected system — never stored on this website — which keeps your personal and financial information safe.",
+        callout: "You will never be asked to upload sensitive documents or sign a binding contract on this website. Signing always happens through a secure, verified channel I provide personally.",
+      },
     ],
     cta: "Have questions about a specific contract term?",
   },
