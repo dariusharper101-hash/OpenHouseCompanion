@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Nav from "@/components/nav";
+import { AGENT } from "@/config/agent";
 
 const TOPICS = [
   {
@@ -223,13 +224,31 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="border-t border-slate-800 py-8 px-4">
-        <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-          <p>© {new Date().getFullYear()} Open House Companion. All rights reserved.</p>
-          <p className="text-center max-w-lg">
-            By using this site you acknowledge receipt of the Texas Information About Brokerage
-            Services (IABS). This is not a guarantee of representation. A written buyer
-            representation agreement is required before agent services begin.
-          </p>
+        <div className="max-w-5xl mx-auto space-y-4 text-xs text-slate-600">
+          {(AGENT.name || AGENT.brokerage || AGENT.licenseNumber) && (
+            <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-1 md:gap-3 text-center text-slate-500">
+              {AGENT.name && (
+                <span className="text-slate-400 font-medium">
+                  {AGENT.name}{AGENT.title ? `, ${AGENT.title}` : ""}
+                </span>
+              )}
+              {AGENT.licenseNumber && <span>TREC License #{AGENT.licenseNumber}</span>}
+              {AGENT.brokerage && (
+                <span>
+                  {AGENT.brokerage}{AGENT.brokerageLicense ? ` (#${AGENT.brokerageLicense})` : ""}
+                </span>
+              )}
+              {AGENT.phone && <span>{AGENT.phone}</span>}
+            </div>
+          )}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p>© {new Date().getFullYear()} {AGENT.appName}. All rights reserved.</p>
+            <p className="text-center max-w-lg">
+              By using this site you acknowledge receipt of the Texas Information About Brokerage
+              Services (IABS). This is not a guarantee of representation. A written buyer
+              representation agreement is required before agent services begin.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
