@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Nav from "@/components/nav";
+import { AGENT } from "@/config/agent";
 
 // ─── Content ──────────────────────────────────────────────────────────────────
 
@@ -562,8 +563,8 @@ const CONTENT: Record<string, TopicContent> = {
       },
       {
         heading: "When & Where You'll Actually Sign",
-        body: "This site is your starting point — where you learn the process and tell me about your goals. When it's time to sign the real documents (IABS, Buyer Representation Agreement, the TREC contract, and disclosures), I'll send them to you through a secure, legally-compliant e-signature process provided through my brokerage. Your signed paperwork is handled inside that protected system — never stored on this website — which keeps your personal and financial information safe.",
-        callout: "You will never be asked to upload sensitive documents or sign a binding contract on this website. Signing always happens through a secure, verified channel I provide personally.",
+        body: `This site is your starting point — where you learn the process and tell me about your goals. When it's time to sign the real documents (IABS, Buyer Representation Agreement, the TREC contract, and disclosures), I'll send them to you through ${AGENT.signing.platform} — a secure, legally-compliant e-signature platform provided through my brokerage. You'll receive a private email invitation to review and sign each document at your own pace. Your signed paperwork lives inside that protected system, never on this website, which keeps your personal and financial information safe.`,
+        callout: "You will never be asked to upload sensitive documents or sign a binding contract on this website. Signing always happens through the secure, verified email invitation I send you directly.",
       },
     ],
     cta: "Have questions about a specific contract term?",
@@ -696,6 +697,7 @@ const RESOURCES: Record<string, ResourceLink[]> = {
     { label: "TREC — Contracts & Forms", url: "https://www.trec.texas.gov/forms", note: "Read the actual One-to-Four Family Contract & addenda" },
     { label: "TREC — Information About Brokerage Services (IABS)", url: "https://www.trec.texas.gov/forms/information-about-brokerage-services", note: "The disclosure I'm required to give you" },
     { label: "TREC — Consumer Information", url: "https://www.trec.texas.gov/education/consumers", note: "Your rights and how to file a complaint" },
+    { label: `Signing via ${AGENT.signing.platform}`, url: AGENT.signing.infoUrl, note: "How documents get signed — you'll receive a secure email invite per document" },
   ],
   selling: [
     { label: "TREC — Seller's Disclosure & Listing Forms", url: "https://www.trec.texas.gov/forms", note: "The disclosure notice you'll complete as a seller" },

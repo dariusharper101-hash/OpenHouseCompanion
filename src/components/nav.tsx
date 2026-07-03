@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AGENT } from "@/config/agent";
 
 export default function Nav() {
   return (
@@ -10,7 +11,14 @@ export default function Nav() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.5 1.5 0 012.092 0L22.25 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
           </div>
-          <span className="text-white font-semibold tracking-tight">Open House Companion</span>
+          <span className="flex flex-col leading-none">
+            <span className="text-white font-semibold tracking-tight">{AGENT.appName}</span>
+            {AGENT.name && (
+              <span className="text-slate-400 text-xs mt-0.5">
+                with {AGENT.name}{AGENT.brokerage ? ` · ${AGENT.brokerage}` : ""}
+              </span>
+            )}
+          </span>
         </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm text-slate-400">

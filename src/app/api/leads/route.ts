@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { addLead } from "@/lib/leads";
+import { notifyNewLead } from "@/lib/notify";
 import type { LeadFormData } from "@/types/lead";
 
 export async function POST(req: NextRequest) {
@@ -29,6 +30,10 @@ export async function POST(req: NextRequest) {
     }
 
     const lead = await addLead(body);
+
+    // Best-effort notification — never blocks or fails the submission.
+    await notifyNewLead(lead);
+
     return NextResponse.json({ success: true, id: lead.id }, { status: 201 });
   } catch (err) {
     // Surface the real reason in the server logs (visible in Vercel → Logs) so
