@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Nav from "@/components/nav";
-import AgentCard from "@/components/agent-card";
+import AgentCard, { SocialLinks } from "@/components/agent-card";
 import { AGENT } from "@/config/agent";
 
 const TOPICS = [
@@ -245,6 +245,9 @@ export default function HomePage() {
               {AGENT.phone && <span>{AGENT.phone}</span>}
             </div>
           )}
+          <div className="flex justify-center">
+            <SocialLinks />
+          </div>
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p>© {new Date().getFullYear()} {AGENT.appName}. All rights reserved.</p>
             <p className="text-center max-w-lg">

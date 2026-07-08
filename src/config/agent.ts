@@ -18,6 +18,12 @@ export const AGENT = {
   email: "DariusHarper@kw.com",
   serviceArea: "Dallas–Fort Worth",
 
+  // Social profiles (shown in the agent card, footer, and social funnel)
+  socials: {
+    instagram: "https://www.instagram.com/hopinrealestate",
+    facebook: "https://www.facebook.com/share/199UeSkPuT/",
+  },
+
   // Brokerage (Texas requires the brokerage be identified)
   brokerage: "Keller Williams DPR",
   brokerageLicense: "", // brokerage TREC number (optional)
