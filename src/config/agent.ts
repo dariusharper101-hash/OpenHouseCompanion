@@ -8,18 +8,18 @@ export const AGENT = {
   appName: "Open House Companion",
 
   // You
-  name: "", // e.g. "Jane Smith" — leave blank to keep generic branding
-  title: "REALTOR®", // e.g. "REALTOR®", "Broker Associate"
-  licenseNumber: "", // your TREC license number (shown near disclosures)
-  photoUrl: "", // public URL to a headshot (or leave blank)
+  name: "Darius Harper",
+  title: "REALTOR®",
+  licenseNumber: "0847860", // TREC license number
+  photoUrl: "", // public URL or /public path to a headshot; falls back to initials
 
   // Contact
-  phone: "", // e.g. "(555) 555-5555"
-  email: "", // contact email
-  serviceArea: "Texas", // e.g. "Greater Houston" — shown in copy
+  phone: "(870) 718-0974",
+  email: "DariusHarper@kw.com",
+  serviceArea: "Dallas–Fort Worth",
 
   // Brokerage (Texas requires the brokerage be identified)
-  brokerage: "", // brokerage name
+  brokerage: "Keller Williams DPR",
   brokerageLicense: "", // brokerage TREC number (optional)
 
   // Signing / transaction platform provided by your brokerage.
@@ -35,3 +35,12 @@ export const AGENT = {
 
 // Convenience: what to show as the human-facing signature line.
 export const agentDisplayName = AGENT.name || AGENT.appName;
+
+// Initials for the avatar fallback when no photoUrl is set.
+export const agentInitials =
+  AGENT.name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("") || "OH";
