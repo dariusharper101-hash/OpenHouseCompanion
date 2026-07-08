@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Nav from "@/components/nav";
+import AgentCard from "@/components/agent-card";
 import { AGENT } from "@/config/agent";
 
 const TOPICS = [
@@ -202,6 +203,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* About the agent */}
+      <AgentCard />
 
       {/* CTA */}
       <section className="py-20 px-4">
