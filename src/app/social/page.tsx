@@ -80,7 +80,7 @@ export default function SocialLeadPage() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Something went wrong");
+        throw new Error(data.detail || data.error || "Something went wrong");
       }
       setDone(true);
     } catch (err) {

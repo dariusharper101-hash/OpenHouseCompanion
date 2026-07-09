@@ -36,10 +36,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, id: lead.id }, { status: 201 });
   } catch (err) {
-    // Surface the real reason in the server logs (visible in Vercel → Logs) so
-    // misconfiguration (missing table, bad key) is diagnosable, while keeping
-    // the client-facing message generic.
+    // Surface the real reason in the server logs (Vercel → Logs) AND in the
+    // response `detail` so misconfiguration (missing table, bad key, RLS) is
+    // diagnosable during setup. `detail` is safe to remove once things are green.
     console.error("Lead submission failed:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error", detail: err instanceof Error ? err.message : String(err) },
+      { status: 500 }
+    );
   }
 }

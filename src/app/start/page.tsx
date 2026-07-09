@@ -238,8 +238,8 @@ function StartForm() {
         body: JSON.stringify(form),
       });
       if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Something went wrong");
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || data.error || "Something went wrong");
       }
       const params = new URLSearchParams({
         name: form.firstName,
