@@ -66,7 +66,7 @@ export type LeadProduct = "open-house" | "social";
 export const LEAD_PRODUCTS: LeadProduct[] = ["open-house", "social"];
 
 export const PRODUCT_LABELS: Record<LeadProduct, string> = {
-  "open-house": "Open House Companion",
+  "open-house": "Website",
   social: "Social Media",
 };
 

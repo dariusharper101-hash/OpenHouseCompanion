@@ -5,7 +5,7 @@
 
 export const AGENT = {
   // Product / site name shown in the nav and browser title.
-  appName: "Open House Companion",
+  appName: "Hop In Real Estate",
 
   // You
   name: "Darius Harper",
@@ -49,4 +49,4 @@ export const agentInitials =
     .filter(Boolean)
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("") || "OH";
+    .join("") || "HI";

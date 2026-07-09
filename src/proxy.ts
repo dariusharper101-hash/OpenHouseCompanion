@@ -13,7 +13,7 @@ function unauthorized() {
   return new NextResponse("Authentication required", {
     status: 401,
     headers: {
-      "WWW-Authenticate": 'Basic realm="Open House Companion Admin", charset="UTF-8"',
+      "WWW-Authenticate": 'Basic realm="Hop In Real Estate Admin", charset="UTF-8"',
     },
   });
 }
