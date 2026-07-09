@@ -5,7 +5,7 @@ import { AGENT } from "@/config/agent";
 
 const brandLine = AGENT.name
   ? `${AGENT.appName} — ${AGENT.name}${AGENT.brokerage ? `, ${AGENT.brokerage}` : ""}`
-  : "Open House Companion — Real Estate Done Right";
+  : "Hop In Real Estate — Real Estate Done Right";
 const brandDesc = AGENT.name
   ? `Expert real estate guidance for buyers, sellers, and investors across ${AGENT.serviceArea} with ${AGENT.name}${AGENT.brokerage ? ` of ${AGENT.brokerage}` : ""}. Know your programs, understand the process, and work with an agent who has your back.`
   : "Expert real estate guidance for buyers, sellers, and investors. Know your programs, understand the process, and work with an agent who has your back.";

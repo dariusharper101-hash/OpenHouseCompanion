@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { AGENT } from "@/config/agent";
 import type {
   LeadFormData,
   ClientRole,
@@ -294,7 +295,7 @@ function StartForm() {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1.5 mb-4">
             <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-            <span className="text-blue-300 text-sm font-medium">Open House Companion</span>
+            <span className="text-blue-300 text-sm font-medium">{AGENT.appName}</span>
           </div>
           <h1 className="text-2xl font-bold text-white">
             {isDone ? "You're all set!" : (stepLabels[currentStep] ?? "Get Started")}

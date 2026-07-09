@@ -12,7 +12,7 @@ import { PRODUCT_LABELS } from "@/types/lead";
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const NOTIFY_EMAIL = process.env.NOTIFY_EMAIL;
-const NOTIFY_FROM = process.env.NOTIFY_FROM || "Open House Companion <onboarding@resend.dev>";
+const NOTIFY_FROM = process.env.NOTIFY_FROM || "Hop In Real Estate <onboarding@resend.dev>";
 
 function esc(s: unknown): string {
   return String(s ?? "")

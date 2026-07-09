@@ -9,6 +9,7 @@ import {
   type LeadStatus,
   type LeadProduct,
 } from "@/types/lead";
+import { AGENT } from "@/config/agent";
 
 // ─── Display helpers ──────────────────────────────────────────────────────────
 
@@ -300,7 +301,7 @@ export default function AdminPage() {
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-2xl font-bold text-white">Lead Dashboard</h1>
-            <p className="text-slate-500 text-sm">Open House Companion — agent view</p>
+            <p className="text-slate-500 text-sm">{AGENT.appName} — agent view</p>
           </div>
           <div className="flex gap-3">
             <button
@@ -414,7 +415,7 @@ export default function AdminPage() {
                             )}
                             title={PRODUCT_LABELS[lead.product] ?? lead.product}
                           >
-                            {lead.product === "social" ? "Social" : "Open House"}
+                            {lead.product === "social" ? "Social" : "Website"}
                           </span>
                         </div>
                         {(lead.role === "buying" || lead.role === "both") && (

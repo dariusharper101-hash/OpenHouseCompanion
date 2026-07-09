@@ -607,11 +607,11 @@ const CONTENT: Record<string, TopicContent> = {
       },
       {
         heading: "Step 4 — List and Market",
-        body: "Your listing goes live on the MLS, which syndicates to Zillow, Realtor.com, and hundreds of other sites. My marketing strategy includes professional photos, targeted social media, open houses, and agent-to-agent outreach.",
+        body: "Your listing goes live on the MLS, which syndicates to Zillow, Realtor.com, and hundreds of other sites. My marketing strategy includes professional photos, targeted social media, in-person showings, and agent-to-agent outreach.",
         bullets: [
           "MLS listing with professional photography",
           "Targeted Facebook and Instagram advertising",
-          "Open houses and broker tours",
+          "Private showings and broker tours",
           "Email campaigns to active buyer pools",
           "Yard sign and lockbox installation",
         ],
