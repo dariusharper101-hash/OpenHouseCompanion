@@ -1,263 +1,230 @@
-import Link from "next/link";
-import Nav from "@/components/nav";
-import AgentCard, { SocialLinks } from "@/components/agent-card";
+"use client";
+
+import { useState, useEffect } from "react";
+import type { LeadFormData, ClientRole, BuyerTimeline } from "@/types/lead";
 import { AGENT } from "@/config/agent";
 
-const TOPICS = [
-  {
-    slug: "programs",
-    icon: "💰",
-    title: "Loan Programs",
-    desc: "FHA, VA, USDA, and Texas-specific programs you may qualify for.",
-  },
-  {
-    slug: "taxes",
-    icon: "📋",
-    title: "County Property Taxes",
-    desc: "How Texas property taxes work and what they mean for your payment.",
-  },
-  {
-    slug: "insurance",
-    icon: "🛡️",
-    title: "Homeowners Insurance",
-    desc: "HO-3, flood, windstorm, and what's actually covered.",
-  },
-  {
-    slug: "warranties",
-    icon: "🔧",
-    title: "Home Warranties",
-    desc: "Builder warranties vs. third-party and what they protect.",
-  },
-  {
-    slug: "inspections",
-    icon: "🔍",
-    title: "Inspections",
-    desc: "Every inspection type, who pays, and how to use findings.",
-  },
-  {
-    slug: "contracts",
-    icon: "✍️",
-    title: "Contracts & Signing",
-    desc: "TREC forms, earnest money, option periods, and closing costs.",
-  },
+// ─── Open House Companion — visitor sign-in ─────────────────────────────────────
+// A distinct product from the Hop In Real Estate lead-gen site: a fast, tablet-
+// friendly sign-in sheet for people walking into a physical open house. Feeds the
+// SAME shared database (tagged product: "open-house") so every walk-in becomes a
+// tracked lead in the same dashboard.
+
+const TIMELINES: { value: BuyerTimeline; label: string }[] = [
+  { value: "asap", label: "ASAP" },
+  { value: "1-3-months", label: "1–3 months" },
+  { value: "3-6-months", label: "3–6 months" },
+  { value: "6-12-months", label: "6–12 months" },
+  { value: "just-browsing", label: "Just looking" },
 ];
 
-export default function HomePage() {
+function baseLead(): LeadFormData {
+  return {
+    role: "buying",
+    clientType: "first-time-buyer",
+    firstName: "", lastName: "", email: "", phone: "",
+    timeline: "3-6-months", isPreApproved: false,
+    budgetMin: "", budgetMax: "", propertyType: "any",
+    bedrooms: "", bathrooms: "", neighborhoods: "",
+    purchasePurpose: "primary", ownedHomeLast3Years: false,
+    isVeteran: false, employmentType: "w2", creditRange: "660-699",
+    investorStrategy: "rental", propertiesOwned: "",
+    sellerAddress: "", sellerEstimatedValue: "",
+    sellerMortgageStatus: "has-mortgage", sellerReason: "",
+    sellerTimeline: "", buyingSimultaneously: false,
+    iabsAcknowledged: false, buyerRepAcknowledged: false,
+    notes: "", source: "open-house-signin", product: "open-house",
+  };
+}
+
+const input =
+  "w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white text-lg placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all";
+
+export default function OpenHouseSignInPage() {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [role, setRole] = useState<ClientRole>("buying");
+  const [hasAgent, setHasAgent] = useState<null | boolean>(null);
+  const [timeline, setTimeline] = useState<BuyerTimeline>("3-6-months");
+  const [address, setAddress] = useState("");
+  const [iabs, setIabs] = useState(false);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    // Let the agent pre-fill the property address via ?address=... on the sign-in URL
+    const a = params.get("address");
+    if (a) setAddress(a);
+  }, []);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    if (!firstName.trim() || !lastName.trim()) return setError("Please enter your name.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setError("Please enter a valid email.");
+    if (!phone.trim()) return setError("Please enter a phone number.");
+    if (!iabs) return setError("Please acknowledge the brokerage services notice to continue.");
+
+    setSubmitting(true);
+    const notes = [
+      hasAgent === true ? "Already working with an agent" : hasAgent === false ? "NOT working with an agent" : "",
+      address ? `Open house: ${address}` : "",
+    ].filter(Boolean).join(" · ");
+
+    const payload: LeadFormData = {
+      ...baseLead(),
+      role, firstName, lastName, email, phone, timeline,
+      iabsAcknowledged: iabs,
+      notes,
+      neighborhoods: address,
+      source: "open-house-signin",
+      product: "open-house",
+    };
+    try {
+      const res = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.detail || data.error || "Something went wrong");
+      }
+      setDone(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  function reset() {
+    setFirstName(""); setLastName(""); setEmail(""); setPhone("");
+    setRole("buying"); setHasAgent(null); setTimeline("3-6-months");
+    setIabs(false); setDone(false); setError("");
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
-      <Nav />
-
-      {/* Hero */}
-      <section className="pt-32 pb-20 px-4 text-center">
-        <div className="max-w-3xl mx-auto">
-          <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1.5 mb-6">
-            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-            <span className="text-blue-300 text-sm font-medium">
-              Real estate, the way it should be done
-            </span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 flex items-center justify-center px-4 py-10">
+      <div className="w-full max-w-lg">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="text-4xl mb-2">🏡</div>
+          <div className="inline-flex items-center gap-2 bg-emerald-500/20 border border-emerald-400/30 rounded-full px-4 py-1.5 mb-3">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-emerald-200 text-sm font-medium">{AGENT.appName}</span>
           </div>
-
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
-            Your Home.{" "}
-            <span className="text-blue-400">Your Future.</span>
-            <br />
-            Your Agent.
-          </h1>
-
-          <p className="text-lg text-slate-300 max-w-xl mx-auto mb-10 leading-relaxed">
-            Whether you&apos;re buying your first home, selling a property, or growing an investment
-            portfolio — you deserve an agent who knows the process cold and will tell you
-            everything you need to know before you sign a single line.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/start?role=buying"
-              className="px-8 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base transition-all shadow-xl shadow-blue-900/50 hover:shadow-blue-800/60 hover:-translate-y-0.5"
-            >
-              I&apos;m Buying a Home
-            </Link>
-            <Link
-              href="/start?role=selling"
-              className="px-8 py-4 rounded-xl bg-slate-700 hover:bg-slate-600 border border-slate-600 text-white font-semibold text-base transition-all hover:-translate-y-0.5"
-            >
-              I&apos;m Selling a Home
-            </Link>
-            <Link
-              href="/start?role=both"
-              className="px-8 py-4 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white font-semibold text-base transition-all hover:-translate-y-0.5"
-            >
-              Buying &amp; Selling
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust signals */}
-      <section className="py-12 px-4 border-y border-slate-800">
-        <div className="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {[
-            { label: "All Client Types", sub: "First-time to investor" },
-            { label: "Full Transparency", sub: "No surprises, ever" },
-            { label: "Legal Compliance", sub: "IABS & buyer rep ready" },
-            { label: "Texas Expert", sub: "Every county, every program" },
-          ].map(({ label, sub }) => (
-            <div key={label} className="space-y-1">
-              <p className="text-white font-semibold text-sm">{label}</p>
-              <p className="text-slate-500 text-xs">{sub}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* What you'll learn */}
-      <section className="py-20 px-4">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-3">
-              Everything you need to know
-            </h2>
-            <p className="text-slate-400 max-w-lg mx-auto">
-              Real estate is full of surprises — most of them avoidable. My job is to make
-              sure you&apos;re informed before every decision, not after.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {TOPICS.map(({ slug, icon, title, desc }) => (
-              <Link
-                key={slug}
-                href={`/learn/${slug}`}
-                className="group bg-slate-800/60 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-6 transition-all hover:-translate-y-0.5"
-              >
-                <div className="text-2xl mb-3">{icon}</div>
-                <h3 className="text-white font-semibold mb-1 group-hover:text-blue-400 transition-colors">
-                  {title}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
-              </Link>
-            ))}
-          </div>
-
-          <div className="text-center mt-8">
-            <Link
-              href="/learn"
-              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
-            >
-              View all education topics
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Who I work with */}
-      <section className="py-20 px-4 bg-slate-800/30 border-y border-slate-800">
-        <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-white mb-3">
-              I work with every type of client
-            </h2>
-            <p className="text-slate-400 max-w-lg mx-auto">
-              No matter where you are in your real estate journey, I have the knowledge and
-              resources to guide you to the right outcome.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
-              {
-                type: "First-Time Buyers",
-                desc: "Learn what programs you qualify for, how to get pre-approved, and what every step of the process looks like.",
-                href: "/start?type=first-time-buyer",
-              },
-              {
-                type: "Move-Up Buyers",
-                desc: "Buying and selling at the same time takes coordination. I'll walk you through the bridge strategy that makes it work.",
-                href: "/start?type=move-up-buyer",
-              },
-              {
-                type: "Investors",
-                desc: "Whether you flip, hold, or BRRRR — I speak your language. Cap rates, 1031s, cash-on-cash return.",
-                href: "/start?type=investor",
-              },
-              {
-                type: "Sellers",
-                desc: "Pricing strategy, disclosure requirements, staging, negotiation — I'll position your home to sell at the right price.",
-                href: "/start?role=selling",
-              },
-            ].map(({ type, desc, href }) => (
-              <Link
-                key={type}
-                href={href}
-                className="group bg-slate-800/60 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-6 transition-all"
-              >
-                <h3 className="text-white font-semibold mb-2 group-hover:text-blue-400 transition-colors">
-                  {type}
-                </h3>
-                <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* About the agent */}
-      <AgentCard />
-
-      {/* CTA */}
-      <section className="py-20 px-4">
-        <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready to get started?
-          </h2>
-          <p className="text-slate-400 mb-8">
-            Fill out a quick form and I&apos;ll reach out to walk you through your options —
-            no pressure, no obligation.
-          </p>
-          <Link
-            href="/start"
-            className="inline-block px-10 py-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold text-base transition-all shadow-xl shadow-blue-900/50 hover:-translate-y-0.5"
-          >
-            Tell Me About Your Situation →
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-slate-800 py-8 px-4">
-        <div className="max-w-5xl mx-auto space-y-4 text-xs text-slate-600">
-          {(AGENT.name || AGENT.brokerage || AGENT.licenseNumber) && (
-            <div className="flex flex-col md:flex-row md:items-center md:justify-center gap-1 md:gap-3 text-center text-slate-500">
-              {AGENT.name && (
-                <span className="text-slate-400 font-medium">
-                  {AGENT.name}{AGENT.title ? `, ${AGENT.title}` : ""}
-                </span>
-              )}
-              {AGENT.licenseNumber && <span>TREC License #{AGENT.licenseNumber}</span>}
-              {AGENT.brokerage && (
-                <span>
-                  {AGENT.brokerage}{AGENT.brokerageLicense ? ` (#${AGENT.brokerageLicense})` : ""}
-                </span>
-              )}
-              {AGENT.phone && <span>{AGENT.phone}</span>}
-            </div>
+          <h1 className="text-3xl font-bold text-white leading-tight">Welcome — please sign in</h1>
+          {address ? (
+            <p className="text-emerald-200/80 text-sm mt-2">Open house at <span className="font-semibold">{address}</span></p>
+          ) : (
+            <p className="text-emerald-200/80 text-sm mt-2">Thanks for stopping by today.</p>
           )}
-          <div className="flex justify-center">
-            <SocialLinks />
-          </div>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p>© {new Date().getFullYear()} {AGENT.appName}. All rights reserved.</p>
-            <p className="text-center max-w-lg">
-              By using this site you acknowledge receipt of the Texas Information About Brokerage
-              Services (IABS). This is not a guarantee of representation. A written buyer
-              representation agreement is required before agent services begin.
-            </p>
-          </div>
         </div>
-      </footer>
+
+        {done ? (
+          <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-8 text-center">
+            <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h2 className="text-2xl font-bold text-white mb-2">Thanks, {firstName}! 👋</h2>
+            <p className="text-white/80 text-sm leading-relaxed">
+              Enjoy the tour. {AGENT.name || "Your agent"} is here if you have any questions —
+              and will follow up with anything you need.
+            </p>
+            <button
+              onClick={reset}
+              className="mt-6 px-6 py-3 rounded-xl bg-white text-emerald-700 font-semibold text-sm hover:bg-white/90 transition-all"
+            >
+              Sign in the next guest →
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={submit} className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-3xl p-6 space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <input className={input} placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+              <input className={input} placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+            </div>
+            <input className={input} type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <input className={input} type="tel" placeholder="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} />
+
+            <div>
+              <p className="text-white/70 text-xs font-medium mb-2 uppercase tracking-wide">Are you currently working with a real estate agent?</p>
+              <div className="grid grid-cols-2 gap-2">
+                {[{ v: false, l: "No" }, { v: true, l: "Yes" }].map(({ v, l }) => (
+                  <button key={l} type="button" onClick={() => setHasAgent(v)}
+                    className={[
+                      "py-2.5 rounded-xl border text-sm font-semibold transition-all",
+                      hasAgent === v ? "bg-white text-emerald-700 border-white" : "bg-white/10 text-white border-white/20 hover:bg-white/20",
+                    ].join(" ")}>
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-white/70 text-xs font-medium mb-2 uppercase tracking-wide">What brings you in?</p>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { v: "buying", l: "Buying" },
+                  { v: "selling", l: "Selling" },
+                  { v: "both", l: "Both" },
+                ] as { v: ClientRole; l: string }[]).map(({ v, l }) => (
+                  <button key={v} type="button" onClick={() => setRole(v)}
+                    className={[
+                      "py-2.5 rounded-xl border text-sm font-semibold transition-all",
+                      role === v ? "bg-white text-emerald-700 border-white" : "bg-white/10 text-white border-white/20 hover:bg-white/20",
+                    ].join(" ")}>
+                    {l}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-white/70 text-xs font-medium mb-2 uppercase tracking-wide">Timeline</p>
+              <div className="flex flex-wrap gap-2">
+                {TIMELINES.map(({ value, label }) => (
+                  <button key={value} type="button" onClick={() => setTimeline(value)}
+                    className={[
+                      "px-3 py-1.5 rounded-lg border text-xs font-medium transition-all",
+                      timeline === value ? "bg-white text-emerald-700 border-white" : "bg-white/10 text-white border-white/20 hover:bg-white/20",
+                    ].join(" ")}>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input type="checkbox" checked={iabs} onChange={(e) => setIabs(e.target.checked)}
+                className="w-4 h-4 rounded accent-white mt-0.5 flex-shrink-0" />
+              <span className="text-white/70 text-xs leading-relaxed">
+                I acknowledge I&apos;ve been informed about the Texas <span className="font-semibold text-white">Information About Brokerage Services (IABS)</span>, and understand a full copy will be provided before any representation begins.
+              </span>
+            </label>
+
+            {error && <p className="text-white bg-red-500/40 border border-red-300/40 rounded-lg px-3 py-2 text-sm text-center">{error}</p>}
+
+            <button type="submit" disabled={submitting}
+              className="w-full py-4 rounded-xl bg-white text-emerald-700 font-bold text-lg hover:bg-white/90 disabled:opacity-60 transition-all shadow-lg">
+              {submitting ? "Signing in…" : "Sign In"}
+            </button>
+          </form>
+        )}
+
+        <p className="text-center text-white/40 text-xs mt-5">
+          Your information is private and will never be sold.
+        </p>
+      </div>
     </div>
   );
 }

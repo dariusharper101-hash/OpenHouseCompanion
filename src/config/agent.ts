@@ -5,7 +5,7 @@
 
 export const AGENT = {
   // Product / site name shown in the nav and browser title.
-  appName: "Hop In Real Estate",
+  appName: "Open House Companion",
 
   // You
   name: "Darius Harper",
