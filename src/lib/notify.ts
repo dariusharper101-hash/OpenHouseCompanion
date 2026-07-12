@@ -72,7 +72,7 @@ export async function notifyNewLead(lead: Lead): Promise<void> {
       body: JSON.stringify({
         from: NOTIFY_FROM,
         to: [NOTIFY_EMAIL],
-        subject: `New ${lead.product === "social" ? "social" : "website"} lead: ${lead.firstName} ${lead.lastName} (${lead.role})`,
+        subject: `New ${lead.product === "social" ? "social" : "open house"} lead: ${lead.firstName} ${lead.lastName} (${lead.role})`,
         html: buildHtml(lead),
         reply_to: lead.email,
       }),
