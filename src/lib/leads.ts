@@ -132,6 +132,24 @@ export async function updateLeadStatus(
   return lead;
 }
 
+export async function deleteLead(id: string): Promise<boolean> {
+  if (useSupabase) {
+    const { data, error } = await db()
+      .from(TABLE)
+      .delete()
+      .eq("id", id)
+      .select("id");
+    if (error) throw new Error(`Supabase delete failed: ${error.message}`);
+    return Boolean(data && data.length > 0);
+  }
+
+  const leads = await readFileLeads();
+  const next = leads.filter((l) => l.id !== id);
+  if (next.length === leads.length) return false; // nothing removed
+  await writeFileLeads(next);
+  return true;
+}
+
 // ─── CSV export ─────────────────────────────────────────────────────────────
 
 const CSV_COLUMNS: { key: keyof Lead; label: string }[] = [
