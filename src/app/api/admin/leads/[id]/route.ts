@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { updateLeadStatus } from "@/lib/leads";
+import { updateLeadStatus, deleteLead } from "@/lib/leads";
 import { LEAD_STATUSES, type LeadStatus } from "@/types/lead";
 
 export async function PATCH(
@@ -29,4 +29,18 @@ export async function PATCH(
   }
 
   return NextResponse.json(lead);
+}
+
+export async function DELETE(
+  _req: NextRequest,
+  ctx: RouteContext<"/api/admin/leads/[id]">
+) {
+  const { id } = await ctx.params;
+
+  const removed = await deleteLead(id);
+  if (!removed) {
+    return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+  }
+
+  return NextResponse.json({ deleted: true, id });
 }

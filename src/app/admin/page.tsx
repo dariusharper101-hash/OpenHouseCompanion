@@ -72,13 +72,16 @@ function LeadDrawer({
   lead,
   onClose,
   onStatusChange,
+  onDelete,
 }: {
   lead: Lead;
   onClose: () => void;
   onStatusChange: (id: string, status: LeadStatus) => void;
+  onDelete: (id: string) => void;
 }) {
   const isBuyer = lead.role === "buying" || lead.role === "both";
   const isSeller = lead.role === "selling" || lead.role === "both";
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
@@ -217,6 +220,41 @@ function LeadDrawer({
               </p>
             </div>
           )}
+
+          {/* Danger zone — permanently delete this lead */}
+          <div className="pt-2 border-t border-slate-700/60">
+            {confirmDelete ? (
+              <div className="bg-red-950/40 border border-red-800/50 rounded-lg p-3">
+                <p className="text-red-200 text-sm font-medium mb-1">
+                  Delete {lead.firstName} {lead.lastName}?
+                </p>
+                <p className="text-red-300/70 text-xs mb-3">
+                  This permanently removes the lead from your database. This can&apos;t be undone.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => onDelete(lead.id)}
+                    className="flex-1 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-xs font-semibold transition-colors"
+                  >
+                    Yes, delete permanently
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    className="flex-1 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => setConfirmDelete(true)}
+                className="w-full py-2 rounded-lg border border-red-800/50 text-red-400 text-xs font-semibold hover:bg-red-950/40 transition-colors"
+              >
+                Delete lead
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
@@ -268,6 +306,21 @@ export default function AdminPage() {
     } catch {
       // Revert on failure
       loadLeads();
+    }
+  }
+
+  async function removeLead(id: string) {
+    const prevLeads = leads;
+    // Optimistic remove + close the drawer
+    setLeads((prev) => prev.filter((l) => l.id !== id));
+    setSelected(null);
+    try {
+      const res = await fetch(`/api/admin/leads/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+    } catch {
+      // Restore on failure
+      setLeads(prevLeads);
+      setError("Couldn't delete that lead — please try again.");
     }
   }
 
@@ -415,7 +468,7 @@ export default function AdminPage() {
                             )}
                             title={PRODUCT_LABELS[lead.product] ?? lead.product}
                           >
-                            {lead.product === "social" ? "Social" : "Website"}
+                            {lead.product === "social" ? "Social" : "Open House"}
                           </span>
                         </div>
                         {(lead.role === "buying" || lead.role === "both") && (
@@ -461,6 +514,7 @@ export default function AdminPage() {
           lead={selected}
           onClose={() => setSelected(null)}
           onStatusChange={changeStatus}
+          onDelete={removeLead}
         />
       )}
     </div>
