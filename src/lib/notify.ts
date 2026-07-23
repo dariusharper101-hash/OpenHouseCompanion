@@ -60,7 +60,16 @@ function buildHtml(lead: Lead): string {
 }
 
 export async function notifyNewLead(lead: Lead): Promise<void> {
-  if (!RESEND_API_KEY || !NOTIFY_EMAIL) return; // not configured — skip silently
+  if (!RESEND_API_KEY || !NOTIFY_EMAIL) {
+    // Not configured — record which piece is missing so this is diagnosable
+    // from the logs instead of failing silently.
+    console.warn(
+      "Lead notification skipped — email not configured:",
+      `RESEND_API_KEY=${RESEND_API_KEY ? "set" : "MISSING"}`,
+      `NOTIFY_EMAIL=${NOTIFY_EMAIL ? "set" : "MISSING"}`
+    );
+    return;
+  }
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -79,6 +88,8 @@ export async function notifyNewLead(lead: Lead): Promise<void> {
     });
     if (!res.ok) {
       console.error("Lead notification failed:", res.status, await res.text());
+    } else {
+      console.log(`Lead notification sent to ${NOTIFY_EMAIL} for ${lead.firstName} ${lead.lastName}`);
     }
   } catch (err) {
     console.error("Lead notification error:", err);
