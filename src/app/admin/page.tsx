@@ -22,8 +22,16 @@ const STATUS_STYLES: Record<LeadStatus, string> = {
 };
 
 const PRODUCT_STYLES: Record<LeadProduct, string> = {
-  "open-house": "bg-blue-500/15 text-blue-300 border-blue-500/30",
+  website: "bg-blue-500/15 text-blue-300 border-blue-500/30",
   social: "bg-pink-500/15 text-pink-300 border-pink-500/30",
+  "open-house": "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+};
+
+// Short labels for the compact table badge (full names live in PRODUCT_LABELS).
+const PRODUCT_BADGES: Record<LeadProduct, string> = {
+  website: "Hop In",
+  social: "Social",
+  "open-house": "Open House",
 };
 
 const ROLE_LABELS: Record<string, string> = {
@@ -464,11 +472,11 @@ export default function AdminPage() {
                           <span
                             className={cls(
                               "inline-block px-1.5 py-0.5 rounded border text-[10px] font-medium whitespace-nowrap",
-                              PRODUCT_STYLES[lead.product] ?? PRODUCT_STYLES["open-house"]
+                              PRODUCT_STYLES[lead.product] ?? PRODUCT_STYLES.website
                             )}
                             title={PRODUCT_LABELS[lead.product] ?? lead.product}
                           >
-                            {lead.product === "social" ? "Social" : "Open House"}
+                            {PRODUCT_BADGES[lead.product] ?? lead.product}
                           </span>
                         </div>
                         {(lead.role === "buying" || lead.role === "both") && (
