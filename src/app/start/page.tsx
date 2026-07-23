@@ -113,7 +113,7 @@ const empty: LeadFormData = {
   sellerMortgageStatus: "has-mortgage", sellerReason: "",
   sellerTimeline: "", buyingSimultaneously: false,
   iabsAcknowledged: false, buyerRepAcknowledged: false,
-  notes: "", source: "", product: "open-house",
+  notes: "", source: "", product: "website",
 };
 
 // ─── UI helpers ──────────────────────────────────────────────────────────────

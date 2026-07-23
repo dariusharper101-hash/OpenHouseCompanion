@@ -61,13 +61,17 @@ export const LEAD_STATUSES: LeadStatus[] = [
 
 // Which front-end product captured the lead. Both products write to the same
 // shared database; this tag is how the dashboard segments them.
-export type LeadProduct = "open-house" | "social";
+//   website    → the Hop In Real Estate site (hopinrealestate.com) intake form
+//   social     → the Hop In Real Estate social funnel
+//   open-house → the Open House Companion visitor sign-in (separate app)
+export type LeadProduct = "open-house" | "social" | "website";
 
-export const LEAD_PRODUCTS: LeadProduct[] = ["open-house", "social"];
+export const LEAD_PRODUCTS: LeadProduct[] = ["website", "social", "open-house"];
 
 export const PRODUCT_LABELS: Record<LeadProduct, string> = {
-  "open-house": "Open House",
+  website: "Hop In Real Estate",
   social: "Social Media",
+  "open-house": "Open House",
 };
 
 export interface LeadFormData {
