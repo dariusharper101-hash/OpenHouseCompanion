@@ -5,81 +5,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Jo's House List — Hop In Real Estate</title>
 <meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<style>body{background:#0f172a}</style>
+<script>
+window.tailwind&&(window.tailwind.config={theme:{extend:{
+ fontFamily:{serif:['Fraunces','Georgia','serif'],sans:['Inter','system-ui','sans-serif']},
+ colors:{brand:'#1d4ed8',ink:'#1a1815',paper:'#f7f5f1'}
+}}});
+</script>
+<style>html,body{background:#f7f5f1}.font-serif{font-family:'Fraunces',Georgia,serif}body{font-family:'Inter',system-ui,sans-serif}</style>
 </head>
-<body class="min-h-full bg-slate-900 text-white">
-<div id="app" class="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900"></div>
+<body class="min-h-full bg-paper text-ink">
+<div id="app" class="min-h-screen"></div>
 <script>
 // ---- Agent ----
 const AGENT={appName:"Hop In Real Estate",name:"Darius Harper",title:"REALTOR®",license:"0847860",phone:"(870) 718-0974",email:"DariusHarper@kw.com",brokerage:"Keller Williams DPR",instagram:"https://www.instagram.com/hopinrealestate",facebook:"https://www.facebook.com/share/199UeSkPuT/"};
 const initials="DH";
-// ---- Default list (Jo's) ----
+// ---- Default list (Jo's) — addresses + links only; agent fills price/photos/DOM ----
 const P=(l)=>"https://us-east.prospects.com/prospects/m.do?tk="+l;
+function h(street,zip,tk){return{street,city:"Dallas",state:"TX",zip,link:P(tk),photo:"",daysOnMarket:null,price:null,beds:null,baths:null,sqft:null,status:"active",note:""}}
 const DEFAULT={name:"Jo's House List",updatedOn:"August 19, 2026",homes:[
-{street:"416 Mount Auburn Ave",city:"Dallas",state:"TX",zip:"75223",link:P("8cb98cacad611e36de56798e03a17495"),photo:"",daysOnMarket:null,price:899900,beds:5,baths:4.5,sqft:4181,status:"active",note:"New construction"},
-{street:"713 Wayne St",city:"Dallas",state:"TX",zip:"75223",link:P("62d4694371e217cb213dc524d148aa89"),photo:"",daysOnMarket:null,price:759000,beds:4,baths:4.5,sqft:3068,status:"active",note:"New construction near Santa Fe Trail"},
-{street:"1018 Grandview Ave",city:"Dallas",state:"TX",zip:"75223",link:P("981dc69537bf2e6c8498d67ea9aebf24"),photo:"",daysOnMarket:null,price:940000,beds:5,baths:4,sqft:3300,status:"active",note:"New construction"},
-{street:"1904 McBroom St",city:"Dallas",state:"TX",zip:"75212",link:P("9c91751e2cab7beb64997c5882506ae2"),photo:"",daysOnMarket:null,price:null,beds:null,baths:null,sqft:null,status:"active",note:"⚠︎ Public listings conflict — confirm price/beds/baths/sqft from MLS"},
-{street:"1943 McBroom St",city:"Dallas",state:"TX",zip:"75212",link:P("83fc09144895689787a4b5f2e1f72216"),photo:"",daysOnMarket:null,price:660000,beds:4,baths:4,sqft:2900,status:"active",note:"New construction (2024)"},
-{street:"3418 Borger St",city:"Dallas",state:"TX",zip:"75212",link:P("c3209457567763485190e29108bf16e4"),photo:"",daysOnMarket:null,price:687000,beds:6,baths:4,sqft:3259,status:"active",note:"⚠︎ Price shown online ranges $659K–$705K — confirm"},
-{street:"1951 Leath St",city:"Dallas",state:"TX",zip:"75212",link:P("648cd8c21470e73bb20fb9e6465edc1e"),photo:"",daysOnMarket:null,price:685000,beds:4,baths:4.5,sqft:2835,status:"active",note:"New construction"},
-{street:"4215 Canada Dr",city:"Dallas",state:"TX",zip:"75212",link:P("8db2906a9b64a06939a96fe6b74aee26"),photo:"",daysOnMarket:null,price:649950,beds:4,baths:3.5,sqft:3091,status:"active",note:"New construction"},
-{street:"1919 Nomas St",city:"Dallas",state:"TX",zip:"75212",link:P("77d4f369e1ca2cb45645355f9650322e"),photo:"",daysOnMarket:null,price:633000,beds:4,baths:3.5,sqft:3170,status:"active",note:"New construction"},
-{street:"2619 Emmett St",city:"Dallas",state:"TX",zip:"75211",link:P("f4360cc83abdca394cae2841267b4d7d"),photo:"",daysOnMarket:null,price:689900,beds:4,baths:4,sqft:2967,status:"active",note:"⚠︎ Two listings at this address online (renovated $689.9K vs investor special $205K) — confirm which is yours"},
-{street:"2401 Peabody Ave",city:"Dallas",state:"TX",zip:"75215",link:P("ba94e64f6138d1e22f4e1c5f5668172b"),photo:"",daysOnMarket:null,price:510000,beds:4,baths:3.5,sqft:2701,status:"active",note:""},
-{street:"2706 Valentine St",city:"Dallas",state:"TX",zip:"75215",link:P("6b135e913445c739aa58f6f7c0adb929"),photo:"",daysOnMarket:null,price:521000,beds:4,baths:4,sqft:2617,status:"active",note:"New construction (2026)"}
+h("416 Mount Auburn Ave","75223","8cb98cacad611e36de56798e03a17495"),
+h("713 Wayne St","75223","62d4694371e217cb213dc524d148aa89"),
+h("1018 Grandview Ave","75223","981dc69537bf2e6c8498d67ea9aebf24"),
+h("1904 McBroom St","75212","9c91751e2cab7beb64997c5882506ae2"),
+h("1943 McBroom St","75212","83fc09144895689787a4b5f2e1f72216"),
+h("3418 Borger St","75212","c3209457567763485190e29108bf16e4"),
+h("1951 Leath St","75212","648cd8c21470e73bb20fb9e6465edc1e"),
+h("4215 Canada Dr","75212","8db2906a9b64a06939a96fe6b74aee26"),
+h("1919 Nomas St","75212","77d4f369e1ca2cb45645355f9650322e"),
+h("2619 Emmett St","75211","f4360cc83abdca394cae2841267b4d7d"),
+h("2401 Peabody Ave","75215","ba94e64f6138d1e22f4e1c5f5668172b"),
+h("2706 Valentine St","75215","6b135e913445c739aa58f6f7c0adb929")
 ]};
 const HOODS={"75223":"East Dallas","75212":"West Dallas","75211":"Oak Cliff","75215":"South Dallas"};
 const ORDER=["East Dallas","West Dallas","Oak Cliff","South Dallas"];
-const hoodOf=h=>HOODS[h.zip]||("Dallas "+h.zip);
-const pubNote=h=>(h.note&&h.note.indexOf("⚠")===0)?"":(h.note||"");
+const hoodOf=x=>HOODS[x.zip]||("Dallas "+x.zip);
+const pubNote=x=>(x.note&&x.note.indexOf("⚠")===0)?"":(x.note||"");
 const money=p=>p==null?null:"$"+Number(p).toLocaleString("en-US");
 const dom=d=>d==null?"New listing":d<=0?"Just listed":d===1?"1 day on market":d+" days on market";
 const bySort=(a,b)=>((a.daysOnMarket==null?1/0:a.daysOnMarket)-(b.daysOnMarket==null?1/0:b.daysOnMarket));
-function grouped(homes){const m=new Map();homes.forEach(h=>{const k=hoodOf(h);(m.get(k)||m.set(k,[]).get(k)).push(h)});
+function grouped(homes){const m=new Map();homes.forEach(x=>{const k=hoodOf(x);(m.get(k)||m.set(k,[]).get(k)).push(x)});
  const rank=k=>{const i=ORDER.indexOf(k);return i<0?ORDER.length:i};
- return [...m.entries()].sort((a,b)=>rank(a[0])-rank(b[0])||a[0].localeCompare(b[0])).map(([n,hs])=>({n,homes:hs.slice().sort(bySort)}))}
-// ---- encode/decode ----
+return [...m.entries()].sort((a,b)=>rank(a[0])-rank(b[0])||a[0].localeCompare(b[0])).map(([n,hs])=>({n,homes:hs.slice().sort(bySort)}))}
+// ---- encode / decode ----
 function b64u(s){const by=new TextEncoder().encode(s);let bin="";by.forEach(b=>bin+=String.fromCharCode(b));return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
 function unb64u(s){const b=atob(s.replace(/-/g,"+").replace(/_/g,"/"));const by=Uint8Array.from(b,c=>c.charCodeAt(0));return new TextDecoder().decode(by)}
 const enc=p=>b64u(JSON.stringify(p));
 function dec(s){try{const o=JSON.parse(unb64u(s));if(!Array.isArray(o.homes))o.homes=[];return o}catch(e){return null}}
-function textList(p){let L=[p.name+" — Updated "+p.updatedOn,""];grouped(p.homes).forEach(g=>{L.push("📍 "+g.n);g.homes.forEach(h=>{let b=[];if(money(h.price))b.push(money(h.price));if(h.beds!=null)b.push(h.beds+" bd");if(h.baths!=null)b.push(h.baths+" ba");if(h.sqft!=null)b.push(Number(h.sqft).toLocaleString("en-US")+" sqft");if(h.daysOnMarket!=null)b.push(dom(h.daysOnMarket));L.push("• "+h.street+", "+h.city+" "+h.zip);if(b.length)L.push("  "+b.join(" · "));const n=pubNote(h);if(n)L.push("  "+n);L.push("  "+h.link)});L.push("")});return L.join("\n").trim()}
+function textList(p){let L=[p.name+" — Updated "+p.updatedOn,""];grouped(p.homes).forEach(g=>{L.push("📍 "+g.n);g.homes.forEach(x=>{let b=[];if(money(x.price))b.push(money(x.price));if(x.beds!=null)b.push(x.beds+" bd");if(x.baths!=null)b.push(x.baths+" ba");if(x.sqft!=null)b.push(Number(x.sqft).toLocaleString("en-US")+" sqft");if(x.daysOnMarket!=null)b.push(dom(x.daysOnMarket));L.push("• "+x.street+", "+x.city+" "+x.zip);if(b.length)L.push("  "+b.join(" · "));const n=pubNote(x);if(n)L.push("  "+n);L.push("  "+x.link)});L.push("")});return L.join("\n").trim()}
+// ---- shared UI ----
 const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-const STC={active:"bg-emerald-500/15 text-emerald-300 border-emerald-400/30",pending:"bg-amber-500/15 text-amber-300 border-amber-400/30","coming-soon":"bg-blue-500/15 text-blue-300 border-blue-400/30",sold:"bg-slate-500/15 text-slate-300 border-slate-400/30"};
+const STC={active:"text-emerald-700",pending:"text-amber-700","coming-soon":"text-blue-700",sold:"text-neutral-500"};
+const STD={active:"bg-emerald-500",pending:"bg-amber-500","coming-soon":"bg-blue-500",sold:"bg-neutral-400"};
 const STL={active:"Active",pending:"Pending","coming-soon":"Coming soon",sold:"Sold"};
-function cardHTML(h){const price=money(h.price);const note=pubNote(h);let stats=[];if(h.beds!=null)stats.push([h.beds,"Beds"]);if(h.baths!=null)stats.push([h.baths,"Baths"]);if(h.sqft!=null)stats.push([Number(h.sqft).toLocaleString("en-US"),"Sq Ft"]);
- const photo=h.photo?`<img src="${esc(h.photo)}" alt="${esc(h.street)}" class="h-full w-full object-cover">`:`<div class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-slate-800 to-slate-900 text-slate-600"><svg class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.5 1.5 0 012.092 0L22.25 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/></svg><span class="text-[11px] uppercase tracking-wider">Photo coming soon</span></div>`;
- return `<div class="group flex flex-col overflow-hidden rounded-2xl bg-slate-800/60 border border-slate-700 hover:border-blue-500/50 transition-colors">
- <div class="relative aspect-[4/3] bg-slate-900 overflow-hidden">${photo}
- <div class="absolute left-3 top-3 flex flex-wrap gap-2"><span class="rounded-full border px-2.5 py-1 text-[11px] font-semibold backdrop-blur ${STC[h.status]||STC.active}">${STL[h.status]||"Active"}</span><span class="rounded-full border border-white/20 bg-slate-900/70 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">${esc(dom(h.daysOnMarket))}</span></div></div>
- <div class="flex flex-1 flex-col p-4"><div class="flex items-start justify-between gap-3"><div><h3 class="text-white font-semibold leading-tight">${esc(h.street||"Untitled home")}</h3><p class="text-slate-400 text-sm">${esc(h.city)}, ${esc(h.state)} ${esc(h.zip)}</p></div>${price?`<span class="whitespace-nowrap text-blue-400 font-bold">${esc(price)}</span>`:""}</div>
- ${stats.length?`<div class="mt-3 flex divide-x divide-slate-700 self-start rounded-lg border border-slate-700 bg-slate-900/40">${stats.map(s=>`<div class="flex flex-col items-center px-3 py-1.5"><span class="text-white font-semibold text-sm leading-none">${esc(s[0])}</span><span class="text-slate-500 text-[11px] uppercase tracking-wide mt-1">${s[1]}</span></div>`).join("")}</div>`:""}
- ${note?`<p class="mt-3 text-sm text-slate-300">${esc(note)}</p>`:""}
- ${h.link?`<a href="${esc(h.link)}" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex items-center justify-center gap-1.5 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500">View listing &amp; photos →</a>`:""}
- </div></div>`}
-function presentation(homes){if(!homes.length)return `<div class="rounded-2xl border border-dashed border-slate-700 p-12 text-center text-slate-500">No homes yet.</div>`;
- return `<div class="space-y-12">`+grouped(homes).map(g=>`<section><div class="mb-4 flex items-center gap-3"><svg class="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg><h2 class="text-xl font-bold text-white">${esc(g.n)}</h2><span class="rounded-full bg-slate-800 px-2.5 py-0.5 text-xs font-medium text-slate-400">${g.homes.length} ${g.homes.length===1?"home":"homes"}</span></div><div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">${g.homes.map(cardHTML).join("")}</div></section>`).join("")+`</div>`}
-function agentFooter(){return `<footer class="mt-16 rounded-2xl border border-slate-700 bg-slate-800/60 p-6"><div class="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left"><div class="rounded-full bg-gradient-to-br from-blue-500 to-blue-700 border-2 border-blue-400/40 flex items-center justify-center text-white font-bold" style="width:72px;height:72px;font-size:26px">${initials}</div><div class="flex-1"><p class="text-lg font-semibold text-white">${esc(AGENT.name)}<span class="text-blue-400">, ${esc(AGENT.title)}</span></p><p class="text-sm text-slate-400">${esc(AGENT.brokerage)}</p><div class="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm sm:justify-start"><a href="tel:${esc(AGENT.phone.replace(/[^\d+]/g,""))}" class="text-blue-400 hover:text-blue-300">${esc(AGENT.phone)}</a><a href="mailto:${esc(AGENT.email)}" class="text-blue-400 hover:text-blue-300">${esc(AGENT.email)}</a></div></div></div><p class="mt-4 text-center text-xs text-slate-600 sm:text-left">TREC License #${esc(AGENT.license)}. Information deemed reliable but not guaranteed — verify all details independently.</p></footer>`}
-function nav(){return `<nav class="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur border-b border-slate-800"><div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between"><a href="#" class="flex items-center gap-2.5"><div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center"><svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.5 1.5 0 012.092 0L22.25 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg></div><span class="flex flex-col leading-none"><span class="text-white font-semibold tracking-tight">${esc(AGENT.appName)}</span><span class="text-slate-400 text-xs mt-0.5">with ${esc(AGENT.name)} · ${esc(AGENT.brokerage)}</span></span></a><a href="#builder" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold shadow-lg shadow-blue-900/40">Builder</a></div></nav>`}
-// ---- Client list view ----
+function statCell(v,l){return `<div class="flex items-baseline gap-1"><span class="font-semibold text-ink">${esc(v)}</span><span class="text-neutral-500">${l}</span></div>`}
+function cardHTML(x){const price=money(x.price);const note=pubNote(x);let st=[];if(x.beds!=null)st.push(statCell(x.beds,"bd"));if(x.baths!=null)st.push(statCell(x.baths,"ba"));if(x.sqft!=null)st.push(statCell(Number(x.sqft).toLocaleString("en-US"),"sqft"));
+ const media=x.photo?`<img src="${esc(x.photo)}" alt="${esc(x.street)}" loading="lazy" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]">`:`<div class="flex h-full w-full flex-col items-center justify-center gap-2 bg-neutral-100 text-neutral-400"><svg class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.5 1.5 0 012.092 0L22.25 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/></svg><span class="text-[11px] uppercase tracking-widest">Photo coming soon</span></div>`;
+ const priceBar=price?`<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent p-4"><div class="font-serif text-2xl font-semibold text-white drop-shadow">${esc(price)}</div></div>`:"";
+return `<article class="group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/[0.06] shadow-sm transition-shadow duration-300 hover:shadow-xl">
+<div class="relative aspect-[4/3] overflow-hidden">${media}
+<div class="absolute left-3 top-3 flex flex-wrap gap-2">
+<span class="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold shadow-sm ${STC[x.status]||STC.active}"><span class="h-1.5 w-1.5 rounded-full ${STD[x.status]||STD.active}"></span>${STL[x.status]||"Active"}</span>
+<span class="inline-flex items-center rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">${esc(dom(x.daysOnMarket))}</span></div>${priceBar}</div>
+<div class="flex flex-1 flex-col p-4">
+<h3 class="font-serif text-lg leading-tight text-ink">${esc(x.street||"Untitled home")}</h3>
+<p class="mt-0.5 text-sm text-neutral-500">${esc(x.city)}, ${esc(x.state)} ${esc(x.zip)}</p>
+${st.length?`<div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600">${st.join('<span class="text-neutral-300">·</span>')}</div>`:""}
+${note?`<p class="mt-3 text-sm text-neutral-600">${esc(note)}</p>`:""}
+<div class="mt-auto pt-4">${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:gap-2.5 transition-all">View listing &amp; photos <span aria-hidden="true">→</span></a>`:""}</div>
+</div></article>`}
+function presentation(homes){if(!homes.length)return `<div class="rounded-2xl border border-dashed border-neutral-300 bg-white/50 p-12 text-center text-neutral-400">No homes yet.</div>`;
+return `<div class="space-y-14">`+grouped(homes).map(g=>`<section><div class="mb-6 flex items-baseline justify-between border-b border-black/10 pb-3"><h2 class="font-serif text-2xl text-ink">${esc(g.n)}</h2><span class="text-sm text-neutral-500">${g.homes.length} ${g.homes.length===1?"home":"homes"}</span></div><div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">${g.homes.map(cardHTML).join("")}</div></section>`).join("")+`</div>`}
+function agentFooter(){return `<footer class="mt-20 overflow-hidden rounded-2xl bg-white ring-1 ring-black/[0.06] shadow-sm"><div class="flex flex-col items-center gap-5 p-7 text-center sm:flex-row sm:text-left"><div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-blue-800 font-serif text-xl font-semibold text-white">${initials}</div><div class="flex-1"><p class="font-serif text-xl text-ink">${esc(AGENT.name)} <span class="text-neutral-400">·</span> <span class="text-base text-brand">${esc(AGENT.title)}</span></p><p class="text-sm text-neutral-500">${esc(AGENT.brokerage)}</p><div class="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm sm:justify-start"><a href="tel:${esc(AGENT.phone.replace(/[^\d+]/g,""))}" class="font-medium text-brand hover:underline">${esc(AGENT.phone)}</a><a href="mailto:${esc(AGENT.email)}" class="font-medium text-brand hover:underline">${esc(AGENT.email)}</a></div></div></div><p class="border-t border-black/[0.06] px-7 py-3 text-center text-xs text-neutral-400 sm:text-left">TREC License #${esc(AGENT.license)} · Information deemed reliable but not guaranteed — verify all details independently.</p></footer>`}
+function nav(){return `<nav class="sticky top-0 z-50 border-b border-black/[0.06] bg-paper/85 backdrop-blur"><div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5"><a href="#" class="flex items-center gap-2.5"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.5 1.5 0 012.092 0L22.25 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg></span><span class="flex flex-col leading-none"><span class="font-serif text-base font-semibold text-ink">${esc(AGENT.appName)}</span><span class="mt-0.5 text-[11px] text-neutral-500">with ${esc(AGENT.name)} · ${esc(AGENT.brokerage)}</span></span></a><a href="#builder" class="rounded-full border border-brand/20 bg-brand/[0.06] px-4 py-1.5 text-sm font-semibold text-brand hover:bg-brand/10">Builder</a></div></nav>`}
+// ---- client list view ----
 function renderList(p){document.title=p.name+" — "+AGENT.appName;
- document.getElementById("app").innerHTML=nav()+`<div class="mx-auto max-w-6xl px-4 pb-20 pt-28">
- <header class="mb-8"><div class="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/20 px-4 py-1.5"><span class="text-sm font-medium text-blue-300">Curated Home List</span></div>
- <h1 class="mt-5 text-4xl font-bold text-white">${esc(p.name)}</h1>
- <p class="mt-2 text-slate-400">${p.homes.length} ${p.homes.length===1?"home":"homes"} across Dallas · organized by area and days on market · Updated ${esc(p.updatedOn)}</p>
- <div class="mt-6 flex flex-wrap gap-3"><button id="ct" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/40">Copy text list</button><button id="cl" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">Copy page link</button><button onclick="window.print()" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700">Print / Save PDF</button></div></header>
- ${presentation(p.homes)}${agentFooter()}
- <p class="mt-6 text-center"><a href="#builder" class="text-xs text-slate-600 hover:text-slate-400">Agent tools</a></p></div>`;
+document.getElementById("app").innerHTML=nav()+`<div class="mx-auto max-w-6xl px-5 pb-24 pt-12">
+<header class="mb-12 max-w-2xl">
+<div class="text-xs font-semibold uppercase tracking-[0.22em] text-brand">Curated Home List</div>
+<h1 class="mt-3 font-serif text-4xl leading-[1.05] text-ink sm:text-5xl">${esc(p.name)}</h1>
+<p class="mt-4 text-neutral-500">${p.homes.length} ${p.homes.length===1?"home":"homes"} across Dallas · organized by area and days on market · Updated ${esc(p.updatedOn)}</p>
+<div class="mt-7 flex flex-wrap gap-3">
+<button id="ct" class="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800">Copy text list</button>
+<button id="cl" class="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-neutral-50">Copy page link</button>
+<button onclick="window.print()" class="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-neutral-50">Print / Save PDF</button>
+</div></header>
+${presentation(p.homes)}${agentFooter()}
+<p class="mt-8 text-center"><a href="#builder" class="text-xs text-neutral-400 hover:text-neutral-600">Agent tools</a></p></div>`;
  const t=textList(p);
- document.getElementById("ct").onclick=e=>{copyText(t);flash(e.target,"Copied!")};
- document.getElementById("cl").onclick=e=>{copyText(location.href);flash(e.target,"Link copied!")};}
+document.getElementById("ct").onclick=e=>{copyText(t);flash(e.target,"Copied!")};
+document.getElementById("cl").onclick=e=>{copyText(location.href);flash(e.target,"Link copied!")};}
 function copyText(t){navigator.clipboard&&navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t))||fallbackCopy(t)}
 function fallbackCopy(t){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(a)}
 function flash(el,msg){const o=el.textContent;el.textContent="✓ "+msg;setTimeout(()=>el.textContent=o,1600)}
+function kb(s){return (s.length/1024).toFixed(s.length>1024?0:1)+" KB"}
 // ---- Builder ----
-const KEY="houseListBuilder.v1";
+const KEY="houseListBuilder.v2";
 function loadSaved(){try{const r=localStorage.getItem(KEY);return r?JSON.parse(r):null}catch(e){return null}}
 function save(p){try{localStorage.setItem(KEY,JSON.stringify(p))}catch(e){}}
 function blank(){return{street:"",city:"Dallas",state:"TX",zip:"",link:"",photo:"",daysOnMarket:null,price:null,beds:null,baths:null,sqft:null,status:"active",note:""}}
@@ -87,70 +111,79 @@ function parseAddr(line){const m=line.match(/^(.*?),\s*([^,]+),\s*([A-Za-z]{2})\
 function parseBulk(t){const hs=[];let cur=null;t.split(/\r?\n/).forEach(raw=>{const l=raw.trim();if(!l)return;if(/^https?:\/\//i.test(l)){if(cur)cur.link=l;return}cur=Object.assign(blank(),parseAddr(l));hs.push(cur)});return hs}
 let B=null;
 function num(v){return v.trim()===""?null:(isFinite(+v)?+v:null)}
-function fieldR(label,val,oi,key,type){return `<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-500">${label}</span><input type="${type||"text"}" value="${esc(val==null?"":val)}" data-i="${oi}" data-k="${key}" class="bi w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none"></label>`}
+function compressImage(file,cb){const rd=new FileReader();rd.onload=e=>{const img=new Image();img.onload=()=>{const max=1200;let w=img.width,ht=img.height;if(w>ht&&w>max){ht=Math.round(ht*max/w);w=max}else if(ht>max){w=Math.round(w*max/ht);ht=max}const c=document.createElement("canvas");c.width=w;c.height=ht;c.getContext("2d").drawImage(img,0,0,w,ht);try{cb(c.toDataURL("image/jpeg",0.72))}catch(err){cb(e.target.result)}};img.onerror=()=>cb(e.target.result);img.src=e.target.result};rd.readAsDataURL(file)}
+function fieldR(label,val,oi,key,type){return `<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">${label}</span><input type="${type||"text"}" value="${esc(val==null?"":val)}" data-i="${oi}" data-k="${key}" class="bi w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink placeholder-neutral-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"></label>`}
 function renderBuilder(){
- document.title="House List Builder — "+AGENT.appName;
+document.title="House List Builder — "+AGENT.appName;
  const link=location.origin+location.pathname+"#d="+encodeURIComponent(enc(B));
- const homesHTML=B.homes.map((h,i)=>rowHTML(h,i)).join("");
- document.getElementById("app").innerHTML=nav()+bH()+bBar(link)+bMeta()+bBulk()+bHomes(homesHTML)+bPrev();
- // wire up
- const rerender=()=>{save(B);renderBuilder()};
- document.querySelectorAll(".bi").forEach(el=>{el.oninput=e=>{const i=+e.target.dataset.i,k=e.target.dataset.k,v=e.target.value;B.homes[i][k]=(["price","daysOnMarket","beds","baths","sqft"].indexOf(k)>=0)?num(v):v;save(B)}});
- document.querySelectorAll(".bs").forEach(el=>{el.onchange=e=>{B.homes[+e.target.dataset.i].status=e.target.value;rerender()}});
- document.getElementById("mname").oninput=e=>{B.name=e.target.value;save(B)};
- document.getElementById("mdate").oninput=e=>{B.updatedOn=e.target.value;save(B)};
- document.querySelectorAll("[data-rm]").forEach(el=>el.onclick=()=>{B.homes.splice(+el.dataset.rm,1);rerender()});
- document.querySelectorAll("[data-mv]").forEach(el=>el.onclick=()=>{const i=+el.dataset.mv,d=+el.dataset.d,j=i+d;if(j<0||j>=B.homes.length)return;const t=B.homes[i];B.homes[i]=B.homes[j];B.homes[j]=t;rerender()});
- document.getElementById("badd").onclick=()=>{B.homes.push(blank());rerender()};
- document.getElementById("bimp").onclick=()=>{const p=parseBulk(document.getElementById("bulk").value);if(p.length){B.homes=B.homes.concat(p);rerender()}};
- document.getElementById("brs").onclick=()=>{if(confirm("Replace the current list with Jo's default list?")){B=JSON.parse(JSON.stringify(DEFAULT));rerender()}};
- document.getElementById("bca").onclick=()=>{if(confirm("Remove all homes and start blank?")){B={name:"My House List",updatedOn:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),homes:[]};rerender()}};
- document.getElementById("bcl").onclick=e=>{copyText(link);flash(e.target,"Client link copied!")};
- document.getElementById("bct").onclick=e=>{copyText(textList(B));flash(e.target,"Text copied!")};
+ const homesHTML=B.homes.map((x,i)=>rowHTML(x,i)).join("");
+document.getElementById("app").innerHTML=nav()+bH()+bBar(link)+bMeta()+bBulk()+bHomes(homesHTML)+bPrev();
+wireBuilder(link);
 }
-function rowHTML(h,i){return `<div class="rounded-2xl border border-slate-700 bg-slate-800/40 p-4">
-  <div class="mb-3 flex items-center justify-between gap-2"><span class="text-sm font-semibold text-white">${i+1}. ${esc(h.street||"New home")}</span>
-  <div class="flex items-center gap-1"><button data-mv="${i}" data-d="-1" class="rounded px-2 py-1 text-slate-400 hover:text-white">↑</button><button data-mv="${i}" data-d="1" class="rounded px-2 py-1 text-slate-400 hover:text-white">↓</button><button data-rm="${i}" class="rounded px-2 py-1 text-slate-500 hover:text-red-300">✕</button></div></div>
-  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-  <div class="sm:col-span-2 lg:col-span-4">${fieldR("Street address",h.street,i,"street")}</div>
-  ${fieldR("City",h.city,i,"city")}${fieldR("State",h.state,i,"state")}${fieldR("ZIP (sets area group)",h.zip,i,"zip")}
-  <label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-500">Status</span><select data-i="${i}" data-k="status" class="bs w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none">${["active","coming-soon","pending","sold"].map(s=>`<option value="${s}"${h.status===s?" selected":""}>${STL[s]}</option>`).join("")}</select></label>
-  <div class="sm:col-span-2 lg:col-span-4">${fieldR("Listing link",h.link,i,"link")}</div>
-  <div class="sm:col-span-2 lg:col-span-4">${fieldR("Best photo URL (or leave blank)",h.photo,i,"photo")}</div>
-  ${fieldR("Price ($)",h.price,i,"price","number")}${fieldR("Days on market",h.daysOnMarket,i,"daysOnMarket","number")}${fieldR("Beds",h.beds,i,"beds","number")}
-  <div class="grid grid-cols-2 gap-3">${fieldR("Baths",h.baths,i,"baths","number")}${fieldR("Sq ft",h.sqft,i,"sqft","number")}</div>
-  <div class="sm:col-span-2 lg:col-span-4">${fieldR("Highlight note (optional)",h.note,i,"note")}</div>
-  </div></div>`}
-function bH(){return `<div class="mx-auto max-w-5xl px-4 pb-24 pt-28">
- <header class="mb-8"><div class="inline-flex items-center gap-2 rounded-full border border-blue-400/30 bg-blue-500/20 px-4 py-1.5"><span class="text-sm font-medium text-blue-300">Agent Tool · not shown to clients</span></div>
- <h1 class="mt-5 text-3xl font-bold text-white">House List Builder</h1>
- <p class="mt-2 max-w-2xl text-slate-400">Enter your homes below, then copy the <strong class="text-slate-200">client link</strong> and send it by text, email, or social. The client opens the link and sees only the finished presentation — grouped by area and sorted by days on market. Your work saves automatically in this browser.</p></header>
+function wireBuilder(link){
+ const rerender=()=>{save(B);renderBuilder()};
+document.querySelectorAll(".bi").forEach(el=>{el.oninput=e=>{const i=+e.target.dataset.i,k=e.target.dataset.k,v=e.target.value;B.homes[i][k]=(["price","daysOnMarket","beds","baths","sqft"].indexOf(k)>=0)?num(v):v;save(B)}});
+document.querySelectorAll(".bs").forEach(el=>{el.onchange=e=>{B.homes[+e.target.dataset.i].status=e.target.value;rerender()}});
+document.querySelectorAll(".bp").forEach(el=>{el.onchange=e=>{const i=+el.dataset.i,f=e.target.files&&e.target.files[0];if(!f)return;compressImage(f,d=>{B.homes[i].photo=d;rerender()})}});
+document.querySelectorAll(".brp").forEach(el=>{el.onclick=()=>{B.homes[+el.dataset.i].photo="";rerender()}});
+document.getElementById("mname").oninput=e=>{B.name=e.target.value;save(B)};
+document.getElementById("mdate").oninput=e=>{B.updatedOn=e.target.value;save(B)};
+document.querySelectorAll("[data-rm]").forEach(el=>el.onclick=()=>{B.homes.splice(+el.dataset.rm,1);rerender()});
+document.querySelectorAll("[data-mv]").forEach(el=>el.onclick=()=>{const i=+el.dataset.mv,d=+el.dataset.d,j=i+d;if(j<0||j>=B.homes.length)return;const t=B.homes[i];B.homes[i]=B.homes[j];B.homes[j]=t;rerender()});
+document.getElementById("badd").onclick=()=>{B.homes.push(blank());rerender()};
+document.getElementById("bimp").onclick=()=>{const p=parseBulk(document.getElementById("bulk").value);if(p.length){B.homes=B.homes.concat(p);rerender()}};
+document.getElementById("brs").onclick=()=>{if(confirm("Replace the current list with Jo's default list?")){B=JSON.parse(JSON.stringify(DEFAULT));rerender()}};
+document.getElementById("bca").onclick=()=>{if(confirm("Remove all homes and start blank?")){B={name:"My House List",updatedOn:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),homes:[]};rerender()}};
+document.getElementById("bcl").onclick=e=>{copyText(link);flash(e.target,"Client link copied!")};
+document.getElementById("bct").onclick=e=>{copyText(textList(B));flash(e.target,"Text copied!")};
+}
+function rowHTML(x,i){const thumb=x.photo?`<img src="${esc(x.photo)}" class="h-16 w-16 rounded-lg object-cover ring-1 ring-black/10">`:`<div class="flex h-16 w-16 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 ring-1 ring-black/10"><svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M18 15V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v12a2.25 2.25 0 002.25 2.25h9.75"/></svg></div>`;
+return `<div class="rounded-2xl bg-white p-4 ring-1 ring-black/[0.06] shadow-sm">
+<div class="mb-3 flex items-center justify-between gap-2"><span class="text-sm font-semibold text-ink">${i+1}. ${esc(x.street||"New home")}</span>
+<div class="flex items-center gap-1"><button data-mv="${i}" data-d="-1" class="rounded px-2 py-1 text-neutral-400 hover:text-ink" title="Move up">↑</button><button data-mv="${i}" data-d="1" class="rounded px-2 py-1 text-neutral-400 hover:text-ink" title="Move down">↓</button><button data-rm="${i}" class="rounded px-2 py-1 text-neutral-400 hover:text-red-600" title="Remove">✕</button></div></div>
+<div class="mb-3 flex items-center gap-3 rounded-xl bg-neutral-50 p-3 ring-1 ring-black/[0.04]">${thumb}<div class="flex-1"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">Photo</span><div class="flex flex-wrap items-center gap-2"><label class="cursor-pointer rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-white hover:bg-blue-800">${x.photo?"Replace photo":"Add photo from device"}<input type="file" accept="image/*" data-i="${i}" class="bp hidden"></label>${x.photo?`<button data-i="${i}" class="brp rounded-lg border border-black/10 px-3 py-1.5 text-xs font-semibold text-neutral-600 hover:bg-white">Remove</button>`:`<span class="text-xs text-neutral-400">Take a photo or choose from your library</span>`}</div></div></div>
+<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+<div class="sm:col-span-2 lg:col-span-4">${fieldR("Street address",x.street,i,"street")}</div>
+${fieldR("City",x.city,i,"city")}${fieldR("State",x.state,i,"state")}${fieldR("ZIP (sets area group)",x.zip,i,"zip")}
+<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">Status</span><select data-i="${i}" data-k="status" class="bs w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none">${["active","coming-soon","pending","sold"].map(s=>`<option value="${s}"${x.status===s?" selected":""}>${STL[s]}</option>`).join("")}</select></label>
+<div class="sm:col-span-2 lg:col-span-4">${fieldR("Listing link",x.link,i,"link")}</div>
+${fieldR("Price ($)",x.price,i,"price","number")}${fieldR("Days on market",x.daysOnMarket,i,"daysOnMarket","number")}${fieldR("Beds",x.beds,i,"beds","number")}
+<div class="grid grid-cols-2 gap-3">${fieldR("Baths",x.baths,i,"baths","number")}${fieldR("Sq ft",x.sqft,i,"sqft","number")}</div>
+<div class="sm:col-span-2 lg:col-span-4">${fieldR("Highlight note (optional)",x.note,i,"note")}</div>
+</div></div>`}
+function bH(){return `<div class="mx-auto max-w-5xl px-5 pb-24 pt-12">
+<header class="mb-8"><div class="text-xs font-semibold uppercase tracking-[0.22em] text-brand">Agent Tool · not shown to clients</div>
+<h1 class="mt-3 font-serif text-3xl text-ink">House List Builder</h1>
+<p class="mt-3 max-w-2xl text-neutral-500">Enter your homes, add a photo from your phone or computer, then copy the <strong class="text-ink">client link</strong> and send it by text, email, or social. The client opens the link and sees only the finished presentation — grouped by area and sorted by days on market. Your work saves automatically in this browser.</p></header>
  `}
-function bBar(link){return `<div class="sticky top-16 z-40 mb-8 flex flex-wrap items-center gap-3 rounded-xl border border-slate-700 bg-slate-900/90 p-3 backdrop-blur">
-  <button id="bcl" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-900/40 hover:bg-blue-500">Copy client link</button>
-  <button id="bct" class="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-700">Copy text version</button>
-  <a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-700">Preview client view ↗</a>
-  <div class="ml-auto flex gap-2"><button id="brs" class="rounded-lg px-3 py-2 text-xs text-slate-400 hover:text-white">Reset to Jo's list</button><button id="bca" class="rounded-lg px-3 py-2 text-xs text-slate-500 hover:text-red-300">Clear all</button></div></div>
+function bBar(link){return `<div class="sticky top-16 z-40 mb-8 flex flex-wrap items-center gap-3 rounded-2xl bg-white/95 p-3 ring-1 ring-black/[0.06] shadow-sm backdrop-blur">
+<button id="bcl" class="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800">Copy client link</button>
+<button id="bct" class="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Copy text version</button>
+<a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Preview client view ↗</a>
+<span class="hidden text-xs text-neutral-400 sm:inline">Link ${kb(link)}${link.length>60000?' · ⚠ large — fewer photos text more easily':''}</span>
+<div class="ml-auto flex gap-1"><button id="brs" class="rounded-full px-3 py-2 text-xs text-neutral-500 hover:text-ink">Reset to Jo's list</button><button id="bca" class="rounded-full px-3 py-2 text-xs text-neutral-400 hover:text-red-600">Clear all</button></div></div>
  `}
-function bMeta(){return `<section class="mb-8 grid gap-4 rounded-2xl border border-slate-700 bg-slate-800/40 p-5 sm:grid-cols-2">
-  <label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-500">List name</span><input id="mname" value="${esc(B.name)}" class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"></label>
-  <label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-slate-500">Updated date (shown to client)</span><input id="mdate" value="${esc(B.updatedOn)}" class="w-full rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"></label></section>
+function bMeta(){return `<section class="mb-6 grid gap-4 rounded-2xl bg-white p-5 ring-1 ring-black/[0.06] shadow-sm sm:grid-cols-2">
+<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">List name</span><input id="mname" value="${esc(B.name)}" class="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none"></label>
+<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">Updated date (shown to client)</span><input id="mdate" value="${esc(B.updatedOn)}" class="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none"></label></section>
  `}
-function bBulk(){return `<section class="mb-8 rounded-2xl border border-slate-700 bg-slate-800/40 p-5"><h2 class="text-sm font-semibold text-white">Quick add — paste a list</h2><p class="mt-1 text-xs text-slate-500">Paste address + link pairs (one per line). Each address becomes a home. Fill in price, photos, and days on market afterward.</p>
-  <textarea id="bulk" rows="5" class="w-full mt-3 rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-xs font-mono text-white placeholder-slate-500 focus:border-blue-500 focus:outline-none" placeholder="416 Mount Auburn Ave, Dallas, TX 75223&#10;https://...&#10;&#10;1904 McBroom St, Dallas, TX 75212&#10;https://..."></textarea>
-  <button id="bimp" class="mt-3 rounded-lg border border-slate-700 bg-slate-800 px-4 py-2 text-sm font-semibold text-slate-200 hover:bg-slate-700">Add pasted homes</button></section>
+function bBulk(){return `<section class="mb-6 rounded-2xl bg-white p-5 ring-1 ring-black/[0.06] shadow-sm"><h2 class="text-sm font-semibold text-ink">Quick add — paste a list</h2><p class="mt-1 text-xs text-neutral-500">Paste address + link pairs (one per line). Each address becomes a home. Add photos, price, and days on market afterward.</p>
+<textarea id="bulk" rows="5" class="mt-3 w-full rounded-lg border border-black/10 bg-white px-3 py-2 font-mono text-xs text-ink placeholder-neutral-400 focus:border-brand focus:outline-none" placeholder="416 Mount Auburn Ave, Dallas, TX 75223&#10;https://...&#10;&#10;1904 McBroom St, Dallas, TX 75212&#10;https://..."></textarea>
+<button id="bimp" class="mt-3 rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Add pasted homes</button></section>
  `}
-function bHomes(homesHTML){return `<section class="space-y-4"><div class="flex items-center justify-between"><h2 class="text-lg font-bold text-white">Homes <span class="text-sm font-normal text-slate-500">(${B.homes.length})</span></h2><button id="badd" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-500">+ Add home</button></div>${homesHTML||`<p class="rounded-2xl border border-dashed border-slate-700 p-8 text-center text-sm text-slate-500">No homes yet — paste a list above or click Add home.</p>`}</section>
+function bHomes(homesHTML){return `<section class="space-y-4"><div class="flex items-center justify-between"><h2 class="font-serif text-xl text-ink">Homes <span class="text-sm font-sans text-neutral-400">(${B.homes.length})</span></h2><button id="badd" class="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white hover:bg-blue-800">+ Add home</button></div>${homesHTML||`<p class="rounded-2xl border border-dashed border-neutral-300 p-8 text-center text-sm text-neutral-400">No homes yet — paste a list above or click Add home.</p>`}</section>
  `}
-function bPrev(){return `<section class="mt-14"><div class="mb-4 flex items-center gap-3"><h2 class="text-lg font-bold text-white">Live preview</h2><span class="text-xs text-slate-500">— exactly what the client sees</span></div>
-  <div class="rounded-2xl border border-slate-700 bg-slate-900/40 p-4 sm:p-6"><h3 class="text-2xl font-bold text-white">${esc(B.name)}</h3><p class="mb-6 mt-1 text-sm text-slate-400">${B.homes.length} ${B.homes.length===1?"home":"homes"} · Updated ${esc(B.updatedOn)}</p>${presentation(B.homes)}${agentFooter()}</div></section></div>`}
+function bPrev(){return `<section class="mt-14"><div class="mb-4 flex items-center gap-3"><h2 class="font-serif text-xl text-ink">Live preview</h2><span class="text-xs text-neutral-400">— exactly what the client sees</span></div>
+<div class="rounded-2xl bg-paper p-5 ring-1 ring-black/[0.06] sm:p-7"><div class="text-xs font-semibold uppercase tracking-[0.22em] text-brand">Curated Home List</div><h3 class="mt-2 font-serif text-3xl text-ink">${esc(B.name)}</h3><p class="mb-8 mt-2 text-sm text-neutral-500">${B.homes.length} ${B.homes.length===1?"home":"homes"} · Updated ${esc(B.updatedOn)}</p>${presentation(B.homes)}${agentFooter()}</div></section></div>
+ `}
 // ---- Router ----
-function route(){const h=location.hash;
- if(h.indexOf("#d=")===0||h.indexOf("&d=")>-1){const m=h.match(/[#&]d=([^&]+)/);const p=m&&dec(decodeURIComponent(m[1]));renderList(p||DEFAULT);return}
- if(h.indexOf("#builder")===0){if(!B){const s=loadSaved();B=(s&&Array.isArray(s.homes))?s:JSON.parse(JSON.stringify(DEFAULT))}renderBuilder();return}
- renderList(DEFAULT);}
+function route(){const hh=location.hash;
+if(hh.indexOf("#d=")===0||hh.indexOf("&d=")>-1){const m=hh.match(/[#&]d=([^&]+)/);const p=m&&dec(decodeURIComponent(m[1]));renderList(p||DEFAULT);return}
+if(hh.indexOf("#builder")===0){if(!B){const s=loadSaved();B=(s&&Array.isArray(s.homes))?s:JSON.parse(JSON.stringify(DEFAULT))}renderBuilder();return}
+renderList(DEFAULT);}
 window.addEventListener("hashchange",route);
 route();
+
 </script>
 </body>
 </html>
