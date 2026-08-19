@@ -1,26 +1,29 @@
-# Jo's House List — standalone static tool
+# Jo's House List — standalone static tool (v2)
 
 `jo-house-list.html` is a single self-contained file (no build step) that runs the
-whole house-list tool client-side: the client-facing list, the agent builder, and
-the URL-hash sharing scheme. It is what's deployed publicly at:
+whole house-list tool client-side. Deployed publicly at:
 
-  https://jo-house-list.vercel.app
+  https://jo-house-list.vercel.app   (builder at /#builder)
 
-## Views (hash-routed, so one file serves all three)
-- `/`            → client-facing default list (Jo's list)
-- `/#builder`    → the agent builder (enter homes, copy a client link)
-- `/#d=<data>`   → a client list encoded in the link (what the builder produces)
+## What it does
+- **Client list** — a light, editorial presentation (Fraunces/Inter, photo-forward
+  cards, prominent price, status + days-on-market pills), grouped by area and sorted
+  by days on market.
+- **Agent builder** (`/#builder`) — enter homes; **add a photo from your phone or
+  computer** (device upload; images are resized/compressed in the browser); set
+  price, days on market, beds/baths/sqft, status, notes; reorder; paste-import.
+- **Share** — the builder serializes the whole list into the URL hash and gives you
+  a `/#d=...` client link. No database. Send it by text, email, or social; the
+  client sees only the finished presentation.
 
-## How sharing works
-The builder serializes the whole list (name + date + homes) into the URL hash and
-hands you a `/#d=...` link. The link holds the data — no database. Send that link by
-text, email, or social; the recipient sees only the finished presentation.
+## Notes
+- Device photos are embedded in the link. A few photos keep the link small; many
+  large photos make it long (the builder shows a live link-size indicator and warns).
+  For a fully lightweight link, use hosted photo URLs instead.
+- Prices/beds/baths/sqft/days-on-market start **blank** — enter accurate values from
+  your MLS. Nothing unverified is shown to clients.
+- The live copy is a split build (index.html + p1..p11.js) for upload-size limits;
+  this single file is the source of truth and is functionally identical. Styling uses
+  the Tailwind Play CDN + Google Fonts, so it needs internet to render.
 
-## Editing / re-deploying
-Edit this file directly, then host it anywhere static (Vercel, Netlify, S3, etc.).
-The live copy is deployed as a split build (index.html + p1..p10.js) to satisfy
-upload-size limits, but this single file is the source of truth and is functionally
-identical. Styling uses the Tailwind Play CDN, so it needs internet to render.
-
-The same tool also exists as first-class pages in the Next.js app under
-`src/app/list` and `src/app/list/builder`.
+The tool also exists as Next.js pages under `src/app/list` (earlier dark design).
