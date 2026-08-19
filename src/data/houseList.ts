@@ -333,8 +333,11 @@ export function groupedHomes(homes: Home[] = HOMES): HomeGroup[] {
  * Plain-text version of the list for SMS, email, and social captions. Mirrors
  * the on-page grouping: location headers, homes sorted by days on market.
  */
-export function formatTextList(homes: Home[] = HOMES): string {
-  const lines: string[] = [`${LIST_META.name} — Updated ${LIST_META.updatedOn}`, ""];
+export function formatTextList(
+  homes: Home[] = HOMES,
+  meta: { name: string; updatedOn: string } = LIST_META,
+): string {
+  const lines: string[] = [`${meta.name} — Updated ${meta.updatedOn}`, ""];
 
   for (const group of groupedHomes(homes)) {
     lines.push(`📍 ${group.neighborhood}`);
@@ -357,4 +360,109 @@ export function formatTextList(homes: Home[] = HOMES): string {
   }
 
   return lines.join("\n").trim();
+}
+
+// ─── Shareable list payload (URL-encoded) ─────────────────────────────────────
+// The builder tool encodes a whole list (its name + date + homes) into the link
+// itself, so no database is needed: the agent hands the client a /list#d=… URL
+// and the client view decodes it. This keeps the "input → output link" workflow
+// entirely self-contained and Vercel-friendly.
+
+export interface ListPayload {
+  name: string;
+  updatedOn: string;
+  homes: Home[];
+}
+
+export const DEFAULT_PAYLOAD: ListPayload = {
+  name: LIST_META.name,
+  updatedOn: LIST_META.updatedOn,
+  homes: HOMES,
+};
+
+/** Empty home used as the template when adding a row in the builder. */
+export function blankHome(): Home {
+  return {
+    street: "",
+    city: "Dallas",
+    state: "TX",
+    zip: "",
+    link: "",
+    photo: "",
+    daysOnMarket: null,
+    price: null,
+    beds: null,
+    baths: null,
+    sqft: null,
+    status: "active",
+    note: "",
+  };
+}
+
+const STATUSES: HomeStatus[] = ["active", "pending", "coming-soon", "sold"];
+
+function num(v: unknown): number | null {
+  const n = typeof v === "string" ? Number(v) : (v as number);
+  return typeof n === "number" && Number.isFinite(n) ? n : null;
+}
+
+function str(v: unknown): string {
+  return typeof v === "string" ? v : "";
+}
+
+/** Coerce arbitrary parsed JSON into a safe Home (never throws). */
+export function sanitizeHome(raw: unknown): Home {
+  const o = (raw ?? {}) as Record<string, unknown>;
+  const status = STATUSES.includes(o.status as HomeStatus) ? (o.status as HomeStatus) : "active";
+  return {
+    street: str(o.street),
+    city: str(o.city) || "Dallas",
+    state: str(o.state) || "TX",
+    zip: str(o.zip),
+    link: str(o.link),
+    photo: str(o.photo),
+    daysOnMarket: num(o.daysOnMarket),
+    price: num(o.price),
+    beds: num(o.beds),
+    baths: num(o.baths),
+    sqft: num(o.sqft),
+    status,
+    note: str(o.note),
+  };
+}
+
+// URL-safe base64 (handles UTF-8). Works in the browser and Node.
+function toBase64Url(text: string): string {
+  const bytes = new TextEncoder().encode(text);
+  let bin = "";
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+function fromBase64Url(s: string): string {
+  const b64 = s.replace(/-/g, "+").replace(/_/g, "/");
+  const bin = atob(b64);
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+/** Serialize a list into a compact string for the URL hash. */
+export function encodePayload(payload: ListPayload): string {
+  return toBase64Url(JSON.stringify(payload));
+}
+
+/** Decode a list from the URL hash. Returns null if missing/invalid. */
+export function decodePayload(encoded: string | null | undefined): ListPayload | null {
+  if (!encoded) return null;
+  try {
+    const parsed = JSON.parse(fromBase64Url(encoded)) as Record<string, unknown>;
+    const homes = Array.isArray(parsed.homes) ? parsed.homes.map(sanitizeHome) : [];
+    return {
+      name: str(parsed.name) || LIST_META.name,
+      updatedOn: str(parsed.updatedOn) || LIST_META.updatedOn,
+      homes,
+    };
+  } catch {
+    return null;
+  }
 }
