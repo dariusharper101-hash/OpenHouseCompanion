@@ -12,17 +12,21 @@ whole house-list tool client-side. Deployed publicly at:
 - **Agent builder** (`/#builder`) — enter homes; **add a photo from your phone or
   computer** (device upload; images are resized/compressed in the browser); set
   price, days on market, beds/baths/sqft, status, notes; reorder; paste-import.
-- **Share** — the builder serializes the whole list into the URL hash and gives you
-  a `/#d=...` client link. No database. Send it by text, email, or social; the
-  client sees only the finished presentation.
+- **Share** — the builder serializes the list into the URL hash and gives you a
+  `/#d=...` client link. No database. Send it by text, email, or social; the client
+  sees only the finished presentation.
 
 ## Notes
-- Device photos are embedded in the link. A few photos keep the link small; many
-  large photos make it long (the builder shows a live link-size indicator and warns).
-  For a fully lightweight link, use hosted photo URLs instead.
+- **The client link stays small and easy to send.** It carries the addresses,
+  details, and listing links only — photos you upload from your device are **not**
+  embedded in the link (that used to make the URL megabytes long). Uploaded photos
+  still show in the builder's live preview so you can pick the best one, and each
+  home's **View listing & photos** button opens the full gallery for the client.
+  To show a specific image to clients in the link, paste a hosted `http(s)` photo
+  URL into the Listing link/photo field — short URLs are kept in the link.
 - Prices/beds/baths/sqft/days-on-market start **blank** — enter accurate values from
   your MLS. Nothing unverified is shown to clients.
-- The live copy is a split build (index.html + p1..p11.js) for upload-size limits;
+- The live copy is a split build (index.html + p1..p8.js) for upload-size limits;
   this single file is the source of truth and is functionally identical. Styling uses
   the Tailwind Play CDN + Google Fonts, so it needs internet to render.
 

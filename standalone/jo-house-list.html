@@ -55,6 +55,11 @@ function b64u(s){const by=new TextEncoder().encode(s);let bin="";by.forEach(b=>b
 function unb64u(s){const b=atob(s.replace(/-/g,"+").replace(/_/g,"/"));const by=Uint8Array.from(b,c=>c.charCodeAt(0));return new TextDecoder().decode(by)}
 const enc=p=>b64u(JSON.stringify(p));
 function dec(s){try{const o=JSON.parse(unb64u(s));if(!Array.isArray(o.homes))o.homes=[];return o}catch(e){return null}}
+// Shareable link must stay small: drop embedded device photos (base64 data URLs)
+// so they don't bloat the URL. Short http(s) photo URLs are kept.
+function slimForLink(p){return Object.assign({},p,{homes:p.homes.map(x=>(x.photo&&/^https?:/i.test(x.photo))?x:Object.assign({},x,{photo:""}))})}
+const encClient=p=>enc(slimForLink(p));
+const photosInLink=p=>p.homes.some(x=>x.photo&&!/^https?:/i.test(x.photo));
 function textList(p){let L=[p.name+" — Updated "+p.updatedOn,""];grouped(p.homes).forEach(g=>{L.push("📍 "+g.n);g.homes.forEach(x=>{let b=[];if(money(x.price))b.push(money(x.price));if(x.beds!=null)b.push(x.beds+" bd");if(x.baths!=null)b.push(x.baths+" ba");if(x.sqft!=null)b.push(Number(x.sqft).toLocaleString("en-US")+" sqft");if(x.daysOnMarket!=null)b.push(dom(x.daysOnMarket));L.push("• "+x.street+", "+x.city+" "+x.zip);if(b.length)L.push("  "+b.join(" · "));const n=pubNote(x);if(n)L.push("  "+n);L.push("  "+x.link)});L.push("")});return L.join("\n").trim()}
 // ---- shared UI ----
 const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -115,7 +120,7 @@ function compressImage(file,cb){const rd=new FileReader();rd.onload=e=>{const im
 function fieldR(label,val,oi,key,type){return `<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">${label}</span><input type="${type||"text"}" value="${esc(val==null?"":val)}" data-i="${oi}" data-k="${key}" class="bi w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink placeholder-neutral-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"></label>`}
 function renderBuilder(){
 document.title="House List Builder — "+AGENT.appName;
- const link=location.origin+location.pathname+"#d="+encodeURIComponent(enc(B));
+ const link=location.origin+location.pathname+"#d="+encodeURIComponent(encClient(B));
  const homesHTML=B.homes.map((x,i)=>rowHTML(x,i)).join("");
 document.getElementById("app").innerHTML=nav()+bH()+bBar(link)+bMeta()+bBulk()+bHomes(homesHTML)+bPrev();
 wireBuilder(link);
@@ -154,13 +159,13 @@ ${fieldR("Price ($)",x.price,i,"price","number")}${fieldR("Days on market",x.day
 function bH(){return `<div class="mx-auto max-w-5xl px-5 pb-24 pt-12">
 <header class="mb-8"><div class="text-xs font-semibold uppercase tracking-[0.22em] text-brand">Agent Tool · not shown to clients</div>
 <h1 class="mt-3 font-serif text-3xl text-ink">House List Builder</h1>
-<p class="mt-3 max-w-2xl text-neutral-500">Enter your homes, add a photo from your phone or computer, then copy the <strong class="text-ink">client link</strong> and send it by text, email, or social. The client opens the link and sees only the finished presentation — grouped by area and sorted by days on market. Your work saves automatically in this browser.</p></header>
+<p class="mt-3 max-w-2xl text-neutral-500">Enter your homes, add a photo from your phone or computer, then copy the <strong class="text-ink">client link</strong> and send it by text, email, or social. The link stays small and easy to send — it carries the addresses, details, and listing links, and each home's <strong class="text-ink">View listing &amp; photos</strong> button opens the full photo gallery. Photos you upload here show in your preview so you can pick the best one. Your work saves automatically in this browser.</p></header>
  `}
 function bBar(link){return `<div class="sticky top-16 z-40 mb-8 flex flex-wrap items-center gap-3 rounded-2xl bg-white/95 p-3 ring-1 ring-black/[0.06] shadow-sm backdrop-blur">
 <button id="bcl" class="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800">Copy client link</button>
 <button id="bct" class="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Copy text version</button>
 <a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Preview client view ↗</a>
-<span class="hidden text-xs text-neutral-400 sm:inline">Link ${kb(link)}${link.length>60000?' · ⚠ large — fewer photos text more easily':''}</span>
+<span class="hidden text-xs text-neutral-400 sm:inline">Link ${kb(link)} · light &amp; easy to send${photosInLink(B)?' · your uploaded photos stay in this preview, not in the link':''}</span>
 <div class="ml-auto flex gap-1"><button id="brs" class="rounded-full px-3 py-2 text-xs text-neutral-500 hover:text-ink">Reset to Jo's list</button><button id="bca" class="rounded-full px-3 py-2 text-xs text-neutral-400 hover:text-red-600">Clear all</button></div></div>
  `}
 function bMeta(){return `<section class="mb-6 grid gap-4 rounded-2xl bg-white p-5 ring-1 ring-black/[0.06] shadow-sm sm:grid-cols-2">
