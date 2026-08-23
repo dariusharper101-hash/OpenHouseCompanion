@@ -55,11 +55,21 @@ function b64u(s){const by=new TextEncoder().encode(s);let bin="";by.forEach(b=>b
 function unb64u(s){const b=atob(s.replace(/-/g,"+").replace(/_/g,"/"));const by=Uint8Array.from(b,c=>c.charCodeAt(0));return new TextDecoder().decode(by)}
 const enc=p=>b64u(JSON.stringify(p));
 function dec(s){try{const o=JSON.parse(unb64u(s));if(!Array.isArray(o.homes))o.homes=[];return o}catch(e){return null}}
-// Shareable link must stay small: drop embedded device photos (base64 data URLs)
-// so they don't bloat the URL. Short http(s) photo URLs are kept.
+// bytes <-> base64url (for compressed payloads)
+function bytesToB64u(by){let bin="";by.forEach(b=>bin+=String.fromCharCode(b));return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"")}
+function b64uToBytes(s){const b=atob(s.replace(/-/g,"+").replace(/_/g,"/"));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+async function gzip(str){const cs=new CompressionStream("gzip");const buf=await new Response(new Blob([new TextEncoder().encode(str)]).stream().pipeThrough(cs)).arrayBuffer();return new Uint8Array(buf)}
+async function gunzip(by){const ds=new DecompressionStream("gzip");const buf=await new Response(new Blob([by]).stream().pipeThrough(ds)).arrayBuffer();return new TextDecoder().decode(buf)}
+// Shareable link must stay SHORT: drop embedded device photos, pack into a compact
+// schema (short keys, omit defaults, store just the listing token), then gzip it.
+const PROS="https://us-east.prospects.com/prospects/m.do?tk=";
 function slimForLink(p){return Object.assign({},p,{homes:p.homes.map(x=>(x.photo&&/^https?:/i.test(x.photo))?x:Object.assign({},x,{photo:""}))})}
-const encClient=p=>enc(slimForLink(p));
 const photosInLink=p=>p.homes.some(x=>x.photo&&!/^https?:/i.test(x.photo));
+function pack(p){return{n:p.name||"",u:p.updatedOn||"",h:(p.homes||[]).map(x=>{const o={s:x.street||"",z:x.zip||""};if(x.city&&x.city!=="Dallas")o.c=x.city;if(x.state&&x.state!=="TX")o.e=x.state;if(x.link){if(x.link.indexOf(PROS)===0)o.t=x.link.slice(PROS.length);else o.l=x.link}if(x.photo&&/^https?:/i.test(x.photo))o.p=x.photo;if(x.daysOnMarket!=null)o.d=x.daysOnMarket;if(x.price!=null)o.pr=x.price;if(x.beds!=null)o.b=x.beds;if(x.baths!=null)o.ba=x.baths;if(x.sqft!=null)o.q=x.sqft;if(x.status&&x.status!=="active")o.st=x.status;if(x.note)o.nt=x.note;return o})}}
+function unpack(c){if(!c||!Array.isArray(c.h))return null;return{name:c.n||"",updatedOn:c.u||"",homes:c.h.map(o=>({street:o.s||"",city:o.c||"Dallas",state:o.e||"TX",zip:o.z||"",link:o.t!=null?PROS+o.t:(o.l||""),photo:o.p||"",daysOnMarket:o.d!=null?o.d:null,price:o.pr!=null?o.pr:null,beds:o.b!=null?o.b:null,baths:o.ba!=null?o.ba:null,sqft:o.q!=null?o.q:null,status:o.st||"active",note:o.nt||""}))}}
+// Returns the URL-hash fragment (without leading #). Prefers gzip (c=), falls back to compact JSON (j=).
+async function encClient(p){const json=JSON.stringify(pack(slimForLink(p)));if(typeof CompressionStream!=="undefined"){try{return "c="+bytesToB64u(await gzip(json))}catch(e){}}return "j="+b64u(json)}
+async function decodeHash(hh){let m;if(m=hh.match(/[#&]c=([^&]+)/)){try{return unpack(JSON.parse(await gunzip(b64uToBytes(decodeURIComponent(m[1])))))}catch(e){return null}}if(m=hh.match(/[#&]j=([^&]+)/)){try{return unpack(JSON.parse(unb64u(decodeURIComponent(m[1]))))}catch(e){return null}}if(m=hh.match(/[#&]d=([^&]+)/)){return dec(decodeURIComponent(m[1]))}return null}
 function textList(p){let L=[p.name+" — Updated "+p.updatedOn,""];grouped(p.homes).forEach(g=>{L.push("📍 "+g.n);g.homes.forEach(x=>{let b=[];if(money(x.price))b.push(money(x.price));if(x.beds!=null)b.push(x.beds+" bd");if(x.baths!=null)b.push(x.baths+" ba");if(x.sqft!=null)b.push(Number(x.sqft).toLocaleString("en-US")+" sqft");if(x.daysOnMarket!=null)b.push(dom(x.daysOnMarket));L.push("• "+x.street+", "+x.city+" "+x.zip);if(b.length)L.push("  "+b.join(" · "));const n=pubNote(x);if(n)L.push("  "+n);L.push("  "+x.link)});L.push("")});return L.join("\n").trim()}
 // ---- shared UI ----
 const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -118,9 +128,9 @@ let B=null;
 function num(v){return v.trim()===""?null:(isFinite(+v)?+v:null)}
 function compressImage(file,cb){const rd=new FileReader();rd.onload=e=>{const img=new Image();img.onload=()=>{const max=1200;let w=img.width,ht=img.height;if(w>ht&&w>max){ht=Math.round(ht*max/w);w=max}else if(ht>max){w=Math.round(w*max/ht);ht=max}const c=document.createElement("canvas");c.width=w;c.height=ht;c.getContext("2d").drawImage(img,0,0,w,ht);try{cb(c.toDataURL("image/jpeg",0.72))}catch(err){cb(e.target.result)}};img.onerror=()=>cb(e.target.result);img.src=e.target.result};rd.readAsDataURL(file)}
 function fieldR(label,val,oi,key,type){return `<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">${label}</span><input type="${type||"text"}" value="${esc(val==null?"":val)}" data-i="${oi}" data-k="${key}" class="bi w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink placeholder-neutral-400 focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"></label>`}
-function renderBuilder(){
+async function renderBuilder(){
 document.title="House List Builder — "+AGENT.appName;
- const link=location.origin+location.pathname+"#d="+encodeURIComponent(encClient(B));
+ const link=location.origin+location.pathname+"#"+await encClient(B);
  const homesHTML=B.homes.map((x,i)=>rowHTML(x,i)).join("");
 document.getElementById("app").innerHTML=nav()+bH()+bBar(link)+bMeta()+bBulk()+bHomes(homesHTML)+bPrev();
 wireBuilder(link);
@@ -182,8 +192,8 @@ function bPrev(){return `<section class="mt-14"><div class="mb-4 flex items-cent
 <div class="rounded-2xl bg-paper p-5 ring-1 ring-black/[0.06] sm:p-7"><div class="text-xs font-semibold uppercase tracking-[0.22em] text-brand">Curated Home List</div><h3 class="mt-2 font-serif text-3xl text-ink">${esc(B.name)}</h3><p class="mb-8 mt-2 text-sm text-neutral-500">${B.homes.length} ${B.homes.length===1?"home":"homes"} · Updated ${esc(B.updatedOn)}</p>${presentation(B.homes)}${agentFooter()}</div></section></div>
  `}
 // ---- Router ----
-function route(){const hh=location.hash;
-if(hh.indexOf("#d=")===0||hh.indexOf("&d=")>-1){const m=hh.match(/[#&]d=([^&]+)/);const p=m&&dec(decodeURIComponent(m[1]));renderList(p||DEFAULT);return}
+async function route(){const hh=location.hash;
+if(/[#&][cjd]=/.test(hh)){const p=await decodeHash(hh);renderList(p||DEFAULT);return}
 if(hh.indexOf("#builder")===0){if(!B){const s=loadSaved();B=(s&&Array.isArray(s.homes))?s:JSON.parse(JSON.stringify(DEFAULT))}renderBuilder();return}
 renderList(DEFAULT);}
 window.addEventListener("hashchange",route);
