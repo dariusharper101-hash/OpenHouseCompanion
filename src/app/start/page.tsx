@@ -25,10 +25,13 @@ type StepId =
   | "buyer-prefs"
   | "qualifiers"
   | "seller-details"
+  | "rental-prefs"
   | "legal"
   | "done";
 
 function getSteps(role: ClientRole): StepId[] {
+  // Renters skip the buy/sell screen entirely — it doesn't apply to a lease.
+  if (role === "renting") return ["contact", "rental-prefs", "legal"];
   if (role === "buying") return ["role", "contact", "buyer-prefs", "qualifiers", "legal"];
   if (role === "selling") return ["role", "contact", "seller-details", "legal"];
   return ["role", "contact", "seller-details", "buyer-prefs", "qualifiers", "legal"];
@@ -87,6 +90,21 @@ const INVESTOR_STRATEGIES: { value: InvestorStrategy; label: string }[] = [
 const SELLER_TIMELINES = [
   "Within 30 days", "1 – 3 months", "3 – 6 months", "6 – 12 months", "Just exploring"
 ];
+
+// Rental (leasing) options — reuse the shared Lead fields (budgetMin holds the
+// monthly range, timeline holds the move-in window, neighborhoods holds areas).
+const RENT_BUDGETS = [
+  "Under $1,000/mo", "$1,000 – $1,500/mo", "$1,500 – $2,000/mo",
+  "$2,000 – $2,500/mo", "$2,500 – $3,500/mo", "$3,500+/mo",
+];
+
+const MOVEIN_LABELS: Record<BuyerTimeline, string> = {
+  asap: "As soon as possible",
+  "1-3-months": "Within 1 – 3 months",
+  "3-6-months": "In 3 – 6 months",
+  "6-12-months": "In 6 – 12 months",
+  "just-browsing": "Just starting to look",
+};
 
 const SELLER_REASONS = [
   "Upsizing / need more space",
@@ -276,6 +294,7 @@ function StartForm() {
     "buyer-prefs": "Property Preferences",
     qualifiers: "Program Qualifiers",
     "seller-details": "About Your Property",
+    "rental-prefs": "What You're Looking For",
     legal: "Legal Disclosures",
   };
 
@@ -375,6 +394,53 @@ function StartForm() {
                 <Field label="Phone Number" error={errors.phone}>
                   <input type="tel" placeholder="(555) 000-0000" value={form.phone}
                     onChange={(e) => set("phone", e.target.value)} className={inputCls(errors.phone)} />
+                </Field>
+              </div>
+            )}
+
+            {/* ── STEP: Rental Preferences ─────────────────────────────────── */}
+            {currentStep === "rental-prefs" && (
+              <div className="space-y-5">
+                <p className="text-muted text-sm">
+                  Tell me what you&apos;re after and I&apos;ll pull matching apartments — my locating
+                  service is <span className="text-green font-medium">100% free to you</span>.
+                </p>
+
+                <div>
+                  <p className="text-muted text-sm mb-3">Monthly budget</p>
+                  <div className="grid grid-cols-2 gap-2">
+                    {RENT_BUDGETS.map((b) => (
+                      <ChoiceButton key={b} selected={form.budgetMin === b} onClick={() => set("budgetMin", b)}>
+                        {b}
+                      </ChoiceButton>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-muted text-sm mb-3">When do you need to move in?</p>
+                  <div className="space-y-2">
+                    {(Object.keys(MOVEIN_LABELS) as BuyerTimeline[]).map((t) => (
+                      <ChoiceButton key={t} selected={form.timeline === t} onClick={() => set("timeline", t)}>
+                        {MOVEIN_LABELS[t]}
+                      </ChoiceButton>
+                    ))}
+                  </div>
+                </div>
+
+                <Field label="Preferred areas / neighborhoods" hint="e.g. Uptown, Downtown, Las Colinas, Frisco">
+                  <input type="text" placeholder="Where do you want to live?" value={form.neighborhoods}
+                    onChange={(e) => set("neighborhoods", e.target.value)} className={inputCls()} />
+                </Field>
+
+                <Field label="Bedrooms">
+                  <select value={form.bedrooms} onChange={(e) => set("bedrooms", e.target.value)} className={inputCls()}>
+                    <option value="">Any</option>
+                    <option value="Studio">Studio</option>
+                    <option value="1">1 bedroom</option>
+                    <option value="2">2 bedrooms</option>
+                    <option value="3+">3+ bedrooms</option>
+                  </select>
                 </Field>
               </div>
             )}

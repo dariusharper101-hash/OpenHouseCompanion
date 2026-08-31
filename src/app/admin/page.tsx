@@ -38,6 +38,7 @@ const ROLE_LABELS: Record<string, string> = {
   buying: "Buying",
   selling: "Selling",
   both: "Buying & Selling",
+  renting: "Renting",
 };
 
 const CLIENT_TYPE_LABELS: Record<string, string> = {
@@ -206,6 +207,19 @@ function LeadDrawer({
                 <DetailRow label="Reason" value={lead.sellerReason} />
                 <DetailRow label="Timeline" value={lead.sellerTimeline} />
                 <DetailRow label="Buying Too" value={lead.buyingSimultaneously} />
+              </div>
+            </div>
+          )}
+
+          {/* Rental details */}
+          {lead.role === "renting" && (
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-2">Rental Details</h3>
+              <div className="space-y-0">
+                <DetailRow label="Monthly Budget" value={lead.budgetMin} />
+                <DetailRow label="Move-In" value={lead.timeline} />
+                <DetailRow label="Areas" value={lead.neighborhoods} />
+                <DetailRow label="Bedrooms" value={lead.bedrooms} />
               </div>
             </div>
           )}
@@ -423,6 +437,7 @@ export default function AdminPage() {
             <option value="buying">Buying</option>
             <option value="selling">Selling</option>
             <option value="both">Both</option>
+            <option value="renting">Renting</option>
           </select>
           <select
             value={statusFilter}

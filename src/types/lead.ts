@@ -1,4 +1,4 @@
-export type ClientRole = "buying" | "selling" | "both";
+export type ClientRole = "buying" | "selling" | "both" | "renting";
 
 export type ClientType =
   | "first-time-buyer"

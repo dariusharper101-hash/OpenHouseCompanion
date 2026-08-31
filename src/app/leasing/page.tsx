@@ -50,7 +50,7 @@ export default function LeasingPage() {
             you nothing. The communities pay me a locator fee, so my service is 100% free to you.
           </p>
           <div className="flex flex-wrap gap-3 mt-9">
-            <Link href="/start?role=buying&src=leasing" className="px-7 py-3.5 rounded-full bg-cream text-green font-medium hover:bg-white transition-colors">
+            <Link href="/start?role=renting&src=leasing" className="px-7 py-3.5 rounded-full bg-cream text-green font-medium hover:bg-white transition-colors">
               Find my apartment
             </Link>
             {tel && (
@@ -122,7 +122,7 @@ export default function LeasingPage() {
             completely free.
           </p>
           <div className="flex flex-wrap justify-center gap-3 mt-8">
-            <Link href="/start?role=buying&src=leasing" className="px-9 py-4 rounded-full bg-green text-cream font-medium hover:bg-green-600 transition-colors">
+            <Link href="/start?role=renting&src=leasing" className="px-9 py-4 rounded-full bg-green text-cream font-medium hover:bg-green-600 transition-colors">
               Find my apartment →
             </Link>
             {tel && (

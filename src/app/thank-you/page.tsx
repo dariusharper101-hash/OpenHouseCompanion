@@ -87,6 +87,7 @@ export default async function ThankYouPage({ searchParams }: Props) {
   });
 
   const isBuying = role === "buying" || role === "both";
+  const isRenting = role === "renting";
 
   return (
     <div className="min-h-screen bg-cream">
@@ -155,14 +156,18 @@ export default async function ThankYouPage({ searchParams }: Props) {
               {
                 n: "2",
                 title: "Review your options together",
-                desc: isBuying
+                desc: isRenting
+                  ? "I'll pull a shortlist of apartments that match your budget, timing, and neighborhoods, then set up tours at the best ones — free to you."
+                  : isBuying
                   ? "We'll walk through the programs you qualify for, get you pointed toward the right lender, and build a plan."
                   : "We'll discuss pricing strategy, market conditions, and what the selling process will look like for your property.",
               },
               {
                 n: "3",
-                title: "Sign the required agreements",
-                desc: "Before I can fully represent you, we'll complete the IABS disclosure and Buyer Representation Agreement (if buying). No surprises.",
+                title: isRenting ? "Tour and apply" : "Sign the required agreements",
+                desc: isRenting
+                  ? "We'll visit your favorites, and I'll help with the application and lease from start to finish."
+                  : "Before I can fully represent you, we'll complete the IABS disclosure and Buyer Representation Agreement (if buying). No surprises.",
               },
               {
                 n: "4",
