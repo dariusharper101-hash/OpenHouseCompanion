@@ -2,8 +2,8 @@ import Link from "next/link";
 import { MARKET, type MarketStat } from "@/config/market";
 
 // ─── Sparkline ────────────────────────────────────────────────────────────────
-// A single-series trend line: 2px stroke, rounded ends, a subtle area fill, and a
-// marker on the latest point. One hue (the brand blue) on the dark card surface.
+// Single-series trend line: 2px stroke, rounded ends, subtle area fill, marker on
+// the latest point. One hue (the brand green) on the light card surface.
 
 function Sparkline({ data, id }: { data: readonly number[]; id: string }) {
   const w = 220;
@@ -27,35 +27,25 @@ function Sparkline({ data, id }: { data: readonly number[]; id: string }) {
     <svg viewBox={`0 0 ${w} ${h}`} width="100%" height={h} className="mt-3 overflow-visible" aria-hidden="true">
       <defs>
         <linearGradient id={`fill-${id}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.28" />
-          <stop offset="100%" stopColor="#60a5fa" stopOpacity="0" />
+          <stop offset="0%" stopColor="#1c3b30" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="#1c3b30" stopOpacity="0" />
         </linearGradient>
       </defs>
       <path d={area} fill={`url(#fill-${id})`} />
-      <path
-        d={line}
-        fill="none"
-        stroke="#60a5fa"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      {/* latest-point marker with a 2px surface ring so it reads on the fill */}
-      <circle cx={lx} cy={ly} r="3.5" fill="#60a5fa" stroke="#1e293b" strokeWidth="2" />
+      <path d={line} fill="none" stroke="#1c3b30" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={lx} cy={ly} r="3.5" fill="#1c3b30" stroke="#fffdf9" strokeWidth="2" />
     </svg>
   );
 }
-
-// ─── Stat card ────────────────────────────────────────────────────────────────
 
 function TrendPill({ stat }: { stat: MarketStat }) {
   const good = stat.trend === "flat" ? null : stat.trend === "up" ? stat.upIsGood : !stat.upIsGood;
   const color =
     good === null
-      ? "text-slate-400 bg-slate-700/40"
+      ? "text-muted bg-line/60"
       : good
-      ? "text-emerald-300 bg-emerald-500/15"
-      : "text-rose-300 bg-rose-500/15";
+      ? "text-green bg-green/10"
+      : "text-[#a23b34] bg-[#a23b34]/10";
   const arrow = stat.trend === "up" ? "↑" : stat.trend === "down" ? "↓" : "→";
   return (
     <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold ${color}`}>
@@ -67,36 +57,33 @@ function TrendPill({ stat }: { stat: MarketStat }) {
 
 function StatCard({ stat, id }: { stat: MarketStat; id: string }) {
   return (
-    <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-5 flex flex-col">
+    <div className="bg-paper border border-line rounded-2xl p-5 flex flex-col">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-slate-400 text-xs uppercase tracking-wide font-medium">{stat.label}</p>
+        <p className="text-muted text-xs uppercase tracking-wide font-medium">{stat.label}</p>
         <TrendPill stat={stat} />
       </div>
-      <p className="text-3xl font-bold text-white mt-2 tracking-tight">{stat.value}</p>
+      <p className="font-display text-3xl font-semibold text-ink mt-2 tracking-tight">{stat.value}</p>
       <Sparkline data={stat.history} id={id} />
-      <p className="text-slate-500 text-xs leading-relaxed mt-3">{stat.caption}</p>
+      <p className="text-faint text-xs leading-relaxed mt-3">{stat.caption}</p>
     </div>
   );
 }
 
-// ─── Section ──────────────────────────────────────────────────────────────────
-
 export default function MarketPulse() {
   const { stats } = MARKET;
   return (
-    <section className="py-20 px-4 bg-slate-800/30 border-y border-slate-800">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-400/30 rounded-full px-3 py-1 mb-4">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-emerald-300 text-xs font-medium">
-              {MARKET.area} · Updated {MARKET.lastUpdated}
-            </span>
-          </div>
-          <h2 className="text-3xl font-bold text-white mb-3">The DFW Market Right Now</h2>
-          <p className="text-slate-400 max-w-lg mx-auto">
-            The numbers that actually move your buying or selling decision — tracked and
-            explained in plain English, refreshed every month.
+    <section className="py-20 md:py-28 px-5">
+      <div className="max-w-6xl mx-auto">
+        <div className="max-w-2xl mb-10">
+          <p className="text-gold text-xs uppercase tracking-[0.2em] font-medium mb-3">
+            {MARKET.area} · Updated {MARKET.lastUpdated}
+          </p>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight">
+            The market, in plain English
+          </h2>
+          <p className="text-muted mt-4 leading-relaxed">
+            The numbers that actually move your buying, selling, or leasing decision — tracked and
+            explained, refreshed every month.
           </p>
         </div>
 
@@ -108,15 +95,15 @@ export default function MarketPulse() {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
-          <p className="text-slate-600 text-xs max-w-md text-center sm:text-left">
-            Figures are indicative metro-wide averages ({MARKET.source}). Your street, price band,
-            and program can look very different — ask me for a precise, address-level analysis.
+          <p className="text-faint text-xs max-w-md text-center sm:text-left">
+            Indicative metro-wide averages ({MARKET.source}). Your street, price band, and program can
+            look very different — ask me for a precise, address-level analysis.
           </p>
           <Link
             href="/tools"
-            className="whitespace-nowrap inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors"
+            className="whitespace-nowrap inline-flex items-center gap-2 px-6 py-3 rounded-full bg-green hover:bg-green-600 text-cream text-sm font-medium transition-colors"
           >
-            Run the numbers on your home →
+            Run the numbers →
           </Link>
         </div>
       </div>

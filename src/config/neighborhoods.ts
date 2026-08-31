@@ -34,6 +34,42 @@ export interface Neighborhood {
 
 export const NEIGHBORHOODS: Neighborhood[] = [
   {
+    slug: "dallas",
+    name: "Dallas",
+    county: "Dallas County",
+    schoolDistrict: "Dallas ISD (and others)",
+    tagline: "The cultural and economic heart of North Texas — a different neighborhood for every kind of life.",
+    intro:
+      "Dallas proper is a patchwork of distinct neighborhoods, from the tree-lined charm of Lakewood and the M Streets to the artsy energy of Bishop Arts and Oak Cliff and the estates of Preston Hollow. It's the region's job, dining, and culture engine, offering everything from walkable urban living to established, character-rich homes.",
+    priceBand: "Low $300s to $2M+ (by neighborhood)",
+    highlights: [
+      { title: "A neighborhood for every lifestyle", desc: "Few cities offer this much range — historic bungalows, sleek new builds, high-rise condos, and estate homes, sometimes within a few miles of each other." },
+      { title: "Culture and dining at the center", desc: "The Arts District, Bishop Arts, Deep Ellum, and Knox-Henderson put food, music, and galleries minutes from home." },
+      { title: "Where the jobs are", desc: "Living in the core cuts commutes to Downtown, Uptown, and the medical district — a real quality-of-life and resale factor." },
+      { title: "Character over cookie-cutter", desc: "Many Dallas neighborhoods have architecture and history you simply can't get in a newer suburb." },
+    ],
+    goodFor: ["Urban professionals", "First-time buyers", "Investors", "Move-up buyers", "Renters"],
+    nearby: ["downtown-dallas", "plano", "frisco"],
+  },
+  {
+    slug: "downtown-dallas",
+    name: "Downtown Dallas",
+    county: "Dallas County",
+    schoolDistrict: "Dallas ISD",
+    tagline: "High-rise, walkable, and always on — urban living and leasing in the center of it all.",
+    intro:
+      "Downtown and the adjacent Uptown/Victory Park corridors are the region's most walkable, high-energy addresses — think residential towers, converted lofts, and luxury apartments steps from the Arts District, Klyde Warren Park, and the DART rail. It's the epicenter of Dallas apartment living, which is exactly where my free apartment-locating service shines.",
+    priceBand: "Condos low $200s to $1M+ · luxury leases vary",
+    highlights: [
+      { title: "Walk-everywhere living", desc: "Restaurants, the Arts District, Klyde Warren Park, and rail transit are all on foot — a rarity in car-first Texas." },
+      { title: "Leasing capital", desc: "Downtown and Uptown hold the metro's densest concentration of luxury high-rise apartments — and locating the right one is free to you through me." },
+      { title: "Lofts, towers, and condos", desc: "From historic converted lofts to brand-new glass towers, the urban core suits buyers and renters who want a lock-and-leave lifestyle." },
+      { title: "Culture on your doorstep", desc: "The nation's largest contiguous Arts District, sports venues, and nightlife are all right here." },
+    ],
+    goodFor: ["Renters", "Urban professionals", "Investors", "Downsizers", "Relocating professionals"],
+    nearby: ["dallas", "plano"],
+  },
+  {
     slug: "frisco",
     name: "Frisco",
     county: "Collin County",

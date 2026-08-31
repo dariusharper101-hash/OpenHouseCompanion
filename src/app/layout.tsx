@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 import { AGENT } from "@/config/agent";
 
@@ -10,14 +10,18 @@ const brandDesc = AGENT.name
   ? `Expert real estate guidance for buyers, sellers, and investors across ${AGENT.serviceArea} with ${AGENT.name}${AGENT.brokerage ? ` of ${AGENT.brokerage}` : ""}. Know your programs, understand the process, and work with an agent who has your back.`
   : "Expert real estate guidance for buyers, sellers, and investors. Know your programs, understand the process, and work with an agent who has your back.";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Editorial serif for display headlines, clean sans for everything else.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
+  display: "swap",
+  axes: ["opsz"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -78,9 +82,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-900 text-white">
+      <body className="min-h-full flex flex-col bg-cream text-ink">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -11,7 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = AGENT.siteUrl.replace(/\/$/, "");
   const now = new Date();
 
-  const staticRoutes = ["", "/tools", "/neighborhoods", "/learn", "/start"].map((path) => ({
+  const staticRoutes = ["", "/leasing", "/tools", "/neighborhoods", "/learn", "/start"].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,
     changeFrequency: "weekly" as const,
