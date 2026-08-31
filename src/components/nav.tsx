@@ -22,9 +22,9 @@ export default function Nav() {
         </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm text-slate-400">
-          <Link href="/learn" className="hover:text-white transition-colors">Education Hub</Link>
+          <Link href="/neighborhoods" className="hover:text-white transition-colors">Neighborhoods</Link>
           <Link href="/tools" className="hover:text-white transition-colors">Calculators</Link>
-          <Link href="/learn/process" className="hover:text-white transition-colors">The Process</Link>
+          <Link href="/learn" className="hover:text-white transition-colors">Education Hub</Link>
           <Link href="/learn/programs" className="hover:text-white transition-colors">Loan Programs</Link>
         </div>
 

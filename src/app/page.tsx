@@ -3,6 +3,7 @@ import Nav from "@/components/nav";
 import AgentCard, { SocialLinks } from "@/components/agent-card";
 import MarketPulse from "@/components/market-pulse";
 import { AGENT } from "@/config/agent";
+import { NEIGHBORHOODS } from "@/config/neighborhoods";
 
 const TOPICS = [
   {
@@ -211,6 +212,43 @@ export default function HomePage() {
                 <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Areas I serve */}
+      <section className="py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-white mb-3">Areas I serve across {AGENT.serviceArea}</h2>
+            <p className="text-slate-400 max-w-lg mx-auto">
+              Local knowledge is the whole point. Pick your city for a straight-talk guide to
+              buying or selling there.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-2.5">
+            {NEIGHBORHOODS.map((n) => (
+              <Link
+                key={n.slug}
+                href={`/neighborhoods/${n.slug}`}
+                className="bg-slate-800/60 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 rounded-full px-5 py-2.5 text-sm font-medium text-slate-300 hover:text-white transition-all"
+              >
+                {n.name}
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Link
+              href="/neighborhoods"
+              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+            >
+              View all neighborhood guides
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+              </svg>
+            </Link>
           </div>
         </div>
       </section>
