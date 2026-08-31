@@ -21,13 +21,53 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(AGENT.siteUrl),
   title: brandLine,
   description: brandDesc,
+  keywords: [
+    `${AGENT.serviceArea} realtor`,
+    `${AGENT.serviceArea} real estate agent`,
+    "buy a home Dallas Fort Worth",
+    "sell my home DFW",
+    "first-time home buyer Texas",
+    "DFW mortgage calculator",
+    "how much home can I afford",
+    "Texas VA FHA loan programs",
+    AGENT.name,
+  ],
+  alternates: { canonical: "/" },
   openGraph: {
     title: brandLine,
     description: brandDesc,
+    url: AGENT.siteUrl,
+    siteName: AGENT.appName,
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: brandLine,
+    description: brandDesc,
+  },
+};
+
+// RealEstateAgent structured data — helps Google understand who this site is for
+// and can surface a rich result (name, area, contact).
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "RealEstateAgent",
+  name: AGENT.name || AGENT.appName,
+  url: AGENT.siteUrl,
+  ...(AGENT.phone ? { telephone: AGENT.phone } : {}),
+  ...(AGENT.email ? { email: AGENT.email } : {}),
+  areaServed: AGENT.serviceArea,
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Dallas–Fort Worth",
+    addressRegion: "TX",
+    addressCountry: "US",
+  },
+  ...(AGENT.brokerage ? { memberOf: { "@type": "Organization", name: AGENT.brokerage } } : {}),
+  sameAs: [AGENT.socials.instagram, AGENT.socials.facebook].filter(Boolean),
 };
 
 export default function RootLayout({
@@ -40,7 +80,13 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-slate-900 text-white">{children}</body>
+      <body className="min-h-full flex flex-col bg-slate-900 text-white">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }

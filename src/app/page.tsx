@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Nav from "@/components/nav";
 import AgentCard, { SocialLinks } from "@/components/agent-card";
+import MarketPulse from "@/components/market-pulse";
 import { AGENT } from "@/config/agent";
 
 const TOPICS = [
@@ -90,6 +91,13 @@ export default function HomePage() {
               Buying &amp; Selling
             </Link>
           </div>
+
+          <p className="mt-6 text-sm text-slate-400">
+            Just exploring?{" "}
+            <Link href="/tools" className="text-blue-400 hover:text-blue-300 font-medium transition-colors">
+              Try the free payment &amp; affordability calculators →
+            </Link>
+          </p>
         </div>
       </section>
 
@@ -109,6 +117,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* Live DFW market data */}
+      <MarketPulse />
 
       {/* What you'll learn */}
       <section className="py-20 px-4">

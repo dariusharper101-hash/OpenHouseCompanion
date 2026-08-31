@@ -7,6 +7,10 @@ export const AGENT = {
   // Product / site name shown in the nav and browser title.
   appName: "Hop In Real Estate",
 
+  // Canonical public URL (no trailing slash) — used for SEO, sitemap, and
+  // social share metadata.
+  siteUrl: "https://hopinrealestate.com",
+
   // You
   name: "Darius Harper",
   title: "REALTOR®",
