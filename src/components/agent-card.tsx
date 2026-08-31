@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { AGENT, agentInitials } from "@/config/agent";
 
 // Instagram + Facebook links, shown wherever we surface the agent.
@@ -38,7 +41,8 @@ export function SocialLinks({ className = "" }: { className?: string }) {
 
 // Avatar: uses the headshot if photoUrl is set, otherwise a clean initials disc.
 export function AgentAvatar({ size = 96 }: { size?: number }) {
-  if (AGENT.photoUrl) {
+  const [failed, setFailed] = useState(false);
+  if (AGENT.photoUrl && !failed) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
@@ -46,6 +50,7 @@ export function AgentAvatar({ size = 96 }: { size?: number }) {
         alt={AGENT.name || AGENT.appName}
         width={size}
         height={size}
+        onError={() => setFailed(true)}
         className="rounded-full object-cover border-2 border-gold/50"
         style={{ width: size, height: size }}
       />

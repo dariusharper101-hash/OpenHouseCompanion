@@ -15,7 +15,7 @@ export const AGENT = {
   name: "Darius Harper",
   title: "REALTOR®",
   licenseNumber: "0847860", // TREC license number
-  photoUrl: "", // public URL or /public path to a headshot; falls back to initials
+  photoUrl: "/darius.jpg", // upload public/darius.jpg; falls back to initials until then
 
   // Contact
   phone: "(870) 718-0974",

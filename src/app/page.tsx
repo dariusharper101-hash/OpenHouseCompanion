@@ -154,7 +154,7 @@ export default function HomePage() {
             {featured.map((n, i) => (
               <Link key={n.slug} href={`/neighborhoods/${n.slug}`} className="group relative rounded-3xl overflow-hidden min-h-[220px] flex items-end">
                 <Photo
-                  src={i === 0 ? IMAGES.neighborhood : IMAGES.highrise}
+                  src={i === 0 ? IMAGES.heroSkyline : IMAGES.highrise}
                   alt={n.name}
                   className="absolute inset-0 h-full w-full"
                   overlay

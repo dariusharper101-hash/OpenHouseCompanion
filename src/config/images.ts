@@ -11,8 +11,9 @@ const U = "https://images.unsplash.com";
 const P = "?auto=format&fit=crop&q=70";
 
 export const IMAGES = {
-  // Downtown Dallas / city skyline at dusk — hero.
-  heroSkyline: `${U}/photo-1449824913935-59a10b8d2000${P}&w=2000`,
+  // Downtown Dallas skyline — hero. Self-hosted so it's guaranteed to be Dallas
+  // (upload public/dallas-skyline.jpg). Until then, <Photo> shows a green gradient.
+  heroSkyline: `/dallas-skyline.jpg`,
   // Modern luxury home exterior at dusk.
   luxuryHome: `${U}/photo-1568605114967-8130f3a36994${P}&w=1400`,
   // Bright, warm living-room interior.
