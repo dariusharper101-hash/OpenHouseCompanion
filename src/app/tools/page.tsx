@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import Nav from "@/components/nav";
+import Footer from "@/components/footer";
 import { AGENT } from "@/config/agent";
 
 // ─── Formatting helpers ───────────────────────────────────────────────────────
@@ -38,18 +39,18 @@ function NumberField({
 }) {
   return (
     <label className="block space-y-1.5">
-      <span className="block text-xs font-medium text-slate-400 uppercase tracking-wide">{label}</span>
-      <span className="flex items-center bg-slate-700/60 border border-slate-600 rounded-xl px-3 focus-within:ring-2 focus-within:ring-blue-500/60 focus-within:border-blue-500/60 transition-all">
-        {prefix && <span className="text-slate-400 text-sm mr-1">{prefix}</span>}
+      <span className="block text-xs font-medium text-muted uppercase tracking-wide">{label}</span>
+      <span className="flex items-center bg-cream border border-line rounded-xl px-3 focus-within:ring-2 focus-within:ring-green/30 focus-within:border-green transition-all">
+        {prefix && <span className="text-faint text-sm mr-1">{prefix}</span>}
         <input
           inputMode="decimal"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-transparent py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none"
+          className="w-full bg-transparent py-2.5 text-sm text-ink placeholder-faint focus:outline-none"
         />
-        {suffix && <span className="text-slate-400 text-sm ml-1">{suffix}</span>}
+        {suffix && <span className="text-faint text-sm ml-1">{suffix}</span>}
       </span>
-      {hint && <span className="block text-slate-500 text-xs">{hint}</span>}
+      {hint && <span className="block text-faint text-xs">{hint}</span>}
     </label>
   );
 }
@@ -58,14 +59,14 @@ function Segmented({ options, value, onChange }: {
   options: { label: string; value: string }[]; value: string; onChange: (v: string) => void;
 }) {
   return (
-    <div className="inline-flex rounded-xl bg-slate-700/60 border border-slate-600 p-1">
+    <div className="inline-flex rounded-xl bg-cream border border-line p-1">
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
           onClick={() => onChange(o.value)}
           className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
-            value === o.value ? "bg-blue-600 text-white" : "text-slate-300 hover:text-white"
+            value === o.value ? "bg-green text-cream" : "text-muted hover:text-ink"
           }`}
         >
           {o.label}
@@ -79,7 +80,7 @@ function BreakdownBar({ segments }: { segments: { label: string; value: number; 
   const total = segments.reduce((s, x) => s + x.value, 0) || 1;
   return (
     <div>
-      <div className="flex h-3 rounded-full overflow-hidden bg-slate-700 gap-[2px]">
+      <div className="flex h-3 rounded-full overflow-hidden bg-line gap-[2px]">
         {segments.map((s) => (
           <div key={s.label} style={{ width: `${(s.value / total) * 100}%`, background: s.color }} />
         ))}
@@ -88,8 +89,8 @@ function BreakdownBar({ segments }: { segments: { label: string; value: number; 
         {segments.map((s) => (
           <div key={s.label} className="flex items-center gap-2">
             <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: s.color }} />
-            <span className="text-xs text-slate-400">{s.label}</span>
-            <span className="text-xs text-white font-medium ml-auto">{usd(s.value)}</span>
+            <span className="text-xs text-muted">{s.label}</span>
+            <span className="text-xs text-ink font-medium ml-auto">{usd(s.value)}</span>
           </div>
         ))}
       </div>
@@ -118,9 +119,9 @@ function MortgageCalculator() {
   }, [price, downPct, rate, term, hoa]);
 
   return (
-    <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 md:p-8">
-      <h2 className="text-xl font-bold text-white mb-1">Monthly Payment Calculator</h2>
-      <p className="text-slate-400 text-sm mb-6">
+    <div className="bg-paper border border-line rounded-3xl p-6 md:p-8">
+      <h2 className="font-display text-2xl font-semibold text-ink mb-1 tracking-tight">Monthly Payment Calculator</h2>
+      <p className="text-muted text-sm mb-6">
         A realistic all-in estimate — principal, interest, Texas property taxes, and insurance.
       </p>
 
@@ -131,7 +132,7 @@ function MortgageCalculator() {
             hint={`${usd(r.down)} down · ${usd(r.loan)} loan`} />
           <NumberField label="Interest rate" value={rate} onChange={setRate} suffix="%" />
           <div className="space-y-1.5">
-            <span className="block text-xs font-medium text-slate-400 uppercase tracking-wide">Loan term</span>
+            <span className="block text-xs font-medium text-muted uppercase tracking-wide">Loan term</span>
             <Segmented value={term} onChange={setTerm}
               options={[{ label: "30 yr", value: "30" }, { label: "15 yr", value: "15" }]} />
           </div>
@@ -139,21 +140,21 @@ function MortgageCalculator() {
         </div>
 
         <div className="flex flex-col">
-          <div className="bg-gradient-to-br from-blue-950/60 to-slate-900 border border-blue-500/20 rounded-2xl p-6 text-center">
-            <p className="text-slate-400 text-xs uppercase tracking-wide">Estimated monthly payment</p>
-            <p className="text-4xl md:text-5xl font-bold text-white mt-2 tracking-tight">{usd(r.total)}</p>
-            <p className="text-slate-500 text-xs mt-1">per month</p>
+          <div className="bg-green rounded-2xl p-6 text-center text-cream">
+            <p className="text-cream/70 text-xs uppercase tracking-wide">Estimated monthly payment</p>
+            <p className="font-display text-4xl md:text-5xl font-semibold mt-2 tracking-tight">{usd(r.total)}</p>
+            <p className="text-cream/60 text-xs mt-1">per month</p>
           </div>
           <div className="mt-5">
             <BreakdownBar segments={[
-              { label: "Principal & interest", value: r.pi, color: "#3b82f6" },
-              { label: "Property tax", value: r.tax, color: "#8b5cf6" },
-              { label: "Insurance", value: r.ins, color: "#06b6d4" },
-              ...(r.hoaM > 0 ? [{ label: "HOA", value: r.hoaM, color: "#64748b" }] : []),
+              { label: "Principal & interest", value: r.pi, color: "#1c3b30" },
+              { label: "Property tax", value: r.tax, color: "#b0894f" },
+              { label: "Insurance", value: r.ins, color: "#6d8a7a" },
+              ...(r.hoaM > 0 ? [{ label: "HOA", value: r.hoaM, color: "#c2b8a3" }] : []),
             ]} />
           </div>
           <Link href="/start?role=buying"
-            className="mt-6 text-center px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors">
+            className="mt-6 text-center px-5 py-3 rounded-full bg-green hover:bg-green-600 text-cream text-sm font-medium transition-colors">
             Get pre-approved for this payment →
           </Link>
         </div>
@@ -189,11 +190,11 @@ function AffordabilityCalculator() {
   }, [income, debts, down, rate]);
 
   return (
-    <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 md:p-8">
-      <h2 className="text-xl font-bold text-white mb-1">How Much Home Can I Afford?</h2>
-      <p className="text-slate-400 text-sm mb-6">
-        Based on the 28/36 debt-to-income guideline lenders use. A starting point — real approval
-        depends on credit, program, and documentation.
+    <div className="bg-paper border border-line rounded-3xl p-6 md:p-8">
+      <h2 className="font-display text-2xl font-semibold text-ink mb-1 tracking-tight">How Much Home Can I Afford?</h2>
+      <p className="text-muted text-sm mb-6">
+        Based on the 28/36 debt-to-income guideline lenders use. A starting point — real approval depends
+        on credit, program, and documentation.
       </p>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -206,17 +207,17 @@ function AffordabilityCalculator() {
         </div>
 
         <div className="flex flex-col">
-          <div className="bg-gradient-to-br from-emerald-950/50 to-slate-900 border border-emerald-500/20 rounded-2xl p-6 text-center">
-            <p className="text-slate-400 text-xs uppercase tracking-wide">You could target homes up to</p>
-            <p className="text-4xl md:text-5xl font-bold text-white mt-2 tracking-tight">{usd(r.price)}</p>
-            <p className="text-slate-500 text-xs mt-1">~{usd(r.maxHousing)}/mo toward housing</p>
+          <div className="bg-green rounded-2xl p-6 text-center text-cream">
+            <p className="text-cream/70 text-xs uppercase tracking-wide">You could target homes up to</p>
+            <p className="font-display text-4xl md:text-5xl font-semibold mt-2 tracking-tight">{usd(r.price)}</p>
+            <p className="text-cream/60 text-xs mt-1">~{usd(r.maxHousing)}/mo toward housing</p>
           </div>
-          <p className="text-slate-500 text-xs leading-relaxed mt-5">
+          <p className="text-muted text-sm leading-relaxed mt-5">
             This keeps you inside the ratios most lenders want to see. Want to stretch it, or find
             down-payment assistance you qualify for? That&apos;s exactly what I help with.
           </p>
           <Link href="/start?role=buying"
-            className="mt-6 text-center px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-colors">
+            className="mt-6 text-center px-5 py-3 rounded-full bg-green hover:bg-green-600 text-cream text-sm font-medium transition-colors">
             Map out my buying plan →
           </Link>
         </div>
@@ -229,38 +230,41 @@ function AffordabilityCalculator() {
 
 export default function ToolsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+    <div className="min-h-screen bg-cream">
       <Nav />
-      <section className="pt-28 pb-10 px-4 text-center">
+      <section className="pt-32 pb-10 px-5 text-center">
         <div className="max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">
-            Run the <span className="text-blue-400">real numbers</span>
+          <p className="text-gold text-xs uppercase tracking-[0.2em] font-medium mb-3">Free tools</p>
+          <h1 className="font-display text-4xl md:text-6xl font-semibold text-ink mb-4 tracking-tight">
+            Run the real numbers
           </h1>
-          <p className="text-slate-300 leading-relaxed">
-            No sign-up, no email wall — free calculators built on {AGENT.serviceArea} tax and
-            insurance realities, so the number you see is the number you&apos;ll actually pay.
+          <p className="text-muted leading-relaxed">
+            No sign-up, no email wall — free calculators built on {AGENT.serviceArea} tax and insurance
+            realities, so the number you see is the number you&apos;ll actually pay.
           </p>
         </div>
       </section>
 
-      <section className="px-4 pb-24">
+      <section className="px-5 pb-24">
         <div className="max-w-4xl mx-auto space-y-8">
           <MortgageCalculator />
           <AffordabilityCalculator />
 
-          <div className="text-center bg-slate-800/40 border border-slate-700 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-white mb-2">Curious what your home is worth?</h2>
-            <p className="text-slate-400 max-w-lg mx-auto mb-6">
-              A calculator can&apos;t see your upgrades, your street, or today&apos;s buyer demand. I&apos;ll
-              put together a real, address-level valuation for you — free.
+          <div className="text-center bg-green text-cream rounded-3xl p-8 md:p-12">
+            <h2 className="font-display text-2xl md:text-3xl font-semibold mb-2 tracking-tight">Curious what your home is worth?</h2>
+            <p className="text-cream/80 max-w-lg mx-auto mb-6">
+              A calculator can&apos;t see your upgrades, your street, or today&apos;s buyer demand. I&apos;ll put
+              together a real, address-level valuation for you — free.
             </p>
             <Link href="/start?role=selling"
-              className="inline-block px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold transition-colors shadow-xl shadow-blue-900/50">
+              className="inline-block px-8 py-3.5 rounded-full bg-cream text-green font-medium hover:bg-white transition-colors">
               Get my free home valuation →
             </Link>
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }
