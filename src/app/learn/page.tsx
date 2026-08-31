@@ -62,18 +62,18 @@ const TOPICS = [
 
 export default function LearnPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+    <div className="min-h-screen bg-cream">
       <Nav />
 
       <div className="max-w-5xl mx-auto px-4 pt-32 pb-20">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/30 rounded-full px-4 py-1.5 mb-6">
-            <span className="text-blue-300 text-sm font-medium">Education Hub</span>
+          <div className="inline-flex items-center gap-2 bg-green/10 border border-green/30 rounded-full px-4 py-1.5 mb-6">
+            <span className="text-green text-sm font-medium">Education Hub</span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-4">
+          <h1 className="text-4xl font-bold text-ink mb-4">
             Everything You Need to Know
           </h1>
-          <p className="text-slate-400 max-w-xl mx-auto text-lg">
+          <p className="text-muted max-w-xl mx-auto text-lg">
             Real estate is one of the biggest financial decisions of your life. I believe you
             should understand every step, every cost, and every form — before you sign anything.
           </p>
@@ -84,14 +84,14 @@ export default function LearnPage() {
             <Link
               key={slug}
               href={`/learn/${slug}`}
-              className="group bg-slate-800/60 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/50 rounded-2xl p-6 transition-all hover:-translate-y-0.5"
+              className="group bg-paper hover:bg-paper border border-line hover:border-green/50 rounded-2xl p-6 transition-all hover:-translate-y-0.5"
             >
               <div className="text-3xl mb-4">{icon}</div>
-              <h2 className="text-white font-semibold text-lg mb-2 group-hover:text-blue-400 transition-colors">
+              <h2 className="text-ink font-semibold text-lg mb-2 group-hover:text-green transition-colors">
                 {title}
               </h2>
-              <p className="text-slate-400 text-sm leading-relaxed">{desc}</p>
-              <div className="mt-4 flex items-center gap-1.5 text-blue-400 text-xs font-medium">
+              <p className="text-muted text-sm leading-relaxed">{desc}</p>
+              <div className="mt-4 flex items-center gap-1.5 text-green text-xs font-medium">
                 Read guide
                 <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
@@ -102,10 +102,10 @@ export default function LearnPage() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-slate-500 text-sm mb-4">Have questions after reading? I&apos;m here to help.</p>
+          <p className="text-faint text-sm mb-4">Have questions after reading? I&apos;m here to help.</p>
           <Link
             href="/start"
-            className="inline-block px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all shadow-lg shadow-blue-900/40"
+            className="inline-block px-8 py-3 rounded-xl bg-green hover:bg-green-600 text-cream text-sm font-semibold transition-all shadow-lg"
           >
             Get in Touch →
           </Link>

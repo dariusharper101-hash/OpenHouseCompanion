@@ -735,7 +735,7 @@ function ExternalLinkList({ links }: { links: ResourceLink[] }) {
           className="flex items-start gap-2.5 group"
         >
           <svg
-            className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5 group-hover:text-blue-300 transition-colors"
+            className="w-4 h-4 text-green flex-shrink-0 mt-0.5 group-hover:text-green transition-colors"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -744,10 +744,10 @@ function ExternalLinkList({ links }: { links: ResourceLink[] }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
           </svg>
           <span>
-            <span className="text-blue-300 group-hover:text-blue-200 text-sm font-medium transition-colors underline-offset-2 group-hover:underline">
+            <span className="text-green group-hover:text-green text-sm font-medium transition-colors underline-offset-2 group-hover:underline">
               {l.label}
             </span>
-            {l.note && <span className="block text-slate-500 text-xs mt-0.5">{l.note}</span>}
+            {l.note && <span className="block text-faint text-xs mt-0.5">{l.note}</span>}
           </span>
         </a>
       ))}
@@ -766,36 +766,36 @@ export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
   const allTopics = Object.entries(CONTENT).filter(([slug]) => slug !== topic);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+    <div className="min-h-screen bg-cream">
       <Nav />
 
       <div className="max-w-3xl mx-auto px-4 pt-32 pb-20">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-8">
-          <Link href="/learn" className="hover:text-slate-300 transition-colors">Education Hub</Link>
+        <div className="flex items-center gap-2 text-sm text-faint mb-8">
+          <Link href="/learn" className="hover:text-muted transition-colors">Education Hub</Link>
           <span>/</span>
-          <span className="text-slate-400">{content.title}</span>
+          <span className="text-muted">{content.title}</span>
         </div>
 
         {/* Header */}
         <div className="mb-10">
           <div className="text-4xl mb-4">{content.icon}</div>
-          <h1 className="text-4xl font-bold text-white mb-3">{content.title}</h1>
-          <p className="text-slate-400 text-lg leading-relaxed">{content.subtitle}</p>
+          <h1 className="text-4xl font-bold text-ink mb-3">{content.title}</h1>
+          <p className="text-muted text-lg leading-relaxed">{content.subtitle}</p>
         </div>
 
         {/* Sections */}
         <div className="space-y-8">
           {content.sections.map((section, i) => (
-            <div key={i} className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-xl mb-3">{section.heading}</h2>
-              <p className="text-slate-300 text-sm leading-relaxed mb-4">{section.body}</p>
+            <div key={i} className="bg-paper border border-line rounded-2xl p-6">
+              <h2 className="text-ink font-bold text-xl mb-3">{section.heading}</h2>
+              <p className="text-muted text-sm leading-relaxed mb-4">{section.body}</p>
 
               {section.bullets && (
                 <ul className="space-y-2 mb-4">
                   {section.bullets.map((b, j) => (
-                    <li key={j} className="flex items-start gap-2.5 text-sm text-slate-300">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 flex-shrink-0 mt-2" />
+                    <li key={j} className="flex items-start gap-2.5 text-sm text-muted">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green flex-shrink-0 mt-2" />
                       {b}
                     </li>
                   ))}
@@ -803,8 +803,8 @@ export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
               )}
 
               {section.callout && (
-                <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl px-4 py-3 mt-4">
-                  <p className="text-blue-300 text-sm leading-relaxed">
+                <div className="bg-green/10 border border-green/30 rounded-xl px-4 py-3 mt-4">
+                  <p className="text-green text-sm leading-relaxed">
                     <span className="font-semibold">Key point: </span>
                     {section.callout}
                   </p>
@@ -812,8 +812,8 @@ export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
               )}
 
               {topic === "process" && PROCESS_STEP_LINKS[i] && (
-                <div className="mt-5 border-t border-slate-700/60 pt-4">
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2.5">
+                <div className="mt-5 border-t border-line pt-4">
+                  <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2.5">
                     Apply / Learn more
                   </p>
                   <ExternalLinkList links={PROCESS_STEP_LINKS[i]} />
@@ -825,9 +825,9 @@ export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
 
         {/* Resource links for this topic */}
         {RESOURCES[topic] && (
-          <div className="mt-8 bg-slate-800/50 border border-slate-700 rounded-2xl p-6">
-            <h3 className="text-white font-bold text-lg mb-1">Helpful Links &amp; Where to Apply</h3>
-            <p className="text-slate-500 text-xs mb-4 leading-relaxed">
+          <div className="mt-8 bg-paper border border-line rounded-2xl p-6">
+            <h3 className="text-ink font-bold text-lg mb-1">Helpful Links &amp; Where to Apply</h3>
+            <p className="text-faint text-xs mb-4 leading-relaxed">
               Official and third-party resources for research and applications — provided for your
               convenience, not as endorsements. Confirm current terms directly with each provider,
               and reach out to me anytime for a trusted referral.
@@ -837,14 +837,14 @@ export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
         )}
 
         {/* CTA */}
-        <div className="mt-10 bg-blue-600/10 border border-blue-500/30 rounded-2xl p-6 text-center">
-          <h3 className="text-white font-bold text-lg mb-2">{content.cta}</h3>
-          <p className="text-slate-400 text-sm mb-5">
+        <div className="mt-10 bg-green/10 border border-green/30 rounded-2xl p-6 text-center">
+          <h3 className="text-ink font-bold text-lg mb-2">{content.cta}</h3>
+          <p className="text-muted text-sm mb-5">
             This is what I do — help you understand exactly where you stand before you commit to anything.
           </p>
           <Link
             href="/start"
-            className="inline-block px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all shadow-lg shadow-blue-900/40"
+            className="inline-block px-8 py-3 rounded-xl bg-green hover:bg-green-600 text-cream text-sm font-semibold transition-all shadow-lg"
           >
             Talk to Me About This →
           </Link>
@@ -852,21 +852,21 @@ export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
 
         {/* Other topics */}
         <div className="mt-12">
-          <h3 className="text-white font-semibold mb-4">More Education Topics</h3>
+          <h3 className="text-ink font-semibold mb-4">More Education Topics</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {allTopics.slice(0, 4).map(([slug, c]) => (
               <Link
                 key={slug}
                 href={`/learn/${slug}`}
-                className="flex items-center gap-3 bg-slate-800/50 hover:bg-slate-800 border border-slate-700 hover:border-blue-500/40 rounded-xl p-4 transition-all group"
+                className="flex items-center gap-3 bg-paper hover:bg-paper border border-line hover:border-green/40 rounded-xl p-4 transition-all group"
               >
                 <span className="text-xl">{c.icon}</span>
-                <span className="text-slate-300 group-hover:text-white text-sm font-medium transition-colors">{c.title}</span>
+                <span className="text-muted group-hover:text-ink text-sm font-medium transition-colors">{c.title}</span>
               </Link>
             ))}
           </div>
           <div className="mt-3 text-center">
-            <Link href="/learn" className="text-blue-400 hover:text-blue-300 text-sm transition-colors">
+            <Link href="/learn" className="text-green hover:text-green text-sm transition-colors">
               View all topics →
             </Link>
           </div>

@@ -89,21 +89,21 @@ export default async function ThankYouPage({ searchParams }: Props) {
   const isBuying = role === "buying" || role === "both";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900">
+    <div className="min-h-screen bg-cream">
       <Nav />
 
       <div className="max-w-2xl mx-auto px-4 pt-32 pb-20">
         {/* Success header */}
         <div className="text-center mb-10">
-          <div className="w-20 h-20 rounded-full bg-blue-500/20 border-2 border-blue-400/40 flex items-center justify-center mx-auto mb-4">
-            <svg className="w-10 h-10 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="w-20 h-20 rounded-full bg-green/10 border-2 border-green/40 flex items-center justify-center mx-auto mb-4">
+            <svg className="w-10 h-10 text-green" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">
+          <h1 className="text-3xl font-bold text-ink mb-2">
             Got it, {name}!
           </h1>
-          <p className="text-slate-400 max-w-sm mx-auto">
+          <p className="text-muted max-w-sm mx-auto">
             I&apos;ll review your information and reach out within 24 hours to talk through your situation and next steps.
           </p>
         </div>
@@ -111,30 +111,30 @@ export default async function ThankYouPage({ searchParams }: Props) {
         {/* Program qualifications */}
         {isBuying && programs.length > 0 && (
           <div className="mb-8">
-            <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6">
-              <h2 className="text-white font-bold text-lg mb-1">
+            <div className="bg-paper border border-line rounded-2xl p-6">
+              <h2 className="text-ink font-bold text-lg mb-1">
                 Programs You May Qualify For
               </h2>
-              <p className="text-slate-400 text-sm mb-5">
+              <p className="text-muted text-sm mb-5">
                 Based on your answers, here are programs worth discussing. Final qualification
                 requires a full application — these are strong starting points.
               </p>
               <div className="space-y-4">
                 {programs.map(({ name: prog, badge, desc }) => (
-                  <div key={prog} className="flex items-start gap-4 bg-slate-700/40 rounded-xl p-4 border border-slate-600">
+                  <div key={prog} className="flex items-start gap-4 bg-cream rounded-xl p-4 border border-line">
                     <div className="flex-shrink-0">
-                      <span className="inline-block bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-semibold px-2.5 py-1 rounded-full">
+                      <span className="inline-block bg-green/20 border border-green/40 text-green text-xs font-semibold px-2.5 py-1 rounded-full">
                         {badge}
                       </span>
                     </div>
                     <div>
-                      <p className="text-white text-sm font-semibold mb-1">{prog}</p>
-                      <p className="text-slate-400 text-xs leading-relaxed">{desc}</p>
+                      <p className="text-ink text-sm font-semibold mb-1">{prog}</p>
+                      <p className="text-muted text-xs leading-relaxed">{desc}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <p className="text-slate-600 text-xs mt-4">
+              <p className="text-faint text-xs mt-4">
                 We&apos;ll go through all of these together. I&apos;ll also check for any county-specific or
                 employer-based programs that may apply to you.
               </p>
@@ -143,8 +143,8 @@ export default async function ThankYouPage({ searchParams }: Props) {
         )}
 
         {/* What happens next */}
-        <div className="bg-slate-800/60 border border-slate-700 rounded-2xl p-6 mb-8">
-          <h2 className="text-white font-bold text-lg mb-4">What Happens Next</h2>
+        <div className="bg-paper border border-line rounded-2xl p-6 mb-8">
+          <h2 className="text-ink font-bold text-lg mb-4">What Happens Next</h2>
           <div className="space-y-4">
             {[
               {
@@ -171,12 +171,12 @@ export default async function ThankYouPage({ searchParams }: Props) {
               },
             ].map(({ n, title, desc }) => (
               <div key={n} className="flex items-start gap-4">
-                <div className="w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-7 h-7 rounded-full bg-green text-cream text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
                   {n}
                 </div>
                 <div>
-                  <p className="text-white text-sm font-medium">{title}</p>
-                  <p className="text-slate-400 text-xs mt-0.5 leading-relaxed">{desc}</p>
+                  <p className="text-ink text-sm font-medium">{title}</p>
+                  <p className="text-muted text-xs mt-0.5 leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
@@ -184,17 +184,17 @@ export default async function ThankYouPage({ searchParams }: Props) {
         </div>
 
         {/* Education CTA */}
-        <div className="bg-blue-600/10 border border-blue-500/30 rounded-2xl p-6 text-center">
-          <h2 className="text-white font-bold text-lg mb-2">
+        <div className="bg-green/10 border border-green/30 rounded-2xl p-6 text-center">
+          <h2 className="text-ink font-bold text-lg mb-2">
             While you wait — get informed
           </h2>
-          <p className="text-slate-400 text-sm mb-5">
+          <p className="text-muted text-sm mb-5">
             Head to the Education Hub to learn exactly what to expect: taxes, insurance,
             inspections, warranties, contracts, and the full process from start to finish.
           </p>
           <Link
             href="/learn"
-            className="inline-block px-8 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold transition-all shadow-lg shadow-blue-900/40"
+            className="inline-block px-8 py-3 rounded-xl bg-green hover:bg-green-600 text-cream text-sm font-semibold transition-all shadow-lg"
           >
             Explore the Education Hub →
           </Link>
