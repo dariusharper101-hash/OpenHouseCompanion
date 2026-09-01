@@ -9,9 +9,11 @@ whole house-list tool client-side. Deployed publicly at:
 - **Client list** — a light, editorial presentation (Fraunces/Inter, photo-forward
   cards, prominent price, status + days-on-market pills), grouped by area and sorted
   by days on market.
-- **Agent builder** (`/#builder`) — enter homes; **add a photo from your phone or
-  computer** (device upload; images are resized/compressed in the browser); set
-  price, days on market, beds/baths/sqft, status, notes; reorder; paste-import.
+- **Agent builder** (`/#builder`) — **paste your homes straight from Notes or MLS**
+  and it auto-extracts each home's price, beds, baths, sq ft, days on market, and
+  listing link (anything left over becomes the home's note). Add a photo from your
+  phone or computer (resized/compressed in the browser); edit any field; reorder.
+  "Add homes from paste" appends; "Replace list with paste" swaps the whole list.
 - **Share** — the builder serializes the list into the URL hash and gives you a
   compact `/#c=...` client link. No database. Send it by text, email, or social; the
   client sees only the finished presentation.
