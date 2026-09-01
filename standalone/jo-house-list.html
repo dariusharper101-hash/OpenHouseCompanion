@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jo's House List — Hop In Real Estate</title>
+<title>Home List — Hop In Real Estate</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,10 +23,10 @@ window.tailwind&&(window.tailwind.config={theme:{extend:{
 // ---- Agent ----
 const AGENT={appName:"Hop In Real Estate",name:"Darius Harper",title:"REALTOR®",license:"0847860",phone:"(870) 718-0974",email:"DariusHarper@kw.com",brokerage:"Keller Williams DPR",instagram:"https://www.instagram.com/hopinrealestate",facebook:"https://www.facebook.com/share/199UeSkPuT/"};
 const initials="DH";
-// ---- Default list (Jo's) — addresses + links only; agent fills price/photos/DOM ----
+// ---- Sample list — addresses + links only; agent fills price/photos/DOM ----
 const P=(l)=>"https://us-east.prospects.com/prospects/m.do?tk="+l;
 function h(street,zip,tk){return{street,city:"Dallas",state:"TX",zip,link:P(tk),photo:"",daysOnMarket:null,price:null,beds:null,baths:null,sqft:null,status:"active",note:""}}
-const DEFAULT={name:"Jo's House List",updatedOn:"August 19, 2026",homes:[
+const DEFAULT={name:"Home List",updatedOn:"August 19, 2026",homes:[
 h("416 Mount Auburn Ave","75223","8cb98cacad611e36de56798e03a17495"),
 h("713 Wayne St","75223","62d4694371e217cb213dc524d148aa89"),
 h("1018 Grandview Ave","75223","981dc69537bf2e6c8498d67ea9aebf24"),
@@ -151,8 +151,8 @@ document.querySelectorAll("[data-mv]").forEach(el=>el.onclick=()=>{const i=+el.d
 document.getElementById("badd").onclick=()=>{B.homes.push(blank());rerender()};
 document.getElementById("bimp").onclick=()=>{const p=parseBulk(document.getElementById("bulk").value);if(p.length){B.homes=B.homes.concat(p);document.getElementById("bulk").value="";rerender()}else alert("Couldn't find any homes in that paste. Make sure each home starts with a street address (e.g. 416 Mount Auburn Ave).")};
 document.getElementById("bimpr").onclick=()=>{const p=parseBulk(document.getElementById("bulk").value);if(!p.length){alert("Couldn't find any homes in that paste. Make sure each home starts with a street address.");return}if(B.homes.length&&!confirm("Replace all "+B.homes.length+" current home(s) with the "+p.length+" pasted home(s)?"))return;B.homes=p;document.getElementById("bulk").value="";rerender()};
-document.getElementById("brs").onclick=()=>{if(confirm("Replace the current list with Jo's default list?")){B=JSON.parse(JSON.stringify(DEFAULT));rerender()}};
-document.getElementById("bca").onclick=()=>{if(confirm("Remove all homes and start blank?")){B={name:"My House List",updatedOn:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),homes:[]};rerender()}};
+document.getElementById("brs").onclick=()=>{if(confirm("Load the sample homes? This replaces the current list.")){B=JSON.parse(JSON.stringify(DEFAULT));rerender()}};
+document.getElementById("bca").onclick=()=>{if(confirm("Remove all homes and start a new client list?")){B={name:"Home List",updatedOn:new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"}),homes:[]};rerender()}};
 document.getElementById("bcl").onclick=e=>{copyText(link);flash(e.target,"Client link copied!")};
 document.getElementById("bct").onclick=e=>{copyText(textList(B));flash(e.target,"Text copied!")};
 }
@@ -180,10 +180,10 @@ function bBar(link){return `<div class="sticky top-16 z-40 mb-8 flex flex-wrap i
 <button id="bct" class="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Copy text version</button>
 <a href="${esc(link)}" target="_blank" rel="noopener noreferrer" class="rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Preview client view ↗</a>
 <span class="hidden text-xs text-neutral-400 sm:inline">Link ${kb(link)} · light &amp; easy to send${photosInLink(B)?' · your uploaded photos stay in this preview, not in the link':''}</span>
-<div class="ml-auto flex gap-1"><button id="brs" class="rounded-full px-3 py-2 text-xs text-neutral-500 hover:text-ink">Reset to Jo's list</button><button id="bca" class="rounded-full px-3 py-2 text-xs text-neutral-400 hover:text-red-600">Clear all</button></div></div>
+<div class="ml-auto flex gap-1"><button id="brs" class="rounded-full px-3 py-2 text-xs text-neutral-500 hover:text-ink">Load sample homes</button><button id="bca" class="rounded-full px-3 py-2 text-xs text-neutral-400 hover:text-red-600">Clear all</button></div></div>
  `}
 function bMeta(){return `<section class="mb-6 grid gap-4 rounded-2xl bg-white p-5 ring-1 ring-black/[0.06] shadow-sm sm:grid-cols-2">
-<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">List name</span><input id="mname" value="${esc(B.name)}" class="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none"></label>
+<label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">List name (use your client's name)</span><input id="mname" value="${esc(B.name)}" placeholder="e.g. Sarah's Home List" class="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none"></label>
 <label class="block"><span class="mb-1 block text-[11px] font-medium uppercase tracking-wide text-neutral-500">Updated date (shown to client)</span><input id="mdate" value="${esc(B.updatedOn)}" class="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none"></label></section>
  `}
 function bBulk(){return `<section class="mb-6 rounded-2xl bg-white p-5 ring-1 ring-black/[0.06] shadow-sm"><h2 class="text-sm font-semibold text-ink">Paste from your Notes or MLS</h2><p class="mt-1 text-xs text-neutral-500">Paste your homes exactly as you have them — one home per block, a blank line between homes. It automatically pulls out the <strong class="text-ink">price, beds, baths, sq ft, days on market, and link</strong>. Anything extra becomes the home's note. You can fine-tune each home below afterward.</p>
