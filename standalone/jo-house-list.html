@@ -76,43 +76,73 @@ const esc=s=>String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").rep
 const STC={active:"text-emerald-700",pending:"text-amber-700","coming-soon":"text-blue-700",sold:"text-neutral-500"};
 const STD={active:"bg-emerald-500",pending:"bg-amber-500","coming-soon":"bg-blue-500",sold:"bg-neutral-400"};
 const STL={active:"Active",pending:"Pending","coming-soon":"Coming soon",sold:"Sold"};
+// ---- client favorites (saved on the viewer's own phone) ----
+let FAVS=new Set(),CP=null,CFILT="all";
+const favKey=x=>(x.street||"")+"|"+(x.zip||"");
+const favStoreKey=name=>"clientFavs:"+(name||"");
+function loadFavs(name){try{const r=localStorage.getItem(favStoreKey(name));return new Set(r?JSON.parse(r):[])}catch(e){return new Set()}}
+function saveFavs(name){try{localStorage.setItem(favStoreKey(name),JSON.stringify([...FAVS]))}catch(e){}}
+const mapUrl=x=>"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent([x.street,x.city,x.state,x.zip].filter(Boolean).join(", "));
 function statCell(v,l){return `<div class="flex items-baseline gap-1"><span class="font-semibold text-ink">${esc(v)}</span><span class="text-neutral-500">${l}</span></div>`}
-function cardHTML(x){const price=money(x.price);const note=pubNote(x);let st=[];if(x.beds!=null)st.push(statCell(x.beds,"bd"));if(x.baths!=null)st.push(statCell(x.baths,"ba"));if(x.sqft!=null)st.push(statCell(Number(x.sqft).toLocaleString("en-US"),"sqft"));
- const media=x.photo?`<img src="${esc(x.photo)}" alt="${esc(x.street)}" loading="lazy" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]">`:`<div class="flex h-full w-full flex-col items-center justify-center gap-2 bg-neutral-100 text-neutral-400"><svg class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.5 1.5 0 012.092 0L22.25 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75"/></svg><span class="text-[11px] uppercase tracking-widest">Photo coming soon</span></div>`;
- const priceBar=price?`<div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/25 to-transparent p-4"><div class="font-serif text-2xl font-semibold text-white drop-shadow">${esc(price)}</div></div>`:"";
+function cardHTML(x){const price=money(x.price);const note=pubNote(x);const on=FAVS.has(favKey(x));let st=[];if(x.beds!=null)st.push(statCell(x.beds,"bd"));if(x.baths!=null)st.push(statCell(x.baths,"ba"));if(x.sqft!=null)st.push(statCell(Number(x.sqft).toLocaleString("en-US"),"sqft"));
+ const media=x.photo?`<img src="${esc(x.photo)}" alt="${esc(x.street)}" loading="lazy" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]">`:`<div class="flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br from-neutral-100 to-neutral-200 text-neutral-400"><svg class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M18 15V6a2.25 2.25 0 00-2.25-2.25H6A2.25 2.25 0 003.75 6v12a2.25 2.25 0 002.25 2.25h9.75"/></svg><span class="text-[11px] uppercase tracking-widest">${x.link?"Tap to view photos":"Photos on listing"}</span></div>`;
+ const heart=`<button type="button" data-fav="${esc(favKey(x))}" aria-pressed="${on}" title="Save this home" class="fav absolute right-3 top-3 z-20 flex h-9 w-9 items-center justify-center rounded-full shadow-sm ring-1 ring-black/10 transition hover:scale-110 ${on?"bg-rose-600 text-white":"bg-white/90 text-neutral-600"}"><svg class="h-5 w-5" viewBox="0 0 24 24" fill="${on?"currentColor":"none"}" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg></button>`;
+ const grad=`<div class="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/75 via-black/25 to-transparent p-4">${price?`<div class="font-serif text-2xl font-semibold text-white drop-shadow">${esc(price)}</div>`:"<span></span>"}${x.link?`<span class="inline-flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-[11px] font-semibold text-ink shadow-sm">See all photos <span aria-hidden="true">→</span></span>`:""}</div>`;
 return `<article class="group flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-black/[0.06] shadow-sm transition-shadow duration-300 hover:shadow-xl">
 <div class="relative aspect-[4/3] overflow-hidden">${media}
-<div class="absolute left-3 top-3 flex flex-wrap gap-2">
+${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" class="absolute inset-0 z-10" aria-label="See all photos for ${esc(x.street)}"></a>`:""}
+<div class="absolute left-3 top-3 z-20 flex flex-wrap gap-2">
 <span class="inline-flex items-center gap-1.5 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-semibold shadow-sm ${STC[x.status]||STC.active}"><span class="h-1.5 w-1.5 rounded-full ${STD[x.status]||STD.active}"></span>${STL[x.status]||"Active"}</span>
-<span class="inline-flex items-center rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">${esc(dom(x.daysOnMarket))}</span></div>${priceBar}</div>
+<span class="inline-flex items-center rounded-full bg-black/55 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur">${esc(dom(x.daysOnMarket))}</span></div>${heart}${grad}</div>
 <div class="flex flex-1 flex-col p-4">
 <h3 class="font-serif text-lg leading-tight text-ink">${esc(x.street||"Untitled home")}</h3>
 <p class="mt-0.5 text-sm text-neutral-500">${esc(x.city)}, ${esc(x.state)} ${esc(x.zip)}</p>
 ${st.length?`<div class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600">${st.join('<span class="text-neutral-300">·</span>')}</div>`:""}
 ${note?`<p class="mt-3 text-sm text-neutral-600">${esc(note)}</p>`:""}
-<div class="mt-auto pt-4">${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:gap-2.5 transition-all">View listing &amp; photos <span aria-hidden="true">→</span></a>`:""}</div>
-</div></article>`}
+<div class="mt-auto flex items-center gap-4 pt-4 text-sm font-semibold">
+${x.link?`<a href="${esc(x.link)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-brand hover:gap-2.5 transition-all">Photos <span aria-hidden="true">→</span></a>`:""}
+<a href="${esc(mapUrl(x))}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-neutral-600 hover:text-ink">Map</a>
+<button type="button" data-fav="${esc(favKey(x))}" class="fav ml-auto inline-flex items-center gap-1.5 ${on?"text-rose-600":"text-neutral-500 hover:text-rose-600"}">${on?"♥ Saved":"♡ Save"}</button>
+</div></div></article>`}
 function presentation(homes){if(!homes.length)return `<div class="rounded-2xl border border-dashed border-neutral-300 bg-white/50 p-12 text-center text-neutral-400">No homes yet.</div>`;
 return `<div class="space-y-14">`+grouped(homes).map(g=>`<section><div class="mb-6 flex items-baseline justify-between border-b border-black/10 pb-3"><h2 class="font-serif text-2xl text-ink">${esc(g.n)}</h2><span class="text-sm text-neutral-500">${g.homes.length} ${g.homes.length===1?"home":"homes"}</span></div><div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">${g.homes.map(cardHTML).join("")}</div></section>`).join("")+`</div>`}
 function agentFooter(){return `<footer class="mt-20 overflow-hidden rounded-2xl bg-white ring-1 ring-black/[0.06] shadow-sm"><div class="flex flex-col items-center gap-5 p-7 text-center sm:flex-row sm:text-left"><div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-blue-800 font-serif text-xl font-semibold text-white">${initials}</div><div class="flex-1"><p class="font-serif text-xl text-ink">${esc(AGENT.name)} <span class="text-neutral-400">·</span> <span class="text-base text-brand">${esc(AGENT.title)}</span></p><p class="text-sm text-neutral-500">${esc(AGENT.brokerage)}</p><div class="mt-2 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm sm:justify-start"><a href="tel:${esc(AGENT.phone.replace(/[^\d+]/g,""))}" class="font-medium text-brand hover:underline">${esc(AGENT.phone)}</a><a href="mailto:${esc(AGENT.email)}" class="font-medium text-brand hover:underline">${esc(AGENT.email)}</a></div></div></div><p class="border-t border-black/[0.06] px-7 py-3 text-center text-xs text-neutral-400 sm:text-left">TREC License #${esc(AGENT.license)} · Information deemed reliable but not guaranteed — verify all details independently.</p></footer>`}
 function nav(){return `<nav class="sticky top-0 z-50 border-b border-black/[0.06] bg-paper/85 backdrop-blur"><div class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5"><a href="#" class="flex items-center gap-2.5"><span class="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-white"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955a1.5 1.5 0 012.092 0L22.25 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg></span><span class="flex flex-col leading-none"><span class="font-serif text-base font-semibold text-ink">${esc(AGENT.appName)}</span><span class="mt-0.5 text-[11px] text-neutral-500">with ${esc(AGENT.name)} · ${esc(AGENT.brokerage)}</span></span></a><a href="#builder" class="rounded-full border border-brand/20 bg-brand/[0.06] px-4 py-1.5 text-sm font-semibold text-brand hover:bg-brand/10">Builder</a></div></nav>`}
 // ---- client list view ----
-function renderList(p){document.title=p.name+" — "+AGENT.appName;
-document.getElementById("app").innerHTML=nav()+`<div class="mx-auto max-w-6xl px-5 pb-24 pt-12">
-<header class="mb-12 max-w-2xl">
+function chip(label,val,active){return `<button type="button" data-filt="${esc(val)}" class="chip rounded-full px-4 py-1.5 text-sm font-semibold transition ${active?"bg-brand text-white shadow-sm":"border border-black/10 bg-white text-ink hover:bg-neutral-50"}">${label}</button>`}
+function favBar(){const n=CP.homes.filter(x=>FAVS.has(favKey(x))).length;if(!n)return "";const nm=esc(AGENT.name.split(" ")[0]);
+return `<div class="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white/95 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] backdrop-blur"><div class="mx-auto flex max-w-6xl items-center gap-3 px-5 py-3"><span class="text-sm font-semibold text-ink">♥ ${n} saved</span><div class="ml-auto flex gap-2"><button id="favtxt" class="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-800">Text my favorites to ${nm}</button><button id="favmail" class="rounded-full border border-black/10 bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-neutral-50">Email</button></div></div></div>`}
+function renderList(p){document.title=p.name+" — "+AGENT.appName;CP=p;CFILT="all";FAVS=loadFavs(p.name);paintList()}
+function paintList(){const p=CP;const areas=[...new Set(p.homes.map(hoodOf))];const favN=p.homes.filter(x=>FAVS.has(favKey(x))).length;
+ const shown=CFILT==="all"?p.homes:CFILT==="__fav"?p.homes.filter(x=>FAVS.has(favKey(x))):p.homes.filter(x=>hoodOf(x)===CFILT);
+ const chips=`<div class="mb-8 flex flex-wrap gap-2">`+chip("All homes","all",CFILT==="all")+(areas.length>1?areas.map(a=>chip(a,a,CFILT===a)).join(""):"")+(favN?chip("♥ Saved · "+favN,"__fav",CFILT==="__fav"):"")+`</div>`;
+ const body=(CFILT==="__fav"&&!shown.length)?`<div class="rounded-2xl border border-dashed border-neutral-300 bg-white/50 p-12 text-center text-neutral-400">No saved homes yet — tap <span class="font-semibold text-rose-600">♡ Save</span> on the ones you love.</div>`:presentation(shown);
+document.getElementById("app").innerHTML=nav()+`<div class="mx-auto max-w-6xl px-5 pb-28 pt-12">
+<header class="mb-8 max-w-2xl">
 <div class="text-xs font-semibold uppercase tracking-[0.22em] text-brand">Curated Home List</div>
 <h1 class="mt-3 font-serif text-4xl leading-[1.05] text-ink sm:text-5xl">${esc(p.name)}</h1>
-<p class="mt-4 text-neutral-500">${p.homes.length} ${p.homes.length===1?"home":"homes"} across Dallas · organized by area and days on market · Updated ${esc(p.updatedOn)}</p>
+<p class="mt-4 text-neutral-500">${p.homes.length} ${p.homes.length===1?"home":"homes"} · tap any home for photos · save the ones you love · Updated ${esc(p.updatedOn)}</p>
 <div class="mt-7 flex flex-wrap gap-3">
 <button id="ct" class="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800">Copy text list</button>
 <button id="cl" class="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-neutral-50">Copy page link</button>
 <button onclick="window.print()" class="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-semibold text-ink transition hover:bg-neutral-50">Print / Save PDF</button>
 </div></header>
-${presentation(p.homes)}${agentFooter()}
-<p class="mt-8 text-center"><a href="#builder" class="text-xs text-neutral-400 hover:text-neutral-600">Agent tools</a></p></div>`;
- const t=textList(p);
-document.getElementById("ct").onclick=e=>{copyText(t);flash(e.target,"Copied!")};
-document.getElementById("cl").onclick=e=>{copyText(location.href);flash(e.target,"Link copied!")};}
+${chips}${body}${agentFooter()}
+<p class="mt-8 text-center"><a href="#builder" class="text-xs text-neutral-400 hover:text-neutral-600">Agent tools</a></p></div>`+favBar();
+ wireClient();}
+function wireClient(){const p=CP,t=textList(p);
+ const ct=document.getElementById("ct");if(ct)ct.onclick=e=>{copyText(t);flash(e.target,"Copied!")};
+ const cl=document.getElementById("cl");if(cl)cl.onclick=e=>{copyText(location.href);flash(e.target,"Link copied!")};
+document.querySelectorAll(".chip").forEach(el=>el.onclick=()=>{CFILT=el.dataset.filt;paintList()});
+document.querySelectorAll(".fav").forEach(el=>el.onclick=()=>{const k=el.dataset.fav;if(FAVS.has(k))FAVS.delete(k);else FAVS.add(k);saveFavs(p.name);paintList()});
+ const ftx=document.getElementById("favtxt");if(ftx)ftx.onclick=()=>sendFavs("sms");
+ const fml=document.getElementById("favmail");if(fml)fml.onclick=()=>sendFavs("mail");}
+function sendFavs(mode){const p=CP,favs=p.homes.filter(x=>FAVS.has(favKey(x)));if(!favs.length)return;
+ const lines=favs.map(x=>{const b=money(x.price)?" ("+money(x.price)+")":"";return "• "+x.street+", "+x.city+" "+x.zip+b}).join("\n");
+ const nm=AGENT.name.split(" ")[0];
+ const body="Hi "+nm+", I'd like to see these homes from "+p.name+":\n\n"+lines+"\n\n"+location.href;
+ if(mode==="sms"){location.href="sms:"+AGENT.phone.replace(/[^\d+]/g,"")+"?&body="+encodeURIComponent(body)}
+ else{location.href="mailto:"+encodeURIComponent(AGENT.email)+"?subject="+encodeURIComponent("Homes I like — "+p.name)+"&body="+encodeURIComponent(body)}}
 function copyText(t){navigator.clipboard&&navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t))||fallbackCopy(t)}
 function fallbackCopy(t){const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(a)}
 function flash(el,msg){const o=el.textContent;el.textContent="✓ "+msg;setTimeout(()=>el.textContent=o,1600)}

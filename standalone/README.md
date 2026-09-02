@@ -8,7 +8,11 @@ whole house-list tool client-side. Deployed publicly at:
 ## What it does
 - **Client list** — a light, editorial presentation (Fraunces/Inter, photo-forward
   cards, prominent price, status + days-on-market pills), grouped by area and sorted
-  by days on market.
+  by days on market. The client experience is app-like: the whole photo area of each
+  card **taps through to the listing's full gallery** (no photo uploads needed);
+  clients **♥ Save** homes (kept on their own device), **filter** by All / area /
+  ♥ Saved, open a **Map** per home, and tap **"Text my favorites to <agent>"** to
+  send the agent an SMS (or email) listing exactly which homes they liked.
 - **Agent builder** (`/#builder`) — **paste your homes straight from Notes or MLS**
   and it auto-extracts each home's price, beds, baths, sq ft, days on market, and
   listing link (anything left over becomes the home's note). Add a photo from your
