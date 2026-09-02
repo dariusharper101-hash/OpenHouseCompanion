@@ -140,7 +140,7 @@ document.querySelectorAll(".fav").forEach(el=>el.onclick=()=>{const k=el.dataset
 function sendFavs(mode){const p=CP,favs=p.homes.filter(x=>FAVS.has(favKey(x)));if(!favs.length)return;
  const lines=favs.map(x=>{const b=money(x.price)?" ("+money(x.price)+")":"";return "• "+x.street+", "+x.city+" "+x.zip+b}).join("\n");
  const nm=AGENT.name.split(" ")[0];
- const body="Hi "+nm+", I'd like to see these homes from "+p.name+":\n\n"+lines+"\n\n"+location.href;
+ const body="Hi "+nm+", I'd like to see these homes from "+p.name+":\n\n"+lines;
  if(mode==="sms"){location.href="sms:"+AGENT.phone.replace(/[^\d+]/g,"")+"?&body="+encodeURIComponent(body)}
  else{location.href="mailto:"+encodeURIComponent(AGENT.email)+"?subject="+encodeURIComponent("Homes I like — "+p.name)+"&body="+encodeURIComponent(body)}}
 function copyText(t){navigator.clipboard&&navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t))||fallbackCopy(t)}
