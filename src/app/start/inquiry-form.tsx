@@ -6,6 +6,7 @@ import Link from "next/link";
 import { BrandMasthead } from "@/components/brand";
 import { JOURNEY_PLAN_KEY, parseJourneyBrief, journeyToInquiry, type JourneyBrief } from "@/lib/journey-brief";
 import { BUYER_PLAN_KEY, parseBuyerPlan, planToInquiry } from "@/lib/buyer-plan";
+import { RENT_BUDGETS } from "@/config/rental";
 import type {
   LeadFormData,
   ClientRole,
@@ -98,10 +99,7 @@ const SELLER_TIMELINES = [
 
 // Rental (leasing) options — reuse the shared Lead fields (budgetMin holds the
 // monthly range, timeline holds the move-in window, neighborhoods holds areas).
-const RENT_BUDGETS = [
-  "Under $1,000/mo", "$1,000 – $1,500/mo", "$1,500 – $2,000/mo",
-  "$2,000 – $2,500/mo", "$2,500 – $3,500/mo", "$3,500+/mo",
-];
+// RENT_BUDGETS lives in src/config/rental.ts (shared with /specials).
 
 const MOVEIN_LABELS: Record<BuyerTimeline, string> = {
   "to-confirm": "To discuss / confirm together",

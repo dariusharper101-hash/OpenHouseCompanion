@@ -66,15 +66,29 @@ export const LEAD_STATUSES: LeadStatus[] = [
 //   website    → the Hop In Real Estate site (hopinrealestate.com) intake form
 //   social     → the Hop In Real Estate social funnel
 //   open-house → the Open House Companion visitor sign-in (separate app)
-export type LeadProduct = "open-house" | "social" | "website";
+//   specials-guide → the DFW move-in specials guide page (/specials)
+export type LeadProduct = "open-house" | "social" | "website" | "specials-guide";
 
-export const LEAD_PRODUCTS: LeadProduct[] = ["website", "social", "open-house"];
+export const LEAD_PRODUCTS: LeadProduct[] = ["website", "social", "open-house", "specials-guide"];
 
 export const PRODUCT_LABELS: Record<LeadProduct, string> = {
   website: "Hop In Real Estate",
   social: "Social Media",
   "open-house": "Open House",
+  "specials-guide": "Specials Guide",
 };
+
+// TCPA consent record. Stored with the lead so the exact wording the renter
+// saw (and when) can always be produced. `tcpa: false` means they did not opt in.
+export interface LeadConsent {
+  tcpa: boolean;
+  at: string;        // ISO timestamp of submission
+  version: string;   // TCPA_CONSENT.version shown on the page
+  text: string;      // the exact consent text shown
+  ip: string;
+  userAgent: string;
+  pageUrl: string;
+}
 
 export interface LeadFormData {
   // Identity
@@ -124,6 +138,10 @@ export interface LeadFormData {
   notes: string;
   source: string;
   product: LeadProduct;
+
+  // Specials guide (optional; only set by /api/specials)
+  moveMonth?: string;
+  consent?: LeadConsent;
 }
 
 export interface Lead extends LeadFormData {

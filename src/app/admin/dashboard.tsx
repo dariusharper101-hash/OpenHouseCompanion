@@ -25,6 +25,7 @@ const PRODUCT_STYLES: Record<LeadProduct, string> = {
   website: "bg-blue-500/15 text-blue-300 border-blue-500/30",
   social: "bg-pink-500/15 text-pink-300 border-pink-500/30",
   "open-house": "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
+  "specials-guide": "bg-amber-500/15 text-amber-300 border-amber-500/30",
 };
 
 // Short labels for the compact table badge (full names live in PRODUCT_LABELS).
@@ -32,6 +33,7 @@ const PRODUCT_BADGES: Record<LeadProduct, string> = {
   website: "Hop In",
   social: "Social",
   "open-house": "Open House",
+  "specials-guide": "Specials",
 };
 
 const ROLE_LABELS: Record<string, string> = {
