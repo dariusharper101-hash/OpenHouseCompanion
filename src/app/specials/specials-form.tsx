@@ -42,12 +42,8 @@ function prefersReducedMotion() {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-const inputCls = (error?: string) =>
-  cls(
-    "w-full min-h-12 bg-paper border-2 rounded-lg px-4 py-3 text-base text-ink placeholder-muted",
-    "focus:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-cream",
-    error ? "border-red-700" : "border-line-strong"
-  );
+// Live Hop field; aria-invalid drives the error colours (public/brand/system.css).
+const inputCls = () => "hop-field";
 
 // A native radio/checkbox styled as a 48px chip: keyboard and screen-reader
 // behaviour come for free.
@@ -61,14 +57,15 @@ function Chip({
       <input type={type} name={name} value={value} checked={checked} onChange={onChange} className="peer sr-only" />
       <span
         className={cls(
-          "min-h-12 px-4 py-2.5 rounded-lg border-2 text-[15px] flex items-center gap-2 select-none",
+          "min-h-12 px-4 py-2.5 rounded-[4px] border text-[15px] flex items-center gap-2 select-none",
           "motion-safe:transition-colors",
-          "peer-focus-visible:ring-2 peer-focus-visible:ring-green peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-cream",
-          checked ? "border-green bg-green/10 text-ink font-semibold" : "border-line-strong bg-paper text-ink"
+          "peer-focus-visible:outline-[3px] peer-focus-visible:outline-solid peer-focus-visible:outline-gold peer-focus-visible:outline-offset-2",
+          // Selected matches the live .hop-choice--selected (charcoal fill).
+          checked ? "border-ink bg-ink text-cream font-semibold" : "border-line-strong bg-paper text-ink hover:bg-[var(--hop-clay)]"
         )}
       >
         {checked && (
-          <svg className="w-4 h-4 flex-shrink-0 text-green" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <svg className="w-4 h-4 flex-shrink-0 text-cream" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
             <path fillRule="evenodd" d="M16.7 5.3a1 1 0 0 1 0 1.4l-8 8a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.4L8 12.6l7.3-7.3a1 1 0 0 1 1.4 0z" clipRule="evenodd" />
           </svg>
         )}
@@ -80,7 +77,7 @@ function Chip({
 
 function FieldError({ id, msg }: { id: string; msg?: string }) {
   if (!msg) return null;
-  return <p id={id} className="text-red-700 text-sm font-medium mt-2">{msg}</p>;
+  return <p id={id} className="hop-error-text font-medium">{msg}</p>;
 }
 
 // Renders the consent text exactly as stored, with the two page names linked.
@@ -89,9 +86,9 @@ function ConsentText() {
     <>
       {TCPA_CONSENT.text.split(/(SMS Terms|Privacy Policy)/).map((part, i) =>
         part === "SMS Terms" ? (
-          <Link key={i} href="/sms-terms" target="_blank" className="underline text-green">SMS Terms</Link>
+          <Link key={i} href="/sms-terms" target="_blank" className="underline underline-offset-4">SMS Terms</Link>
         ) : part === "Privacy Policy" ? (
-          <Link key={i} href="/privacy" target="_blank" className="underline text-green">Privacy Policy</Link>
+          <Link key={i} href="/privacy" target="_blank" className="underline underline-offset-4">Privacy Policy</Link>
         ) : (
           <span key={i}>{part}</span>
         )
@@ -253,8 +250,8 @@ export default function SpecialsForm({
 
   return (
     <>
-      <section ref={sectionRef} id="guide-form" className="scroll-mt-20 px-5 py-16 md:py-24 bg-paper border-y border-line">
-        <div className="max-w-2xl mx-auto">
+      <section ref={sectionRef} id="guide-form" className="scroll-mt-6 py-16 md:py-24 bg-paper border-y border-line">
+        <div className="hop-wrap max-w-2xl">
           {phase === "done" && result ? (
             <div role="status">
               <ThankYou
@@ -270,8 +267,8 @@ export default function SpecialsForm({
           ) : (
             <form onSubmit={submit} noValidate className="space-y-8">
               <div>
-                <p className="text-green text-xs uppercase tracking-[0.2em] font-medium">Free guide</p>
-                <h2 className="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mt-2">
+                <p className="hop-eyebrow">Free guide</p>
+                <h2 className="font-display text-4xl md:text-5xl font-semibold text-ink mt-3">
                   Where should I send it?
                 </h2>
                 <p className="text-muted mt-3 leading-relaxed">
@@ -280,9 +277,9 @@ export default function SpecialsForm({
               </div>
 
               {showSummary && errorList.length > 0 && (
-                <div ref={summaryRef} tabIndex={-1} role="alert" className="rounded-lg border-2 border-red-700 bg-red-50 p-4 focus:outline-none">
-                  <p className="font-semibold text-red-800">Please fix {errorList.length === 1 ? "this" : "these"}:</p>
-                  <ul className="mt-2 space-y-1 list-disc pl-5 text-red-800 text-sm">
+                <div ref={summaryRef} tabIndex={-1} role="alert" className="hop-status hop-status--error">
+                  <p className="font-semibold">Please fix {errorList.length === 1 ? "this" : "these"}:</p>
+                  <ul className="mt-2 space-y-1 list-disc pl-5 text-sm">
                     {errorList.map((f) => (
                       <li key={f}><a href={`#sp-${f}`} className="underline">{FIELD_LABELS[f]}: {errors[f]}</a></li>
                     ))}
@@ -299,7 +296,7 @@ export default function SpecialsForm({
               </div>
 
               <div>
-                <label htmlFor="sp-name" className="block text-sm font-semibold text-ink mb-2">Your name</label>
+                <label htmlFor="sp-name" className="hop-label">Your name</label>
                 <input
                   id="sp-name" type="text" autoComplete="name" maxLength={80}
                   value={name}
@@ -307,13 +304,13 @@ export default function SpecialsForm({
                   onBlur={() => name && blurCheck("name")}
                   aria-invalid={Boolean(errors.name)}
                   aria-describedby={errors.name ? "sp-name-err" : undefined}
-                  className={inputCls(errors.name)}
+                  className={inputCls()}
                 />
                 <FieldError id="sp-name-err" msg={errors.name} />
               </div>
 
               <div>
-                <label htmlFor="sp-phone" className="block text-sm font-semibold text-ink mb-2">Mobile number</label>
+                <label htmlFor="sp-phone" className="hop-label">Mobile number</label>
                 <input
                   id="sp-phone" type="tel" inputMode="tel" autoComplete="tel-national"
                   placeholder="(214) 555-0123"
@@ -322,13 +319,13 @@ export default function SpecialsForm({
                   onBlur={() => phone && blurCheck("phone")}
                   aria-invalid={Boolean(errors.phone)}
                   aria-describedby={errors.phone ? "sp-phone-err" : undefined}
-                  className={inputCls(errors.phone)}
+                  className={inputCls()}
                 />
                 <FieldError id="sp-phone-err" msg={errors.phone} />
               </div>
 
               <fieldset id="sp-moveMonth" aria-describedby={errors.moveMonth ? "sp-moveMonth-err" : undefined}>
-                <legend className="text-sm font-semibold text-ink mb-3">When do you want to move?</legend>
+                <legend className="hop-label mb-3">When do you want to move?</legend>
                 <div className="flex flex-wrap gap-2.5">
                   {MOVE_MONTHS.map((m) => (
                     <Chip key={m} type="radio" name="moveMonth" value={m} checked={moveMonth === m}
@@ -339,7 +336,7 @@ export default function SpecialsForm({
               </fieldset>
 
               <fieldset id="sp-budget" aria-describedby={errors.budget ? "sp-budget-err" : undefined}>
-                <legend className="text-sm font-semibold text-ink mb-3">Monthly rent budget</legend>
+                <legend className="hop-label mb-3">Monthly rent budget</legend>
                 <div className="flex flex-wrap gap-2.5">
                   {SPECIALS_BUDGETS.map((b) => (
                     <Chip key={b} type="radio" name="budget" value={b} checked={budget === b}
@@ -350,8 +347,8 @@ export default function SpecialsForm({
               </fieldset>
 
               <fieldset id="sp-areas" aria-describedby={errors.areas ? "sp-areas-err" : "sp-areas-hint"}>
-                <legend className="text-sm font-semibold text-ink mb-1">Areas you&apos;re considering</legend>
-                <p id="sp-areas-hint" className="text-muted text-sm mb-3">Pick as many as you like.</p>
+                <legend className="hop-label mb-1">Areas you&apos;re considering</legend>
+                <p id="sp-areas-hint" className="hop-note mb-3">Pick as many as you like.</p>
                 <div className="flex flex-wrap gap-2.5">
                   {DFW_AREAS.map((a) => (
                     <Chip key={a} type="checkbox" name="areas" value={a} checked={areas.includes(a)} onChange={() => toggleArea(a)} />
@@ -360,11 +357,11 @@ export default function SpecialsForm({
                 <FieldError id="sp-areas-err" msg={errors.areas} />
               </fieldset>
 
-              <div className="rounded-lg border border-line bg-cream p-4">
+              <div className="rounded-[4px] border border-line bg-cream p-4">
                 <label className="flex items-start gap-3 cursor-pointer">
                   <input
                     type="checkbox" checked={textConsent} onChange={(e) => setTextConsent(e.target.checked)}
-                    className="mt-0.5 w-6 h-6 flex-shrink-0 accent-[var(--green)] focus-visible:ring-2 focus-visible:ring-green"
+                    className="mt-0.5 w-6 h-6 flex-shrink-0 accent-[var(--green)]"
                   />
                   <span className="text-sm text-ink leading-relaxed">
                     <span className="font-semibold">Optional.</span> <ConsentText />
@@ -373,7 +370,7 @@ export default function SpecialsForm({
               </div>
 
               {serverError && (
-                <div role="alert" className="rounded-lg border-2 border-red-700 bg-red-50 p-4 text-sm text-red-800">
+                <div role="alert" className="hop-status hop-status--error text-sm">
                   <p className="font-semibold">{serverError}</p>
                   {tel && (
                     <p className="mt-2">
@@ -387,11 +384,12 @@ export default function SpecialsForm({
               <button
                 type="submit"
                 disabled={phase === "sending"}
-                className="w-full min-h-[52px] rounded-lg bg-green text-cream text-base font-semibold hover:bg-green-600 disabled:opacity-70 motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+                aria-busy={phase === "sending"}
+                className="hop-action hop-action--primary w-full justify-center"
               >
                 {phase === "sending" ? "Sending…" : "Send me the guide"}
               </button>
-              <p className="text-muted text-xs leading-relaxed">
+              <p className="hop-note">
                 Free to you: apartment communities pay locators, not renters. No questions about your
                 household or credit, just what you need to see the right specials.
               </p>
@@ -401,8 +399,8 @@ export default function SpecialsForm({
       </section>
 
       {phase === "done" && (
-        <section className="px-5 py-16 md:py-24" aria-label="Your DFW move-in specials guide">
-          <div ref={guideRef} className="max-w-4xl mx-auto scroll-mt-24">
+        <section className="py-16 md:py-24" aria-label="Your DFW move-in specials guide">
+          <div ref={guideRef} className="hop-wrap max-w-4xl scroll-mt-6">
             <FullGuide specials={specials} picked={areas} />
           </div>
         </section>
@@ -418,7 +416,7 @@ export default function SpecialsForm({
       >
         <a
           href="#guide-form"
-          className="flex items-center justify-center min-h-12 rounded-lg bg-green text-cream font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2"
+          className="hop-action hop-action--primary w-full justify-center"
         >
           Get the guide
         </a>
@@ -441,10 +439,10 @@ function ThankYou({
   const who = firstName ? `, ${firstName}` : "";
   return (
     <div>
-      <p className="text-green text-xs uppercase tracking-[0.2em] font-medium">
+      <p className="hop-eyebrow">
         {result.duplicate ? "Welcome back" : "Done"}
       </p>
-      <h2 ref={headingRef} tabIndex={-1} className="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mt-2 focus:outline-none">
+      <h2 ref={headingRef} tabIndex={-1} className="font-display text-4xl md:text-5xl font-semibold text-ink mt-3 focus:outline-none">
         {result.duplicate
           ? "You're already on my list."
           : result.consented
@@ -466,15 +464,15 @@ function ThankYou({
             <li>Reply to my text with any questions, or to set up tours.</li>
           </ol>
           <div className="mt-6 flex flex-wrap gap-3">
-            <a href="/specials/contact.vcf" className="inline-flex items-center justify-center min-h-12 px-6 rounded-lg bg-green text-cream font-semibold hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2">
+            <a href="/specials/contact.vcf" className="hop-action hop-action--primary">
               Save {AGENT.name.split(" ")[0]}&apos;s contact
             </a>
-            <button type="button" onClick={onRead} className="inline-flex items-center justify-center min-h-12 px-6 rounded-lg border-2 border-line-strong text-ink font-semibold hover:border-green focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2">
+            <button type="button" onClick={onRead} className="hop-action hop-action--secondary">
               Read the guide
             </button>
           </div>
           <p className="mt-4 text-sm">
-            <button type="button" onClick={onFix} className="min-h-12 underline text-green font-medium">
+            <button type="button" onClick={onFix} className="hop-action hop-action--quiet">
               Wrong number? Fix it
             </button>
           </p>
@@ -483,16 +481,16 @@ function ThankYou({
         <>
           <p className="text-ink mt-4 leading-relaxed">
             You didn&apos;t opt in to texts, so I won&apos;t text you. If you want help comparing options,
-            you can reach out anytime{AGENT.phone ? <> at <a href={`tel:${tel}`} className="underline text-green">{AGENT.phone}</a></> : null}.
+            you can reach out anytime{AGENT.phone ? <> at <a href={`tel:${tel}`} className="underline underline-offset-4">{AGENT.phone}</a></> : null}.
           </p>
           <div className="mt-6">
-            <button type="button" onClick={onRead} className="inline-flex items-center justify-center min-h-12 px-6 rounded-lg bg-green text-cream font-semibold hover:bg-green-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2">
+            <button type="button" onClick={onRead} className="hop-action hop-action--primary">
               Read the guide
             </button>
           </div>
         </>
       )}
-      <p className="mt-8 text-sm text-muted">{AGENT.name} · {AGENT.brokerage}</p>
+      <p className="hop-note mt-8">{AGENT.name} · {AGENT.brokerage}</p>
     </div>
   );
 }

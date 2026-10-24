@@ -12,6 +12,7 @@
   --green: var(--hop-ink);
   --green-600: oklch(0.32 0.012 45);
   --gold: var(--hop-focus);
+  --line-strong: var(--hop-secondary); /* field / chip borders, 3:1 non-text contrast */
   --background: var(--cream);
   --foreground: var(--ink);
   --hop-space-sm: 12px; --hop-space-md: 24px; --hop-space-lg: 48px;
@@ -30,6 +31,7 @@
   --color-green: var(--green);
   --color-green-600: var(--green-600);
   --color-gold: var(--gold);
+  --color-line-strong: var(--line-strong);
   --font-sans: var(--font-public-sans);
   --font-display: var(--font-barlow);
 }

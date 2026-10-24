@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import Nav from "@/components/nav";
 import Footer from "@/components/footer";
 import { AgentAvatar } from "@/components/agent-card";
+import { ActionLink } from "@/components/ui";
 import { AGENT } from "@/config/agent";
 import { leadsEnabled } from "@/lib/site-mode";
 import { SPECIALS_GUIDE, MIN_TO_SHOW, activeSpecials, fmtGuideDate } from "@/config/specials";
@@ -43,18 +44,18 @@ const INSIDE = [
 
 function Refreshing() {
   return (
-    <section className="px-5 pt-36 pb-24">
-      <div className="max-w-2xl mx-auto text-center">
-        <p className="text-green text-xs uppercase tracking-[0.2em] font-medium">DFW move-in specials</p>
-        <h1 className="font-display text-4xl md:text-5xl font-semibold text-ink tracking-tight mt-3">
+    <main id="main-content" tabIndex={-1} className="hop-wrap py-16 md:py-24">
+      <div className="max-w-2xl">
+        <p className="hop-eyebrow">DFW move-in specials</p>
+        <h1 className="hop-title mt-4">
           Guide being refreshed
         </h1>
-        <p className="text-muted mt-5 leading-relaxed">
+        <p className="hop-lead mt-6">
           I&apos;m re-checking this month&apos;s specials so everything in the guide is current. Check back
-          soon{tel ? <>, or <a href={`tel:${tel}`} className="text-green underline">call or text {AGENT.phone}</a></> : null}.
+          soon{tel ? <>, or <a href={`tel:${tel}`} className="underline underline-offset-4">call or text {AGENT.phone}</a></> : null}.
         </p>
       </div>
-    </section>
+    </main>
   );
 }
 
@@ -65,47 +66,40 @@ export default function SpecialsPage() {
   const live = leadsEnabled && SPECIALS_GUIDE.enabled && specials.length >= MIN_TO_SHOW;
 
   return (
-    <div className="min-h-screen bg-cream">
+    <>
       <Nav />
 
       {!live ? (
         <Refreshing />
       ) : (
-        <main>
+        <main id="main-content" tabIndex={-1}>
           {SPECIALS_GUIDE.sample && (
-            <div className="pt-[68px]">
-              <p className="bg-gold/20 border-b border-gold/40 text-ink text-sm text-center px-5 py-2.5">
-                <strong>Preview with SAMPLE data.</strong> Not real properties or offers. For review only.
-              </p>
-            </div>
+            <p className="bg-[var(--hop-warning-surface)] border-b border-[var(--hop-warning)] text-[var(--hop-warning)] text-sm text-center px-5 py-2.5">
+              <strong>Preview with SAMPLE data.</strong> Not real properties or offers. For review only.
+            </p>
           )}
 
           {/* Hero (typographic, no image) */}
-          <section className={SPECIALS_GUIDE.sample ? "px-5 pt-14 pb-16 md:pt-20" : "px-5 pt-32 pb-16 md:pt-36"}>
-            <div className="max-w-6xl mx-auto">
-              <p className="text-muted text-xs md:text-sm uppercase tracking-[0.25em] mb-5 font-medium">
+          <section className="pt-12 pb-16 md:pt-16">
+            <div className="hop-wrap">
+              <p className="hop-eyebrow">
                 Dallas–Fort Worth · December 2026
               </p>
               <Suspense fallback={<HeadlineFallback />}>
                 <Headline />
               </Suspense>
-              <p className="text-ink text-lg md:text-xl mt-6 max-w-xl leading-relaxed">
+              <p className="hop-lead text-ink mt-6">
                 Choose your move month, budget, and preferred area to see a dated snapshot of DFW apartment
                 specials.
               </p>
-              <p className="text-muted mt-3 max-w-xl leading-relaxed">
+              <p className="hop-lead mt-3">
                 Move-in specials from apartment communities across DFW, gathered into one guide by a licensed
                 apartment locator. Free to you: apartment communities pay locators, not renters.
               </p>
-              <a
-                href="#guide-form"
-                className="inline-flex items-center justify-center min-h-[52px] mt-8 px-8 rounded-lg bg-green text-cream font-semibold hover:bg-green-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green focus-visible:ring-offset-2 focus-visible:ring-offset-cream"
-              >
-                Get the DFW Move-In Guide
-              </a>
+              <ActionLink href="#guide-form" className="mt-8">Get the DFW Move-In Guide</ActionLink>
               <div className="flex items-center gap-3 mt-8">
                 <AgentAvatar size={56} />
-                <p className="text-sm text-muted leading-snug">
+                <p className="hop-note leading-snug">
                   <span className="text-ink font-semibold">{AGENT.name}</span>
                   {AGENT.title ? `, ${AGENT.title}` : ""}
                   <br />
@@ -116,11 +110,11 @@ export default function SpecialsPage() {
           </section>
 
           {/* Value props */}
-          <section className="px-5 pb-16">
-            <div className="max-w-6xl mx-auto grid gap-4 md:grid-cols-3">
+          <section className="pb-16">
+            <div className="hop-wrap grid gap-4 md:grid-cols-3">
               {VALUE_PROPS.map((v) => (
-                <div key={v.title} className="bg-paper border border-line rounded-lg p-6">
-                  <h2 className="font-display text-xl font-semibold text-ink tracking-tight">{v.title}</h2>
+                <div key={v.title} className="bg-paper border border-line rounded-[4px] p-6">
+                  <h2 className="font-display text-2xl font-semibold text-ink">{v.title}</h2>
                   <p className="text-muted text-sm mt-2 leading-relaxed">{v.desc}</p>
                 </div>
               ))}
@@ -128,16 +122,16 @@ export default function SpecialsPage() {
           </section>
 
           {/* What's inside + preview */}
-          <section className="px-5 pb-20">
-            <div className="max-w-6xl mx-auto">
-              <p className="text-green text-xs uppercase tracking-[0.2em] font-medium">What&apos;s inside</p>
-              <h2 className="font-display text-3xl md:text-4xl font-semibold text-ink tracking-tight mt-2">
+          <section className="pb-20">
+            <div className="hop-wrap">
+              <p className="hop-eyebrow">What&apos;s inside</p>
+              <h2 className="hop-title mt-4">
                 Four things to help you choose
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-8">
                 {INSIDE.map((i) => (
-                  <div key={i.n} className="border-t-2 border-gold pt-4">
-                    <p className="font-display text-2xl text-green font-semibold">{i.n}</p>
+                  <div key={i.n} className="border-t border-ink pt-4">
+                    <p className="hop-number">{i.n}</p>
                     <h3 className="font-semibold text-ink mt-1">{i.title}</h3>
                     <p className="text-muted text-sm mt-1 leading-relaxed">{i.desc}</p>
                   </div>
@@ -148,7 +142,7 @@ export default function SpecialsPage() {
                 {specials.slice(0, 2).map((s) => <SpecialCard key={s.id} s={s} />)}
                 <ExampleMath />
               </div>
-              <p className="text-muted text-sm mt-6 max-w-3xl leading-relaxed">
+              <p className="hop-note mt-6">
                 Specials come from public sources (property websites, listings and leasing offices) and are
                 verified on the date shown. {DISCLAIMER} Rent shown is the advertised starting price.
               </p>
@@ -160,6 +154,6 @@ export default function SpecialsPage() {
       )}
 
       <Footer />
-    </div>
+    </>
   );
 }

@@ -8,7 +8,7 @@ import { useSearchParams } from "next/navigation";
 export const HEADLINE_A = "Moving in December? Start with the specials.";
 export const HEADLINE_B = "Your December Apartment Search, Simplified";
 
-const h1 = "font-display text-[2.6rem] leading-[1.05] md:text-7xl font-semibold tracking-tight text-ink max-w-3xl";
+const h1 = "hop-title mt-4";
 
 export function HeadlineFallback() {
   return <h1 className={h1}>{HEADLINE_A}</h1>;

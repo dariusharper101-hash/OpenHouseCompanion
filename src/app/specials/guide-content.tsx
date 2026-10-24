@@ -14,10 +14,10 @@ const usd = (n: number) => `$${n.toLocaleString("en-US")}`;
 export function SpecialCard({ s }: { s: Special }) {
   const value = monthlyValue(s);
   return (
-    <article className="bg-paper border border-line rounded-lg p-5 flex flex-col">
-      <p className="text-muted text-xs uppercase tracking-widest">{s.area}</p>
-      <h4 className="font-display text-lg font-semibold text-ink tracking-tight mt-1.5">{s.property}</h4>
-      <p className="text-green text-xl font-semibold mt-3">{s.special}</p>
+    <article className="bg-paper border border-line rounded-[4px] p-5 flex flex-col">
+      <p className="hop-eyebrow">{s.area}</p>
+      <h4 className="font-display text-2xl font-semibold text-ink mt-1.5">{s.property}</h4>
+      <p className="text-[var(--hop-accent)] text-xl font-semibold mt-3">{s.special}</p>
       <p className="text-muted text-sm mt-1 leading-relaxed">{s.conditions}</p>
       <dl className="mt-4 space-y-1 text-sm">
         {s.startingAt ? (
@@ -55,14 +55,14 @@ export function FullGuide({ specials, picked }: { specials: Special[]; picked: s
   return (
     <div className="space-y-14">
       <section aria-labelledby="g-specials">
-        <p className="font-display text-green text-2xl font-semibold">01</p>
-        <h3 id="g-specials" className="font-display text-2xl md:text-3xl font-semibold text-ink tracking-tight mt-1">
+        <p className="hop-number">01</p>
+        <h3 id="g-specials" className="font-display text-3xl md:text-4xl font-semibold text-ink mt-1">
           Specials by area
         </h3>
         <div className="mt-6 space-y-10">
           {groups.map((g) => (
             <div key={g.area}>
-              <h4 className="text-sm font-semibold uppercase tracking-widest text-muted mb-3">{g.area}</h4>
+              <h4 className="hop-eyebrow mb-3">{g.area}</h4>
               <div className="grid gap-4 sm:grid-cols-2">
                 {g.items.map((s) => <SpecialCard key={s.id} s={s} />)}
               </div>
@@ -72,8 +72,8 @@ export function FullGuide({ specials, picked }: { specials: Special[]; picked: s
       </section>
 
       <section aria-labelledby="g-worth">
-        <p className="font-display text-green text-2xl font-semibold">02</p>
-        <h3 id="g-worth" className="font-display text-2xl md:text-3xl font-semibold text-ink tracking-tight mt-1">
+        <p className="hop-number">02</p>
+        <h3 id="g-worth" className="font-display text-3xl md:text-4xl font-semibold text-ink mt-1">
           What a special is worth per month
         </h3>
         <p className="text-muted mt-3 leading-relaxed max-w-2xl">
@@ -84,8 +84,8 @@ export function FullGuide({ specials, picked }: { specials: Special[]; picked: s
       </section>
 
       <section aria-labelledby="g-questions">
-        <p className="font-display text-green text-2xl font-semibold">03</p>
-        <h3 id="g-questions" className="font-display text-2xl md:text-3xl font-semibold text-ink tracking-tight mt-1">
+        <p className="hop-number">03</p>
+        <h3 id="g-questions" className="font-display text-3xl md:text-4xl font-semibold text-ink mt-1">
           Questions to ask the leasing office
         </h3>
         <ol className="mt-5 space-y-3 list-decimal pl-5 text-ink leading-relaxed max-w-2xl">
@@ -98,8 +98,8 @@ export function FullGuide({ specials, picked }: { specials: Special[]; picked: s
       </section>
 
       <section aria-labelledby="g-timeline">
-        <p className="font-display text-green text-2xl font-semibold">04</p>
-        <h3 id="g-timeline" className="font-display text-2xl md:text-3xl font-semibold text-ink tracking-tight mt-1">
+        <p className="hop-number">04</p>
+        <h3 id="g-timeline" className="font-display text-3xl md:text-4xl font-semibold text-ink mt-1">
           A December move-in timeline
         </h3>
         <ol className="mt-5 space-y-4 max-w-2xl">
@@ -110,7 +110,7 @@ export function FullGuide({ specials, picked }: { specials: Special[]; picked: s
             ["1–2 weeks before", "Set up utilities and renter's insurance if the property requires it. Confirm your move-in date."],
             ["Move-in day", "Do the walk-through and photograph the condition of the home."],
           ].map(([when, what]) => (
-            <li key={when} className="border-l-2 border-gold pl-4">
+            <li key={when} className="border-l-2 border-[var(--hop-accent)] pl-4">
               <p className="text-sm font-semibold text-ink">{when}</p>
               <p className="text-muted text-sm leading-relaxed mt-0.5">{what}</p>
             </li>
@@ -123,12 +123,12 @@ export function FullGuide({ specials, picked }: { specials: Special[]; picked: s
 
 export function ExampleMath() {
   return (
-    <div className="bg-paper border-2 border-dashed border-line-strong rounded-lg p-5 max-w-xl">
-      <p className="text-xs font-semibold uppercase tracking-widest text-ink">Example math, not a listing</p>
+    <div className="bg-paper border-2 border-dashed border-line-strong rounded-[4px] p-5 max-w-xl">
+      <p className="hop-eyebrow text-ink">Example math, not a listing</p>
       <p className="text-ink mt-3 leading-relaxed">
         Rent starting at $1,500/mo with 1 month free on a 12-month lease:
       </p>
-      <p className="font-display text-xl text-ink mt-2">$1,500 ÷ 12 = $125/mo</p>
+      <p className="font-display text-2xl font-semibold text-ink mt-2">$1,500 ÷ 12 = $125/mo</p>
       <p className="text-muted text-sm mt-2 leading-relaxed">
         So it works out to about $1,375/mo over the lease. Real rent, fees and terms vary by property.
       </p>
