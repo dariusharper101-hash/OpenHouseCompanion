@@ -203,7 +203,9 @@ export function hasDurableStore(): boolean {
 }
 
 // Most recent lead for this product + phone within `days`, or null. Used for
-// the specials guide's 30-day dedupe (one person, one tracker row). `phone`
+// the specials guide's 30-day dedupe (one person, one tracker row). Leads with
+// status "lost" (e.g. superseded typo'd numbers) are skipped, so the real
+// owner of that number gets a fresh lead instead of a "duplicate". `phone`
 // must already be normalized (+1XXXXXXXXXX), which is how /api/specials stores it.
 export async function findRecentByPhone(
   phone: string,
@@ -218,6 +220,7 @@ export async function findRecentByPhone(
       .select("*")
       .eq("product", product)
       .eq("data->>phone", phone)
+      .neq("status", "lost")
       .gte("created_at", since)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -229,7 +232,7 @@ export async function findRecentByPhone(
   const leads = await readFileLeads();
   return (
     leads
-      .filter((l) => l.product === product && l.phone === phone && l.createdAt >= since)
+      .filter((l) => l.product === product && l.phone === phone && l.status !== "lost" && l.createdAt >= since)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] ?? null
   );
 }

@@ -46,6 +46,21 @@ function unavailable() {
   );
 }
 
+// Tracker row for a consent change (supersede, revocation, re-opt-in), so the
+// Darius Lead Tracker never shows a stale "Yes". Best-effort like the
+// new-lead row: appendTrackerRow no-ops without its env vars.
+function consentChangeRow(lead: Lead, optedIn: boolean, reason: string) {
+  return appendTrackerRow({
+    Date: todayInDallas(),
+    Name: [lead.firstName, lead.lastName].filter(Boolean).join(" "),
+    Phone: formatUsPhone(lead.phone),
+    Source: "Specials Guide - consent change",
+    "Text Consent": optedIn ? "Yes - re-opted in" : "No - REVOKED/SUPERSEDED, do not text",
+    Notes: reason,
+    "Lead ID": lead.id,
+  });
+}
+
 function clientIp(req: NextRequest): string {
   const fwd = req.headers.get("x-forwarded-for");
   if (fwd) return fwd.split(",")[0].trim();
@@ -156,9 +171,11 @@ export async function POST(req: NextRequest) {
           consent: applyConsentChange(old.consent, revoke, { note }),
         };
         await updateLeadData(old.id, leadData(updated), "lost");
+        const reason = "Number corrected with Fix it; this number was a typo.";
         if (wasOptedIn) {
-          alerts.push(() => notifyConsentChange(updated, true, false, "Number corrected with Fix it; this number was a typo."));
+          alerts.push(() => notifyConsentChange(updated, true, false, reason));
         }
+        alerts.push(() => consentChangeRow(updated, false, reason));
       }
     }
 
@@ -173,14 +190,11 @@ export async function POST(req: NextRequest) {
           consent: applyConsentChange(existing.consent, consentEvent, { pageUrl }),
         };
         await updateLeadData(existing.id, leadData(updated));
-        alerts.push(() =>
-          notifyConsentChange(
-            updated,
-            before,
-            input.textConsent,
-            input.textConsent ? "Re-submitted the guide form with the text box checked." : "Re-submitted the guide form with the text box unchecked (revocation)."
-          )
-        );
+        const reason = input.textConsent
+          ? "Re-submitted the guide form with the text box checked."
+          : "Re-submitted the guide form with the text box unchecked (revocation).";
+        alerts.push(() => notifyConsentChange(updated, before, input.textConsent, reason));
+        alerts.push(() => consentChangeRow(updated, input.textConsent, reason));
       }
       after(async () => {
         await Promise.allSettled(alerts.map((fn) => fn()));
