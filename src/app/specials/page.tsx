@@ -6,7 +6,7 @@ import { AgentAvatar } from "@/components/agent-card";
 import { ActionLink } from "@/components/ui";
 import { AGENT } from "@/config/agent";
 import { leadsEnabled } from "@/lib/site-mode";
-import { SPECIALS_GUIDE, MIN_TO_SHOW, activeSpecials, fmtGuideDate } from "@/config/specials";
+import { SPECIALS_GUIDE, MIN_TO_SHOW, activeSpecials, fmtGuideDate, sampleBlocksLeads } from "@/config/specials";
 import Headline, { HeadlineFallback } from "./headline";
 import SpecialsForm from "./specials-form";
 import { SpecialCard, ExampleMath, DISCLAIMER } from "./guide-content";
@@ -63,7 +63,8 @@ export default function SpecialsPage() {
   const specials = activeSpecials();
   // The form needs lead capture on (NEXT_PUBLIC_HOP_LEADS=1, see site-mode.ts);
   // without it the page shows the call/text state instead of a dead form.
-  const live = leadsEnabled && SPECIALS_GUIDE.enabled && specials.length >= MIN_TO_SHOW;
+  // SAMPLE data never takes real leads in a production deploy.
+  const live = leadsEnabled && SPECIALS_GUIDE.enabled && !sampleBlocksLeads() && specials.length >= MIN_TO_SHOW;
 
   return (
     <>

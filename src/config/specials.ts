@@ -48,6 +48,16 @@ export const SPECIALS_GUIDE = {
   textPromise: "within one business day, between 9 am and 9 pm (noon to 9 pm Sunday)",
 } as const;
 
+// SAMPLE data must never collect real leads on the live site: in a Vercel
+// production deploy, /specials shows the call/text state and /api/specials
+// answers 503. Preview and local dev keep working for review.
+export function sampleBlocksLeads(
+  sample: boolean = SPECIALS_GUIDE.sample,
+  vercelEnv: string | undefined = process.env.VERCEL_ENV,
+): boolean {
+  return sample && vercelEnv === "production";
+}
+
 export const MIN_TO_SHOW = 5;
 
 export const SPECIALS: Special[] = [
