@@ -150,6 +150,50 @@ export async function deleteLead(id: string): Promise<boolean> {
   return true;
 }
 
+// True when storage is configured: Supabase, or the explicit local-dev file
+// store (storageMode() never allows files on Vercel or in production). The
+// specials endpoint refuses leads otherwise rather than silently losing them.
+export function hasDurableStore(): boolean {
+  try {
+    storageMode();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// Most recent lead for this product + phone within `days`, or null. Used for
+// the specials guide's 30-day dedupe (one person, one tracker row). `phone`
+// must already be normalized (+1XXXXXXXXXX), which is how /api/specials stores it.
+export async function findRecentByPhone(
+  phone: string,
+  product: LeadProduct,
+  days: number
+): Promise<Lead | null> {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+
+  if (storageMode() === "supabase") {
+    const { data, error } = await db()
+      .from(TABLE)
+      .select("*")
+      .eq("product", product)
+      .eq("data->>phone", phone)
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw new Error(`Supabase lookup failed: ${error.message}`);
+    return data ? rowToLead(data as LeadRow) : null;
+  }
+
+  const leads = await readFileLeads();
+  return (
+    leads
+      .filter((l) => l.product === product && l.phone === phone && l.createdAt >= since)
+      .sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0] ?? null
+  );
+}
+
 // ─── CSV export ─────────────────────────────────────────────────────────────
 
 const CSV_COLUMNS: { key: keyof Lead; label: string }[] = [

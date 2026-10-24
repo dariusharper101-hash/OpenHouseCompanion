@@ -32,6 +32,7 @@ function row(label: string, value: unknown): string {
 function buildHtml(lead: Lead): string {
   const isBuyer = lead.role === "buying" || lead.role === "both";
   const isSeller = lead.role === "selling" || lead.role === "both";
+  const isRenter = lead.role === "renting";
   return `
   <div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:560px;">
     <h2 style="color:#2563eb;margin:0 0 4px;">New lead: ${esc(lead.firstName)} ${esc(lead.lastName)}</h2>
@@ -51,12 +52,16 @@ function buildHtml(lead: Lead): string {
       ${isSeller ? row("Property", lead.sellerAddress) : ""}
       ${isSeller ? row("Est. value", lead.sellerEstimatedValue) : ""}
       ${isSeller ? row("Sell timeline", lead.sellerTimeline) : ""}
+      ${isRenter ? row("Move month", lead.moveMonth || lead.timeline) : ""}
+      ${isRenter ? row("Budget", lead.budgetMin) : ""}
+      ${isRenter ? row("Areas", lead.neighborhoods) : ""}
+      ${lead.consent ? row("Text consent", lead.consent.tcpa ? "Yes, opted in to texts" : "No, do not text") : ""}
       ${row("Source", lead.source)}
       ${row("Notes", lead.notes)}
     </table>
     <p style="margin:16px 0 0;font-size:13px;">
-      <a href="tel:${esc(lead.phone)}" style="color:#2563eb;">Call</a> &nbsp;·&nbsp;
-      <a href="mailto:${esc(lead.email)}" style="color:#2563eb;">Email</a>
+      <a href="tel:${esc(lead.phone)}" style="color:#2563eb;">Call</a>
+      ${lead.email ? `&nbsp;·&nbsp;<a href="mailto:${esc(lead.email)}" style="color:#2563eb;">Email</a>` : ""}
     </p>
   </div>`;
 }
@@ -84,9 +89,10 @@ export async function notifyNewLead(lead: Lead): Promise<void> {
       body: JSON.stringify({
         from: NOTIFY_FROM,
         to: [NOTIFY_EMAIL],
-        subject: `New ${PRODUCT_LABELS[lead.product] ?? lead.product} lead: ${lead.firstName} ${lead.lastName} (${lead.role})`,
+        subject: `New ${PRODUCT_LABELS[lead.product] ?? lead.product} lead: ${[lead.firstName, lead.lastName].filter(Boolean).join(" ")} (${lead.role})`,
         html: buildHtml(lead),
-        reply_to: lead.email,
+        // Specials-guide leads have no email; Resend rejects an empty reply_to.
+        ...(lead.email ? { reply_to: lead.email } : {}),
       }),
     });
     if (!res.ok) {
