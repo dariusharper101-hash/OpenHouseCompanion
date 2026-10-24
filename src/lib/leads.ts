@@ -196,7 +196,8 @@ export async function findRecentByPhone(
 
 // ─── CSV export ─────────────────────────────────────────────────────────────
 
-const CSV_COLUMNS: { key: keyof Lead; label: string }[] = [
+// `get` overrides the plain field lookup for derived / nested values.
+const CSV_COLUMNS: { key: keyof Lead; label: string; get?: (l: Lead) => unknown }[] = [
   { key: "createdAt", label: "Date" },
   { key: "product", label: "Product" },
   { key: "status", label: "Status" },
@@ -231,6 +232,10 @@ const CSV_COLUMNS: { key: keyof Lead; label: string }[] = [
   { key: "buyerRepAcknowledged", label: "Buyer Rep Ack" },
   { key: "notes", label: "Notes" },
   { key: "source", label: "Source" },
+  { key: "moveMonth", label: "Move Month" },
+  { key: "consent", label: "Text Consent", get: (l) => (l.consent ? (l.consent.tcpa ? "Yes" : "No") : "") },
+  { key: "consent", label: "Consent At", get: (l) => l.consent?.at ?? "" },
+  { key: "consent", label: "Consent Version", get: (l) => l.consent?.version ?? "" },
 ];
 
 function csvEscape(value: unknown): string {
@@ -249,7 +254,7 @@ function csvEscape(value: unknown): string {
 export function leadsToCsv(leads: Lead[]): string {
   const header = CSV_COLUMNS.map((c) => csvEscape(c.label)).join(",");
   const rows = leads.map((lead) =>
-    CSV_COLUMNS.map((c) => csvEscape(lead[c.key])).join(",")
+    CSV_COLUMNS.map((c) => csvEscape(c.get ? c.get(lead) : lead[c.key])).join(",")
   );
   return [header, ...rows].join("\r\n");
 }

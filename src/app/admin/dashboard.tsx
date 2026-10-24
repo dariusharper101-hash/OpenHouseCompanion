@@ -146,12 +146,14 @@ function LeadDrawer({
               <DetailRow label="Source" value={lead.source} />
             </div>
             <div className="flex gap-2 mt-3">
-              <a
-                href={`mailto:${lead.email}`}
-                className="flex-1 text-center py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors"
-              >
-                Email
-              </a>
+              {lead.email && (
+                <a
+                  href={`mailto:${lead.email}`}
+                  className="flex-1 text-center py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold transition-colors"
+                >
+                  Email
+                </a>
+              )}
               <a
                 href={`tel:${lead.phone}`}
                 className="flex-1 text-center py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white text-xs font-semibold transition-colors"
@@ -219,10 +221,25 @@ function LeadDrawer({
               <h3 className="text-white font-semibold text-sm mb-2">Rental Details</h3>
               <div className="space-y-0">
                 <DetailRow label="Monthly Budget" value={lead.budgetMin} />
-                <DetailRow label="Move-In" value={lead.timeline} />
+                <DetailRow label="Move-In" value={lead.moveMonth || lead.timeline} />
                 <DetailRow label="Areas" value={lead.neighborhoods} />
                 <DetailRow label="Bedrooms" value={lead.bedrooms} />
               </div>
+            </div>
+          )}
+
+          {/* Text consent (specials guide) */}
+          {lead.consent && (
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-2">Text Consent</h3>
+              <div className="space-y-0">
+                <DetailRow label="Opted in to texts" value={lead.consent.tcpa} />
+                <DetailRow label="Recorded" value={fmtDate(lead.consent.at)} />
+                <DetailRow label="Wording version" value={lead.consent.version} />
+              </div>
+              {!lead.consent.tcpa && (
+                <p className="text-amber-300 text-xs mt-2">Did not opt in. Do not text this renter.</p>
+              )}
             </div>
           )}
 
