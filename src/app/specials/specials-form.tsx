@@ -121,6 +121,10 @@ export default function SpecialsForm({
   const [serverError, setServerError] = useState("");
   const [result, setResult] = useState<Result | null>(null);
   const [formInView, setFormInView] = useState(false);
+  // Id of the lead just saved, and (after "Fix it") the lead the next submit
+  // replaces, so the server can stop the typo'd number from being texted.
+  const [leadId, setLeadId] = useState<string | null>(null);
+  const [replacesId, setReplacesId] = useState<string | null>(null);
 
   const mountedAt = useRef(0);
   const sectionRef = useRef<HTMLElement>(null);
@@ -198,10 +202,11 @@ export default function SpecialsForm({
           utm_campaign: params.get("utm_campaign") || "",
           variant: params.get("v") === "b" ? "b" : "a",
           pageUrl: window.location.href,
+          ...(replacesId ? { replaces: replacesId } : {}),
         }),
       });
       const data = (await res.json().catch(() => ({}))) as {
-        ok?: boolean; duplicate?: boolean; error?: string; fields?: SpecialsErrors;
+        ok?: boolean; id?: string; duplicate?: boolean; error?: string; fields?: SpecialsErrors;
       };
       if (!res.ok || !data.ok) {
         if (res.status === 400 && data.fields) {
@@ -217,6 +222,8 @@ export default function SpecialsForm({
         setPhase("form");
         return;
       }
+      setLeadId(data.id ?? null);
+      setReplacesId(null);
       setResult({ duplicate: Boolean(data.duplicate), consented: textConsent });
       setPhase("done");
     } catch {
@@ -227,6 +234,7 @@ export default function SpecialsForm({
   }
 
   function fixNumber() {
+    setReplacesId(leadId);
     setResult(null);
     setPhase("form");
     requestAnimationFrame(() => document.getElementById("sp-phone")?.focus());

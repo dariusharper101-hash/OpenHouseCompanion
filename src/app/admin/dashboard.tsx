@@ -238,7 +238,18 @@ function LeadDrawer({
                 <DetailRow label="Wording version" value={lead.consent.version} />
               </div>
               {!lead.consent.tcpa && (
-                <p className="text-amber-300 text-xs mt-2">Did not opt in. Do not text this renter.</p>
+                <p className="text-amber-300 text-xs mt-2">
+                  {lead.consent.note ?? "Did not opt in (or opted out). Do not text this renter."}
+                </p>
+              )}
+              {lead.consent.history && lead.consent.history.length > 1 && (
+                <ol className="mt-3 space-y-1 text-xs text-slate-400">
+                  {lead.consent.history.map((ev, i) => (
+                    <li key={i}>
+                      {fmtDate(ev.at)}: {ev.tcpa ? "opted in" : "no / opted out"} ({ev.version})
+                    </li>
+                  ))}
+                </ol>
               )}
             </div>
           )}

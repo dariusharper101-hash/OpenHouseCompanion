@@ -104,3 +104,56 @@ export async function notifyNewLead(lead: Lead): Promise<void> {
     console.error("Lead notification error");
   }
 }
+
+// ─── Consent-change alert ─────────────────────────────────────────────────────
+// Sent when a specials-guide renter's text consent changes after their first
+// sign-up (an unchecked resubmit revokes an opt-in; a checked one adds it),
+// or when a typo'd number is superseded. Same env gating as above.
+
+export async function notifyConsentChange(
+  lead: Lead,
+  from: boolean,
+  to: boolean,
+  reason: string
+): Promise<void> {
+  if (!RESEND_API_KEY || !NOTIFY_EMAIL) {
+    console.warn("Consent-change alert skipped — email not configured");
+    return;
+  }
+  const yn = (b: boolean) => (b ? "Yes" : "No");
+  const headline = `Consent changed: ${yn(from)}→${yn(to)}${to ? "" : ", do not text"}`;
+  const name = [lead.firstName, lead.lastName].filter(Boolean).join(" ");
+  const html = `
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:560px;">
+    <h2 style="color:${to ? "#2563eb" : "#b91c1c"};margin:0 0 4px;">${esc(headline)}</h2>
+    <p style="color:#64748b;margin:0 0 16px;font-size:13px;">
+      ${esc(PRODUCT_LABELS[lead.product] ?? lead.product)} &middot; ${new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })}
+    </p>
+    <table style="border-collapse:collapse;width:100%;">
+      ${row("Name", name)}
+      ${row("Phone", lead.phone)}
+      ${row("Why", reason)}
+    </table>
+  </div>`;
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      signal: AbortSignal.timeout(5000),
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: NOTIFY_FROM,
+        to: [NOTIFY_EMAIL],
+        subject: `${headline}: ${name}`,
+        html,
+      }),
+    });
+    if (!res.ok) console.error("Consent-change alert failed:", res.status);
+    else console.log(`Consent-change alert sent for lead ${lead.id}`);
+  } catch (err) {
+    console.error("Consent-change alert error:", err instanceof Error ? err.name : "unknown");
+  }
+}

@@ -150,6 +150,46 @@ export async function deleteLead(id: string): Promise<boolean> {
   return true;
 }
 
+// Single lead by id, or null.
+export async function getLeadById(id: string): Promise<Lead | null> {
+  if (storageMode() === "supabase") {
+    const { data, error } = await db().from(TABLE).select("*").eq("id", id).maybeSingle();
+    if (error) throw new Error(`Supabase read failed: ${error.message}`);
+    return data ? rowToLead(data as LeadRow) : null;
+  }
+  return (await readFileLeads()).find((l) => l.id === id) ?? null;
+}
+
+// Replace a lead's stored payload (and optionally its status). Used by the
+// specials guide to record consent changes; id/createdAt never change.
+export async function updateLeadData(
+  id: string,
+  data: LeadFormData,
+  status?: LeadStatus
+): Promise<void> {
+  if (storageMode() === "supabase") {
+    const { error } = await db()
+      .from(TABLE)
+      .update({ data, ...(status ? { status } : {}) })
+      .eq("id", id);
+    if (error) throw new Error(`Supabase update failed: ${error.message}`);
+    return;
+  }
+  const leads = await readFileLeads();
+  const i = leads.findIndex((l) => l.id === id);
+  if (i === -1) return;
+  const { id: keepId, createdAt, status: oldStatus } = leads[i];
+  leads[i] = { ...data, id: keepId, createdAt, status: status ?? oldStatus };
+  await writeFileLeads(leads);
+}
+
+// The stored payload of a lead (drops the row-level fields).
+export function leadData(lead: Lead): LeadFormData {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id, createdAt, status, ...data } = lead;
+  return data;
+}
+
 // True when storage is configured: Supabase, or the explicit local-dev file
 // store (storageMode() never allows files on Vercel or in production). The
 // specials endpoint refuses leads otherwise rather than silently losing them.

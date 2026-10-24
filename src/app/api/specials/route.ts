@@ -1,18 +1,28 @@
 import { NextRequest, NextResponse, after } from "next/server";
-import { addLead, findRecentByPhone, hasDurableStore } from "@/lib/leads";
-import { notifyNewLead } from "@/lib/notify";
+import {
+  addLead,
+  findRecentByPhone,
+  getLeadById,
+  hasDurableStore,
+  leadData,
+  updateLeadData,
+} from "@/lib/leads";
+import { notifyNewLead, notifyConsentChange } from "@/lib/notify";
+import { applyConsentChange } from "@/lib/consent";
 import { appendTrackerRow } from "@/lib/sheet";
 import { rateLimit } from "@/lib/rate-limit";
 import { cleanText, normalizeUsPhone, formatUsPhone, validateSpecials } from "@/lib/specials-lead";
 import { TCPA_CONSENT } from "@/config/consent";
 import { SPECIALS_GUIDE, todayInDallas } from "@/config/specials";
 import { AGENT } from "@/config/agent";
-import type { ConsentEvent, LeadFormData } from "@/types/lead";
+import type { ConsentEvent, Lead, LeadFormData } from "@/types/lead";
 
 // ─── POST /api/specials ───────────────────────────────────────────────────────
 // Dedicated endpoint for the DFW specials guide (leaves /api/leads alone).
-// Order: spam checks → rate limit → validate → 30-day dedupe → Supabase save
-// (must succeed) → email alert + tracker row (best-effort, after the response).
+// Order: spam checks → rate limit → validate → supersede the lead named in
+// `replaces` ("Wrong number? Fix it") → 30-day dedupe (records consent
+// changes on the existing lead) → Supabase save (must succeed) → email alerts
+// + tracker row (best-effort, after the response).
 // Nothing here ever talks to NestQuest. No internal error detail is returned.
 
 const PRODUCT = "specials-guide" as const;
@@ -20,6 +30,8 @@ const MIN_FILL_MS = 3000;          // faster than this is a bot
 const RATE_LIMIT = 5;              // posts per IP...
 const RATE_WINDOW_MS = 10 * 60 * 1000; // ...per 10 minutes
 const DEDUPE_DAYS = 30;
+const REPLACE_WINDOW_MS = 24 * 60 * 60 * 1000; // "Fix it" only within a day
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const tel = AGENT.phone ? AGENT.phone.replace(/[^0-9+]/g, "") : "";
 
@@ -86,6 +98,12 @@ export async function POST(req: NextRequest) {
   }
   const phone = normalizeUsPhone(input.phone)!;
 
+  // "Wrong number? Fix it": the resubmit names the lead it replaces.
+  const replaces = body.replaces ?? null;
+  if (replaces !== null && (typeof replaces !== "string" || !UUID_RE.test(replaces))) {
+    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  }
+
   // Without Supabase (or the explicit local-dev file store) there is nowhere
   // durable to save. Refuse, so the renter sees the call/text fallback.
   if (!hasDurableStore()) {
@@ -116,8 +134,57 @@ export async function POST(req: NextRequest) {
       : {}),
   };
 
+  const pageUrl = cleanText(body.pageUrl, 300);
+  const alerts: (() => Promise<void>)[] = [];
+
   try {
-    if (await findRecentByPhone(phone, PRODUCT, DEDUPE_DAYS)) {
+    // 1. Supersede the typo'd lead: its number was wrong, so it must never be
+    //    texted. Only specials-guide leads, only within a day, only when the
+    //    number actually changed.
+    if (replaces) {
+      const old = await getLeadById(replaces);
+      if (old && old.product !== PRODUCT) {
+        return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+      }
+      if (old && old.phone !== phone && Date.now() - Date.parse(old.createdAt) < REPLACE_WINDOW_MS) {
+        const wasOptedIn = old.consent?.tcpa === true;
+        const note = "Superseded: renter corrected their number. Do not text this number.";
+        const revoke: ConsentEvent = { tcpa: false, at: now, version: TCPA_CONSENT.version, text: TCPA_CONSENT.text };
+        const updated: Lead = {
+          ...old,
+          notes: [old.notes, "SUPERSEDED (number corrected)"].filter(Boolean).join(" · "),
+          consent: applyConsentChange(old.consent, revoke, { note }),
+        };
+        await updateLeadData(old.id, leadData(updated), "lost");
+        if (wasOptedIn) {
+          alerts.push(() => notifyConsentChange(updated, true, false, "Number corrected with Fix it; this number was a typo."));
+        }
+      }
+    }
+
+    // 2. Already on the list (30 days): don't add a second row, but record a
+    //    consent change. An unchecked resubmit after an opt-in is a revocation.
+    const existing = await findRecentByPhone(phone, PRODUCT, DEDUPE_DAYS);
+    if (existing) {
+      const before = existing.consent?.tcpa === true;
+      if (before !== input.textConsent) {
+        const updated: Lead = {
+          ...existing,
+          consent: applyConsentChange(existing.consent, consentEvent, { pageUrl }),
+        };
+        await updateLeadData(existing.id, leadData(updated));
+        alerts.push(() =>
+          notifyConsentChange(
+            updated,
+            before,
+            input.textConsent,
+            input.textConsent ? "Re-submitted the guide form with the text box checked." : "Re-submitted the guide form with the text box unchecked (revocation)."
+          )
+        );
+      }
+      after(async () => {
+        await Promise.allSettled(alerts.map((fn) => fn()));
+      });
       return NextResponse.json({ ok: true, duplicate: true }, { status: 200 });
     }
 
@@ -149,7 +216,7 @@ export async function POST(req: NextRequest) {
       moveMonth: input.moveMonth,
       consent: {
         ...consentEvent,
-        pageUrl: cleanText(body.pageUrl, 300),
+        pageUrl,
       },
     };
 
@@ -159,6 +226,7 @@ export async function POST(req: NextRequest) {
     // catch their own errors and no-op when their env vars are missing.
     after(async () => {
       await Promise.allSettled([
+        ...alerts.map((fn) => fn()),
         notifyNewLead(lead),
         appendTrackerRow({
           Date: todayInDallas(),
@@ -175,7 +243,8 @@ export async function POST(req: NextRequest) {
       ]);
     });
 
-    return NextResponse.json({ ok: true }, { status: 201 });
+    // The id lets "Wrong number? Fix it" name this lead as the one it replaces.
+    return NextResponse.json({ ok: true, id: lead.id }, { status: 201 });
   } catch (err) {
     // Message only (no payload) so renter details stay out of the logs.
     console.error("Specials lead save failed:", err instanceof Error ? err.message : "unknown");
