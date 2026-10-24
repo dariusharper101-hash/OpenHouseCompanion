@@ -1,0 +1,23 @@
+{
+  "homepage": "discovery",
+  "social": "discovery",
+  "buy": "planning + summary + explicit handoff",
+  "start": "explicit structured plan inclusion skips repeated preferences; seller property detail retained; focused inquiry + sample completion",
+  "thank-you": "completion",
+  "leasing": "service + rental planner + reviewed handoff",
+  "relocate": "service + relocation planner + renting/buying branch",
+  "neighborhoods": "exploration",
+  "neighborhoods/[slug]": "reading + qualified context",
+  "learn": "reading index",
+  "learn/[topic]": "reading + portable questions; selling planner; provider-qualified loan copy",
+  "tools": "interactive estimates + validation",
+  "open-houses": "confirmed events + empty request",
+  "design-system": "live component and state catalog",
+  "standalone home list": "client list + builder; separate source",
+  "visitor": "focused sign-in; separate source",
+  "admin": "protected existing task surface, visual foundations only; no private data inspected",
+  "invest": "strategy orientation + investment planner + investor inquiry",
+  "workspace": "local-only five-intent relationship overview + known context + draft/shared recommendations + retained client response + owned next action",
+  "client-review": "intent-specific recommendations/comparison + retained reactions/question + explicit next-action agreement",
+  "relationship-demo": "distinct explorer/existing-client entries; five planners reuse context without new contact intake"
+}

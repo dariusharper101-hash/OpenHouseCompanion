@@ -8,6 +8,7 @@ export type ClientType =
   | "relocating";
 
 export type BuyerTimeline =
+  | "to-confirm"
   | "asap"
   | "1-3-months"
   | "3-6-months"
@@ -25,6 +26,7 @@ export type PropertyType =
 export type PurchasePurpose = "primary" | "second-home" | "investment";
 
 export type CreditRange =
+  | "not-shared"
   | "below-580"
   | "580-619"
   | "620-659"
@@ -47,7 +49,7 @@ export type InvestorStrategy =
   | "wholesale"
   | "other";
 
-export type MortgageStatus = "paid-off" | "has-mortgage" | "underwater";
+export type MortgageStatus = "not-discussed" | "paid-off" | "has-mortgage" | "underwater";
 
 export type LeadStatus = "new" | "contacted" | "active" | "closed" | "lost";
 

@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-03",
+  "status": "implemented locally; reviewable; aesthetic approval outstanding",
+  "previews": {
+    "marketing": "http://127.0.0.1:3123",
+    "catalog": "http://127.0.0.1:3123/design-system",
+    "visitor": "http://127.0.0.1:3125",
+    "list": "http://127.0.0.1:3114/jo-house-list.html"
+  },
+  "tests": {
+    "marketing": 16,
+    "visitor": 12,
+    "list": 5,
+    "result": "33 passed"
+  },
+  "builds": [
+    "marketing sample review mode passed",
+    "visitor sample review mode passed"
+  ],
+  "source_integrity": "original artwork hashes and shared CSS match all three sources; APIs/auth/storage/config not modified",
+  "observed": [
+    "homepage desktop and measured 390px",
+    "desktop plan input to personalized summary",
+    "390px homepage to plan, explicit import, invalid-contact focus, sample inquiry completion",
+    "390px visitor validation and sample completion with no record",
+    "phone menu expands and navigates to actual guide",
+    "catalog actual invalid, selected, busy and disabled states",
+    "marketing route DOM widths 390px without document overflow",
+    "list client empty state and builder typography refresh"
+  ],
+  "limitations": [
+    "320px/tablet viewport requests did not change measured viewport; not passed",
+    "full desktop inquiry completion not repeated after design extension",
+    "visitor reset not verified after development refresh reset the session",
+    "screen-reader and real-device QA not run",
+    "private admin data and live integrations not tested",
+    "inherited area/guide facts require broker/current-source review",
+    "image-failure handlers implemented but failure not injected in browser",
+    "earlier claimed Hop-specific protocol run remains unlocated",
+    "distinct Vite handoff identity remains unresolved"
+  ],
+  "solid_color_contrasts": [
+    {
+      "pair": "charcoal/chalk",
+      "ratio": 15.34
+    },
+    {
+      "pair": "brick/chalk",
+      "ratio": 6.6
+    },
+    {
+      "pair": "secondary/chalk",
+      "ratio": 6.67
+    },
+    {
+      "pair": "secondary/white",
+      "ratio": 7.07
+    },
+    {
+      "pair": "error/error-surface",
+      "ratio": 7.85
+    },
+    {
+      "pair": "success/success-surface",
+      "ratio": 8.41
+    },
+    {
+      "pair": "warning/warning-surface",
+      "ratio": 7.3
+    }
+  ],
+  "screenshots": [
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/buy-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/buyer-summary-desktop.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/catalog-desktop.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/guide-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/home-desktop.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/home-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/learn-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/leasing-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/list-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/neighborhoods-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/open-houses-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/relocate-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/start-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/tools-mobile.jpg",
+    "/Users/facelessdon/Documents/Codex/2026-10-03/task-2/hop-review-evidence/visitor-mobile.jpg"
+  ]
+}

@@ -3,14 +3,14 @@
 import { useState } from "react";
 
 // A photograph that degrades gracefully. If the (external, license-free) image
-// fails to load, we hide the <img> and the tasteful gradient underneath shows
-// through — so an image slot never renders as a broken icon.
+// fails to load, an explicit neutral fallback avoids a broken icon.
 export default function Photo({
   src,
   alt,
   className = "",
   imgClassName = "",
-  gradient = "linear-gradient(135deg, #26503f 0%, #1c3b30 55%, #14342b 100%)",
+  gradient = "var(--line)",
+  eager = false,
   overlay = false,
   children,
 }: {
@@ -19,6 +19,7 @@ export default function Photo({
   className?: string;
   imgClassName?: string;
   gradient?: string;
+  eager?: boolean;
   overlay?: boolean;
   children?: React.ReactNode;
 }) {
@@ -31,11 +32,13 @@ export default function Photo({
         <img
           src={src}
           alt={alt}
-          loading="lazy"
+          loading={eager ? "eager" : "lazy"}
+          fetchPriority={eager ? "high" : "auto"}
           onError={() => setFailed(true)}
           className={`absolute inset-0 w-full h-full object-cover ${imgClassName}`}
         />
       )}
+      {failed && <p className="absolute inset-x-0 top-1/3 z-10 text-center text-ink bg-paper p-4">Photography unavailable</p>}
       {overlay && <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent" />}
       {children}
     </div>

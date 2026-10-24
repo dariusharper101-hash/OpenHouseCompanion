@@ -58,11 +58,11 @@ export const NEIGHBORHOODS: Neighborhood[] = [
     schoolDistrict: "Dallas ISD",
     tagline: "High-rise, walkable, and always on — urban living and leasing in the center of it all.",
     intro:
-      "Downtown and the adjacent Uptown/Victory Park corridors are the region's most walkable, high-energy addresses — think residential towers, converted lofts, and luxury apartments steps from the Arts District, Klyde Warren Park, and the DART rail. It's the epicenter of Dallas apartment living, which is exactly where my free apartment-locating service shines.",
+      "Downtown and the adjacent Uptown/Victory Park corridors are the region's most walkable, high-energy addresses — think residential towers, converted lofts, and luxury apartments steps from the Arts District, Klyde Warren Park, and the DART rail. It's the epicenter of Dallas apartment living, where a property-specific shortlist and application plan can help.",
     priceBand: "Condos low $200s to $1M+ · luxury leases vary",
     highlights: [
       { title: "Walk-everywhere living", desc: "Restaurants, the Arts District, Klyde Warren Park, and rail transit are all on foot — a rarity in car-first Texas." },
-      { title: "Leasing capital", desc: "Downtown and Uptown hold the metro's densest concentration of luxury high-rise apartments — and locating the right one is free to you through me." },
+      { title: "Leasing capital", desc: "Downtown and Uptown hold the metro's densest concentration of luxury high-rise apartments — Confirm any locating compensation, renter charges and application fees for the specific property." },
       { title: "Lofts, towers, and condos", desc: "From historic converted lofts to brand-new glass towers, the urban core suits buyers and renters who want a lock-and-leave lifestyle." },
       { title: "Culture on your doorstep", desc: "The nation's largest contiguous Arts District, sports venues, and nightlife are all right here." },
     ],

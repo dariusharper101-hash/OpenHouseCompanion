@@ -1,0 +1,18 @@
+{
+  "assets": [
+    {
+      "library_file_id": "libfile_b8794b3ec45481919b31978c7cfbcd38",
+      "library_version": 0,
+      "original_name": "Hop In Realestate Icon.PNG",
+      "project_asset": "public/brand/hop-icon.png",
+      "sha256": "28efb9bcc7941c783815b5c78fe58c70adc724918034186d844b9c273c17a9b7"
+    },
+    {
+      "library_file_id": "libfile_0f8862cafb3c8191859c19d27dca72fd",
+      "library_version": 0,
+      "original_name": "Hop In Realestate Wordmark.PNG",
+      "project_asset": "public/brand/hop-wordmark.png",
+      "sha256": "1303f9f4c7c6450f78586c6baa2e13314f154f3ca1265e466f3f760d08536a39"
+    }
+  ]
+}

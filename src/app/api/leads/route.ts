@@ -1,3 +1,4 @@
+import { storageMode, StorageConfigurationError } from "@/lib/storage-config";
 import { NextRequest, NextResponse } from "next/server";
 import { addLead } from "@/lib/leads";
 import { notifyNewLead } from "@/lib/notify";
@@ -29,20 +30,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    storageMode();
     const lead = await addLead(body);
 
-    // Best-effort notification — never blocks or fails the submission.
+    // Best-effort notification, bounded to five seconds. Durable outbox follows separately.
     await notifyNewLead(lead);
 
     return NextResponse.json({ success: true, id: lead.id }, { status: 201 });
   } catch (err) {
-    // Surface the real reason in the server logs (Vercel → Logs) AND in the
-    // response `detail` so misconfiguration (missing table, bad key, RLS) is
-    // diagnosable during setup. `detail` is safe to remove once things are green.
-    console.error("Lead submission failed:", err);
+    console.error("Lead submission failed", { category: err instanceof StorageConfigurationError ? "storage-configuration" : "submission" });
     return NextResponse.json(
-      { error: "Internal server error", detail: err instanceof Error ? err.message : String(err) },
-      { status: 500 }
+      { error: "We could not confirm your submission. Please try again or contact the agent." },
+      { status: err instanceof StorageConfigurationError ? 503 : 500, headers: { "Cache-Control": "no-store" } }
     );
   }
 }

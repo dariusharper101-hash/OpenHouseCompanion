@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Barlow_Condensed, Public_Sans } from "next/font/google";
 import "./globals.css";
+import { ReviewBanner } from "@/components/ui";
 import { AGENT } from "@/config/agent";
 
 const brandLine = AGENT.name
@@ -11,15 +12,15 @@ const brandDesc = AGENT.name
   : "Expert real estate guidance for buyers, sellers, and investors. Know your programs, understand the process, and work with an agent who has your back.";
 
 // Editorial serif for display headlines, clean sans for everything else.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const display = Barlow_Condensed({
+  weight: ["600", "700"],
+  variable: "--font-barlow",
   subsets: ["latin"],
   display: "swap",
-  axes: ["opsz"],
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const body = Public_Sans({
+  variable: "--font-public-sans",
   subsets: ["latin"],
   display: "swap",
 });
@@ -82,13 +83,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${fraunces.variable} ${inter.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <a href="#main-content" className="skip-link">Skip to content</a>
+        <ReviewBanner />
         {children}
       </body>
     </html>

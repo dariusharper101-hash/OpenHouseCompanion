@@ -1,6 +1,10 @@
+import JourneyPlanner from "@/components/journey-planner";
+import GuideQuestionPlan from "@/components/guide-question-plan";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Nav from "@/components/nav";
+import Footer from "@/components/footer";
+import { ActionLink } from "@/components/ui";
 import { AGENT } from "@/config/agent";
 
 // ─── Content ──────────────────────────────────────────────────────────────────
@@ -39,7 +43,7 @@ const CONTENT: Record<string, TopicContent> = {
       },
       {
         heading: "Step 2 — Sign a Buyer Representation Agreement",
-        body: "Effective August 17, 2024, Texas agents are required by law to have a signed Buyer Representation Agreement before showing you properties or negotiating on your behalf. This agreement establishes our working relationship and gives you full fiduciary protections — meaning I am legally obligated to put your interests first.",
+        body: "Hop will explain the applicable written agreement before a showing or representation begins. Review the services, duration and compensation terms before signing separately through the brokerage’s approved process. Browsing this guide does not establish representation.",
         bullets: [
           "Defines the scope and duration of our working relationship",
           "Establishes how agent compensation is handled",
@@ -104,84 +108,73 @@ const CONTENT: Record<string, TopicContent> = {
   },
 
   programs: {
-    icon: "💰",
-    title: "Loan Programs You Should Know",
-    subtitle: "From 0% down to Texas-specific grants — most buyers qualify for more than they think.",
-    sections: [
-      {
-        heading: "VA Home Loan",
-        body: "The most powerful loan program in existence, and most veterans don't fully use it. Backed by the Department of Veterans Affairs, VA loans require no down payment, no private mortgage insurance (PMI), and offer the best rates available for eligible borrowers.",
-        bullets: [
-          "0% down payment",
-          "No private mortgage insurance (PMI)",
-          "Competitive interest rates",
-          "Available to veterans, active duty, National Guard, reserves, and surviving spouses",
-          "Can be used multiple times",
-          "No prepayment penalty",
-        ],
-        callout: "If you've served, this is almost always your best option. The VA funding fee (1.25%–3.3% depending on usage) is typically lower than years of PMI.",
-      },
-      {
-        heading: "FHA Loan",
-        body: "Federal Housing Administration loans are backed by the government and are the most common choice for first-time buyers. Lower credit requirements and down payments make them accessible when conventional financing isn't.",
-        bullets: [
-          "3.5% down with 580+ credit score",
-          "10% down with 500–579 credit score",
-          "Mortgage Insurance Premium (MIP) is required — 1.75% upfront + annual premium",
-          "Higher debt-to-income ratios allowed compared to conventional",
-          "Can be used for primary residences only",
-        ],
-        callout: "MIP doesn't automatically drop off FHA loans made after 2013 with less than 10% down — you may need to refinance to conventional to remove it once you hit 20% equity.",
-      },
-      {
-        heading: "Conventional Loan",
-        body: "Loans that conform to Fannie Mae or Freddie Mac standards. Stronger credit requirements but no upfront mortgage insurance premium, and PMI can be removed automatically at 20% equity.",
-        bullets: [
-          "3% down (Conventional 97 — primary residence, first-time buyers)",
-          "5–20%+ down for move-up buyers and second homes",
-          "PMI required if down payment is under 20%, but it drops off at 20% equity",
-          "Best rates available with 740+ credit score",
-          "Available for primary residences, second homes, and investment properties",
-        ],
-      },
-      {
-        heading: "USDA Loan",
-        body: "United States Department of Agriculture loans are for rural and suburban properties in eligible areas. Often overlooked — many Texas suburbs and smaller cities qualify.",
-        bullets: [
-          "0% down payment",
-          "Must meet income limits (typically 115% of area median income)",
-          "Property must be in an eligible USDA area",
-          "Primary residence only",
-          "Annual guarantee fee (similar to MIP)",
-        ],
-        callout: "Check the USDA eligibility map — many areas outside of major metros qualify, including parts of the Houston, DFW, and San Antonio metro areas.",
-      },
-      {
-        heading: "My First Texas Home (TDHCA)",
-        body: "Texas Department of Housing and Community Affairs program offering below-market 30-year fixed rates plus up to 5% in down payment and closing cost assistance.",
-        bullets: [
-          "Available to first-time homebuyers (or those who haven't owned in 3 years)",
-          "Income and purchase price limits apply (varies by county and family size)",
-          "620+ credit score required",
-          "Must complete homebuyer education course",
-          "Assistance is a second lien — forgiven after 3 years if you stay in the home",
-        ],
-      },
-      {
-        heading: "TSAHC Homebuyer Programs",
-        body: "Texas State Affordable Housing Corporation offers two programs: one for any buyer, one specifically for 'Texas Heroes' (teachers, nurses, police, firefighters, correctional officers, veterans).",
-        bullets: [
-          "Down payment assistance of 2%–5% of the loan amount",
-          "Grant option (does not have to be repaid) or deferred forgivable loan",
-          "Heroes program has additional benefits for qualifying professions",
-          "Available with FHA, VA, USDA, and conventional loans",
-          "No first-time buyer requirement for Heroes program",
-        ],
-        callout: "TSAHC grants are one of the best-kept secrets in Texas real estate. Many buyers who could qualify never use them because their agent didn't know to ask.",
-      },
+    "icon": "💰",
+    "title": "Loan Programs You Should Know",
+    "subtitle": "Compare the questions, costs and requirements before choosing a lender or program.",
+    "sections": [
+        {
+            "heading": "VA Home Loan",
+            "body": "VA-backed purchase loans may offer no down payment and no monthly mortgage insurance for eligible borrowers. A Certificate of Eligibility, lender review, occupancy requirements and the property appraisal still matter. Compare actual lender offers rather than assuming this is the best loan for you.",
+            "bullets": [
+                "No down payment may be available when the sales price does not exceed the appraised value; entitlement and lender requirements apply.",
+                "No private mortgage insurance or FHA mortgage insurance premium.",
+                "A funding fee may apply; exemptions exist. Your lender confirms the fee, rate and closing costs."
+            ],
+            "callout": "Ask the lender to compare the complete cost, including any funding fee. The fee varies by loan type, use and down payment; service alone does not establish approval."
+        },
+        {
+            "heading": "FHA Loan",
+            "body": "FHA insures loans made by participating lenders. HUD describes down payments as low as 3.5% for eligible borrowers. Your lender checks credit, income, property requirements and the complete cash needed to close.",
+            "bullets": [
+                "Discuss the down payment and closing costs separately.",
+                "Ask for the upfront and annual mortgage insurance costs and how long they apply.",
+                "A published program minimum is not a lender approval."
+            ],
+            "callout": "Ask the lender for current FHA requirements and a written comparison with other options. This guide does not determine eligibility."
+        },
+        {
+            "heading": "Conventional Loan",
+            "body": "Conventional options vary by lender and product. Some low-down-payment programs, including HomeReady, offer down payments as low as 3% for eligible borrowers. Requirements differ for a primary residence, second home or investment property.",
+            "bullets": [
+                "Ask which product, occupancy and income rules apply.",
+                "Compare rate, points, closing costs and mortgage insurance.",
+                "For many covered mortgages, you can request PMI cancellation at 80% of original value if the conditions are met; automatic termination generally occurs at the scheduled 78% balance when payments are current."
+            ],
+            "callout": "20% equity does not automatically cancel PMI in every case. Check the mortgage insurance disclosure and ask the servicer about your loan."
+        },
+        {
+            "heading": "USDA Guaranteed Loan",
+            "body": "The USDA guaranteed program can provide 100% financing for eligible primary residences in eligible rural areas. An approved lender reviews the application; a city or neighborhood name alone does not establish eligibility.",
+            "bullets": [
+                "Check the specific address on USDA’s eligibility site.",
+                "Household income limits apply; the program describes a limit of 115% of median household income.",
+                "Compare lender rates, fees and the full cost to close."
+            ],
+            "callout": "Use the address checker and an approved lender to verify the property and household requirements. No-down-payment financing is not the same as no closing costs."
+        },
+        {
+            "heading": "My First Texas Home (TDHCA)",
+            "body": "TDHCA offers My First Texas Home for first-time homebuyers and qualified veterans, with mortgage and down-payment assistance options. Its published materials describe assistance up to 5%, subject to program limits and lender review.",
+            "bullets": [
+                "Income and purchase-price limits apply.",
+                "Work with a TDHCA Approved Loan Officer and complete required homebuyer education.",
+                "Ask which assistance structure is offered, when repayment is due and what conditions apply."
+            ],
+            "callout": "Do not assume every assistance option is forgiven after three years. Review the actual assistance documents, including sale, refinance and occupancy conditions."
+        },
+        {
+            "heading": "TSAHC Homebuyer Programs",
+            "body": "TSAHC’s Home Sweet Texas and Homes for Texas Heroes programs have eligibility requirements. Home Sweet Texas describes assistance up to 5% as a grant or a forgivable second lien; the available option and terms need lender confirmation.",
+            "bullets": [
+                "Income, occupation where applicable, property and loan requirements need checking.",
+                "A grant and a second lien have different obligations.",
+                "The published three-year second-lien option has conditions, including sale or refinance during that period."
+            ],
+            "callout": "Ask for the current program terms and compare the mortgage together with its assistance. No program choice here is an approval or a promise of funding."
+        }
     ],
-    cta: "Find out which programs fit your situation",
-  },
+    "cta": "Compare the options with the right provider"
+},
 
   taxes: {
     icon: "📋",
@@ -218,11 +211,11 @@ const CONTENT: Record<string, TopicContent> = {
         heading: "Homestead Exemption",
         body: "If the home is your primary residence, you can apply for a Homestead Exemption, which reduces your taxable assessed value and caps how much your value can increase each year.",
         bullets: [
-          "Mandatory $100,000 school district exemption (increased by Texas Legislature in 2023)",
+          "The Comptroller currently describes a $140,000 residence homestead exemption for school district taxes; the appraisal district determines qualification.",
           "Additional exemptions available for seniors (65+), disabled persons, and veterans",
           "Caps annual assessed value increase at 10% for your homestead",
           "Must apply with the county appraisal district — not automatic",
-          "Apply between January 1 and April 30 of the year following purchase",
+          "Ask the appraisal district when you qualify and about current application deadlines; do not assume you must wait until the year after purchase.",
         ],
         callout: "The homestead exemption is one of the most valuable tax benefits in Texas. File it the first year you own your home — don't miss the window.",
       },
@@ -563,7 +556,7 @@ const CONTENT: Record<string, TopicContent> = {
       },
       {
         heading: "When & Where You'll Actually Sign",
-        body: `This site is your starting point — where you learn the process and tell me about your goals. When it's time to sign the real documents (IABS, Buyer Representation Agreement, the TREC contract, and disclosures), I'll send them to you through ${AGENT.signing.platform} — a secure, legally-compliant e-signature platform provided through my brokerage. You'll receive a private email invitation to review and sign each document at your own pace. Your signed paperwork lives inside that protected system, never on this website, which keeps your personal and financial information safe.`,
+        body: "This site helps you learn the process and describe your goals. Hop will confirm the brokerage’s approved forms and signing provider before sending a private invitation for the relevant transaction. Review each document and ask questions before signing. Do not upload financial documents or account information to this website.",
         callout: "You will never be asked to upload sensitive documents or sign a binding contract on this website. Signing always happens through the secure, verified email invitation I send you directly.",
       },
     ],
@@ -662,17 +655,20 @@ type ResourceLink = { label: string; url: string; note?: string };
 
 const RESOURCES: Record<string, ResourceLink[]> = {
   programs: [
+    {label:"CFPB — Mortgage insurance cancellation",url:"https://www.consumerfinance.gov/ask-cfpb/when-can-i-remove-private-mortgage-insurance-pmi-from-my-loan-en-202/",note:"Requesting cancellation differs from automatic termination"},
+    {label:"VA — Funding fees and closing costs",url:"https://www.va.gov/housing-assistance/home-loans/funding-fee-and-closing-costs/",note:"Current fee tables and exemptions"},
     { label: "CFPB — Compare Loan Options", url: "https://www.consumerfinance.gov/owning-a-home/loan-options/", note: "Neutral overview of FHA, VA, USDA & conventional loans" },
     { label: "VA Home Loans — VA.gov", url: "https://www.va.gov/housing-assistance/home-loans/", note: "Check eligibility & request your Certificate of Eligibility" },
     { label: "USDA Single-Family Housing", url: "https://www.rd.usda.gov/programs-services/single-family-housing-programs", note: "0% down in eligible rural/suburban areas" },
     { label: "USDA Property Eligibility Map", url: "https://eligibility.sc.egov.usda.gov/eligibility/", note: "Check whether a specific address qualifies" },
-    { label: "FHA / HUD Homebuyer Resources", url: "https://www.hud.gov/buying", note: "Federal Housing Administration program info" },
+    { label: "FHA / HUD Homebuyer Resources", url: "https://www.hud.gov/helping-americans/loans", note: "Federal Housing Administration program info" },
     { label: "Fannie Mae — HomeReady & buyer tools", url: "https://yourhome.fanniemae.com/", note: "3% down conventional option" },
     { label: "Freddie Mac — Home Possible & buyer tools", url: "https://myhome.freddiemac.com/", note: "3% down conventional option" },
-    { label: "My First Texas Home (TDHCA)", url: "https://www.tdhca.texas.gov/homeownership", note: "Texas down-payment & closing-cost assistance" },
-    { label: "TSAHC Homebuyer Programs", url: "https://www.tsahc.org/homebuyers-renters/loans-down-payment-assistance", note: "Grants for Texas buyers & 'Texas Heroes'" },
+    { label: "My First Texas Home (TDHCA)", url: "https://welcomehome.tdhca.texas.gov/programs", note: "Texas down-payment & closing-cost assistance" },
+    { label: "TSAHC Homebuyer Programs", url: "https://www.tsahc.org/homebuyers-renters/loans-and-down-payment-assistance/", note: "Grants for Texas buyers & 'Texas Heroes'" },
   ],
   taxes: [
+    {label:"Texas Comptroller — Property tax exemptions",url:"https://comptroller.texas.gov/taxes/property-tax/exemptions/",note:"Current exemption rules; appraisal districts determine qualification"},
     { label: "Texas Comptroller — Property Tax", url: "https://comptroller.texas.gov/taxes/property-tax/", note: "Statewide rules, deadlines, and taxpayer rights" },
     { label: "Find Your County Appraisal District", url: "https://comptroller.texas.gov/taxes/property-tax/county-directory/", note: "Look up assessed value, tax rates & protest info" },
     { label: "Homestead & Other Exemptions", url: "https://comptroller.texas.gov/taxes/property-tax/exemptions/", note: "File after you move in to lower your taxable value" },
@@ -725,14 +721,14 @@ const PROCESS_STEP_LINKS: Record<number, ResourceLink[]> = {
 
 function ExternalLinkList({ links }: { links: ResourceLink[] }) {
   return (
-    <div className="space-y-2.5">
+    <div className="hop-resource-cards">
       {links.map((l) => (
         <a
           key={l.url}
           href={l.url}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-start gap-2.5 group"
+          className="hop-resource-card"
         >
           <svg
             className="w-4 h-4 text-green flex-shrink-0 mt-0.5 group-hover:text-green transition-colors"
@@ -744,10 +740,10 @@ function ExternalLinkList({ links }: { links: ResourceLink[] }) {
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
           </svg>
           <span>
-            <span className="text-green group-hover:text-green text-sm font-medium transition-colors underline-offset-2 group-hover:underline">
+            <span className="hop-resource-card-label">
               {l.label}
             </span>
-            {l.note && <span className="block text-faint text-xs mt-0.5">{l.note}</span>}
+            {l.note && <span className="hop-resource-card-note">{l.note}</span>}
           </span>
         </a>
       ))}
@@ -757,121 +753,7 @@ function ExternalLinkList({ links }: { links: ResourceLink[] }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default async function TopicPage(props: PageProps<"/learn/[topic]">) {
-  const { topic } = await props.params;
-  const content = CONTENT[topic];
-
-  if (!content) notFound();
-
-  const allTopics = Object.entries(CONTENT).filter(([slug]) => slug !== topic);
-
-  return (
-    <div className="min-h-screen bg-cream">
-      <Nav />
-
-      <div className="max-w-3xl mx-auto px-4 pt-32 pb-20">
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 text-sm text-faint mb-8">
-          <Link href="/learn" className="hover:text-muted transition-colors">Education Hub</Link>
-          <span>/</span>
-          <span className="text-muted">{content.title}</span>
-        </div>
-
-        {/* Header */}
-        <div className="mb-10">
-          <div className="text-4xl mb-4">{content.icon}</div>
-          <h1 className="text-4xl font-bold text-ink mb-3">{content.title}</h1>
-          <p className="text-muted text-lg leading-relaxed">{content.subtitle}</p>
-        </div>
-
-        {/* Sections */}
-        <div className="space-y-8">
-          {content.sections.map((section, i) => (
-            <div key={i} className="bg-paper border border-line rounded-2xl p-6">
-              <h2 className="text-ink font-bold text-xl mb-3">{section.heading}</h2>
-              <p className="text-muted text-sm leading-relaxed mb-4">{section.body}</p>
-
-              {section.bullets && (
-                <ul className="space-y-2 mb-4">
-                  {section.bullets.map((b, j) => (
-                    <li key={j} className="flex items-start gap-2.5 text-sm text-muted">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green flex-shrink-0 mt-2" />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {section.callout && (
-                <div className="bg-green/10 border border-green/30 rounded-xl px-4 py-3 mt-4">
-                  <p className="text-green text-sm leading-relaxed">
-                    <span className="font-semibold">Key point: </span>
-                    {section.callout}
-                  </p>
-                </div>
-              )}
-
-              {topic === "process" && PROCESS_STEP_LINKS[i] && (
-                <div className="mt-5 border-t border-line pt-4">
-                  <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2.5">
-                    Apply / Learn more
-                  </p>
-                  <ExternalLinkList links={PROCESS_STEP_LINKS[i]} />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Resource links for this topic */}
-        {RESOURCES[topic] && (
-          <div className="mt-8 bg-paper border border-line rounded-2xl p-6">
-            <h3 className="text-ink font-bold text-lg mb-1">Helpful Links &amp; Where to Apply</h3>
-            <p className="text-faint text-xs mb-4 leading-relaxed">
-              Official and third-party resources for research and applications — provided for your
-              convenience, not as endorsements. Confirm current terms directly with each provider,
-              and reach out to me anytime for a trusted referral.
-            </p>
-            <ExternalLinkList links={RESOURCES[topic]} />
-          </div>
-        )}
-
-        {/* CTA */}
-        <div className="mt-10 bg-green/10 border border-green/30 rounded-2xl p-6 text-center">
-          <h3 className="text-ink font-bold text-lg mb-2">{content.cta}</h3>
-          <p className="text-muted text-sm mb-5">
-            This is what I do — help you understand exactly where you stand before you commit to anything.
-          </p>
-          <Link
-            href="/start"
-            className="inline-block px-8 py-3 rounded-xl bg-green hover:bg-green-600 text-cream text-sm font-semibold transition-all shadow-lg"
-          >
-            Talk to Me About This →
-          </Link>
-        </div>
-
-        {/* Other topics */}
-        <div className="mt-12">
-          <h3 className="text-ink font-semibold mb-4">More Education Topics</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {allTopics.slice(0, 4).map(([slug, c]) => (
-              <Link
-                key={slug}
-                href={`/learn/${slug}`}
-                className="flex items-center gap-3 bg-paper hover:bg-paper border border-line hover:border-green/40 rounded-xl p-4 transition-all group"
-              >
-                <span className="text-xl">{c.icon}</span>
-                <span className="text-muted group-hover:text-ink text-sm font-medium transition-colors">{c.title}</span>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-3 text-center">
-            <Link href="/learn" className="text-green hover:text-green text-sm transition-colors">
-              View all topics →
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+export default async function TopicPage(props: PageProps<"/learn/[topic]">){
+ const {topic}=await props.params;const content=CONTENT[topic];if(!content)notFound();
+ return <><Nav/><main id="main-content" tabIndex={-1} className="hop-wrap hop-guide"><nav aria-label="Breadcrumb" className="hop-breadcrumb"><Link href="/learn">Field guide</Link><span aria-hidden="true">/</span><span>{content.title}</span></nav><header className="hop-guide-intro"><p className="hop-eyebrow">Know before you decide</p><h1 className="hop-title">{content.title}</h1><p className="hop-lead">{content.subtitle}</p><p className="hop-note mt-5">Use this as orientation for your questions. Current terms, eligibility and transaction-specific disclosures need confirmation with the relevant provider and brokerage.</p></header><div className="hop-guide-layout"><aside className="hop-guide-contents"><details open><summary>In this guide</summary><ol>{content.sections.map((s,i)=><li key={s.heading}><a href={`#section-${i+1}`}>{s.heading}</a></li>)}</ol></details></aside><div className="hop-guide-body">{content.sections.map((s,i)=><section id={`section-${i+1}`} key={s.heading}><p className="hop-number" aria-hidden="true">{String(i+1).padStart(2,"0")}</p><h2>{s.heading}</h2><p>{s.body}</p>{s.bullets&&<ul>{s.bullets.map(b=><li key={b}>{b}</li>)}</ul>}{s.callout&&<div className="hop-status"><strong>Key point</strong><p>{s.callout}</p></div>}{topic==="process"&&PROCESS_STEP_LINKS[i]&&<div className="hop-guide-resources"><h3>Research this step</h3><ExternalLinkList links={PROCESS_STEP_LINKS[i]}/></div>}</section>)}{RESOURCES[topic]&&<section className="hop-guide-resources"><h2>Continue your research</h2><p className="hop-note">Resources for research and applications, not endorsements. Confirm current terms directly with each provider.</p><ExternalLinkList links={RESOURCES[topic]}/></section>}{topic==="selling"?<JourneyPlanner kind="selling"/>:<GuideQuestionPlan topic={topic} title={content.title}/>}<section className="hop-guide-conversation"><p className="hop-eyebrow">Put the information to work</p><h2>{content.cta}</h2><p>Bring your questions and your situation. Let’s work out the next useful step.</p><ActionLink href={topic==="selling"?"/start?role=selling&src=guide":"/start?src=guide"}>Talk this through with Hop</ActionLink></section><section><h2>Keep exploring</h2><div className="hop-guide-related">{Object.entries(CONTENT).filter(([slug])=>slug!==topic).slice(0,4).map(([slug,c])=><Link key={slug} href={`/learn/${slug}`}>{c.title}<span aria-hidden="true">↗</span></Link>)}</div></section></div></div></main><Footer/></>;
 }

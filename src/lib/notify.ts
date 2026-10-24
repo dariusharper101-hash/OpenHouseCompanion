@@ -4,7 +4,7 @@ import { PRODUCT_LABELS } from "@/types/lead";
 // ─── New-lead notification ─────────────────────────────────────────────────────
 // Emails you the moment a lead comes in, via Resend's HTTP API (no SDK needed).
 // Fully env-gated and best-effort: if it's not configured or the send fails, the
-// lead is still saved and the request still succeeds — notifications never block.
+// lead is still saved and the request still succeeds — notification latency is bounded to five seconds.
 //
 // To enable: set RESEND_API_KEY and NOTIFY_EMAIL (where alerts go). Optionally set
 // NOTIFY_FROM (a verified sender; defaults to Resend's onboarding address, which
@@ -18,7 +18,9 @@ function esc(s: unknown): string {
   return String(s ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function row(label: string, value: unknown): string {
@@ -74,6 +76,7 @@ export async function notifyNewLead(lead: Lead): Promise<void> {
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
+      signal: AbortSignal.timeout(5000),
       headers: {
         Authorization: `Bearer ${RESEND_API_KEY}`,
         "Content-Type": "application/json",
@@ -87,11 +90,11 @@ export async function notifyNewLead(lead: Lead): Promise<void> {
       }),
     });
     if (!res.ok) {
-      console.error("Lead notification failed:", res.status, await res.text());
+      console.error("Lead notification failed:", res.status);
     } else {
-      console.log(`Lead notification sent to ${NOTIFY_EMAIL} for ${lead.firstName} ${lead.lastName}`);
+      console.log("Lead notification sent");
     }
-  } catch (err) {
-    console.error("Lead notification error:", err);
+  } catch {
+    console.error("Lead notification error");
   }
 }

@@ -1,3 +1,4 @@
+import { adminGuard } from "@/lib/admin-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { updateLeadStatus, deleteLead } from "@/lib/leads";
 import { LEAD_STATUSES, type LeadStatus } from "@/types/lead";
@@ -6,6 +7,8 @@ export async function PATCH(
   req: NextRequest,
   ctx: RouteContext<"/api/admin/leads/[id]">
 ) {
+  const denied = adminGuard(req);
+  if (denied) return denied;
   const { id } = await ctx.params;
 
   let body: { status?: string };
@@ -32,9 +35,11 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _req: NextRequest,
+  req: NextRequest,
   ctx: RouteContext<"/api/admin/leads/[id]">
 ) {
+  const denied = adminGuard(req);
+  if (denied) return denied;
   const { id } = await ctx.params;
 
   const removed = await deleteLead(id);

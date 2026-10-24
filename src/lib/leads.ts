@@ -1,3 +1,4 @@
+import { storageMode } from "./storage-config";
 import fs from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
@@ -5,13 +6,12 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Lead, LeadFormData, LeadStatus, LeadProduct } from "@/types/lead";
 
 // ─── Backend selection ────────────────────────────────────────────────────────
-// If Supabase credentials are present we use the shared database (the real
-// store that both products write to). Otherwise we fall back to local file
-// storage so the app keeps working in dev / preview before Supabase is wired up.
+// Supabase is mandatory outside explicitly opted-in local development.
+// Misconfiguration fails before a lead is read or written.
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const useSupabase = Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+
 
 const TABLE = "leads";
 
@@ -46,18 +46,18 @@ function rowToLead(row: LeadRow): Lead {
 }
 
 // ─── File fallback ────────────────────────────────────────────────────────────
-// On Vercel only /tmp is writable; locally we persist to ./data. /tmp is
-// ephemeral, so this path is for dev/preview only — Supabase is the real store.
+// Explicit development-only storage. Never used by production or Vercel previews.
 
-const DATA_DIR = process.env.VERCEL ? "/tmp" : path.join(process.cwd(), "data");
+const DATA_DIR = path.join(process.cwd(), "data");
 const LEADS_FILE = path.join(DATA_DIR, "leads.json");
 
 async function readFileLeads(): Promise<Lead[]> {
   try {
     const raw = await fs.readFile(LEADS_FILE, "utf-8");
     return JSON.parse(raw) as Lead[];
-  } catch {
-    return [];
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return [];
+    throw error;
   }
 }
 
@@ -69,7 +69,7 @@ async function writeFileLeads(leads: Lead[]): Promise<void> {
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function readLeads(): Promise<Lead[]> {
-  if (useSupabase) {
+  if (storageMode() === "supabase") {
     const { data, error } = await db()
       .from(TABLE)
       .select("*")
@@ -92,7 +92,7 @@ export async function addLead(input: LeadFormData): Promise<Lead> {
     status: "new",
   };
 
-  if (useSupabase) {
+  if (storageMode() === "supabase") {
     const { error } = await db().from(TABLE).insert({
       id: lead.id,
       created_at: lead.createdAt,
@@ -113,7 +113,7 @@ export async function updateLeadStatus(
   id: string,
   status: LeadStatus
 ): Promise<Lead | null> {
-  if (useSupabase) {
+  if (storageMode() === "supabase") {
     const { data, error } = await db()
       .from(TABLE)
       .update({ status })
@@ -133,7 +133,7 @@ export async function updateLeadStatus(
 }
 
 export async function deleteLead(id: string): Promise<boolean> {
-  if (useSupabase) {
+  if (storageMode() === "supabase") {
     const { data, error } = await db()
       .from(TABLE)
       .delete()
@@ -190,7 +190,12 @@ const CSV_COLUMNS: { key: keyof Lead; label: string }[] = [
 ];
 
 function csvEscape(value: unknown): string {
-  const str = value === null || value === undefined ? "" : String(value);
+  const raw = value === null || value === undefined ? "" : String(value);
+  // CSV quoting alone does not stop spreadsheet formula evaluation. Preserve
+  // stored values; mark potentially executable export cells as literal text.
+  const str = /^[\s\u0000-\u001f]*[=+@-]/u.test(raw) || /^[\t\r\n]/u.test(raw)
+    ? `'${raw}`
+    : raw;
   if (/[",\n\r]/.test(str)) {
     return `"${str.replace(/"/g, '""')}"`;
   }

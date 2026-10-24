@@ -19,7 +19,7 @@ export const AGENT = {
 
   // Contact
   phone: "(870) 718-0974",
-  email: "DariusHarper@kw.com",
+  email: "darius@freeapartmenthunters.com",
   serviceArea: "Dallas–Fort Worth",
 
   // Social profiles (shown in the agent card, footer, and social funnel)
@@ -29,17 +29,20 @@ export const AGENT = {
   },
 
   // Brokerage (Texas requires the brokerage be identified)
-  brokerage: "Keller Williams DPR",
-  brokerageLicense: "", // brokerage TREC number (optional)
+  brokerage: "The Realty Influence LLC",
+  brokerageLicense: "9015889-BB", // sponsoring broker TREC license
 
-  // Signing / transaction platform provided by your brokerage.
-  // Lone Wolf's e-signature product is Authentisign; clients receive a secure
-  // email invite to sign each document per transaction.
+  // TREC Rule 531.20(b) / 535.154: every business website must link to the
+  // sponsoring broker's IABS and the TREC Consumer Protection Notice.
+  // TODO: replace with The Realty Influence LLC's completed IABS PDF.
+  iabsUrl: "https://www.trec.texas.gov/forms/information-about-brokerage-services",
+  consumerProtectionUrl: "https://www.trec.texas.gov/forms/consumer-protection-notice",
+
+  // Signing: documents are sent per transaction through the brokerage's
+  // approved e-signature process. Update once the brokerage confirms its provider.
   signing: {
-    platform: "Lone Wolf (Authentisign)",
-    // Reference link for clients ("what is this?"). Actual signing links are
-    // emailed per transaction — this is not where they sign.
-    infoUrl: "https://www.lwolf.com/solutions/transaction-management",
+    platform: "The Realty Influence LLC",
+    infoUrl: "https://freeapartmenthunters.com",
   },
 } as const;
 

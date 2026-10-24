@@ -1,0 +1,53 @@
+version: 2026-10-03
+primitives:
+  ActionLink:
+    source: src/components/ui.tsx
+    variants: [primary, secondary, quiet]
+    contracts: [descriptive destination, minimum 48px task target, visible focus, decorative arrow hidden from accessibility]
+  Button:
+    source: src/components/ui.tsx
+    variants: [primary, secondary, quiet]
+    states: [default, hover, focus, active, disabled, processing]
+  PageIntro:
+    source: src/components/ui.tsx
+    variants: [discovery, reading, task]
+    contracts: [one h1, eyebrow gives context, lead explains useful outcome]
+  RouteRow:
+    source: src/components/ui.tsx
+    contracts: [whole row is a link, support text shares purpose, visible arrow]
+  Status:
+    source: src/components/ui.tsx
+    variants: [info, error, success]
+    contracts: [text accompanies color, alert only when immediate attention needed]
+  Field:
+    source: public/brand/system.css
+    states: [default, focus, invalid, disabled]
+    contracts: [visible label, associated hint and error, 1rem text, no placeholder-only label]
+  Choice:
+    source: public/brand/system.css
+    states: [default, selected, hover, focus]
+    contracts: [aria-pressed, selected text remains readable, keyboard-operable native button]
+  Portrait:
+    source: src/components/portrait.tsx
+    states: [loaded, unavailable]
+    contracts: [actual supplied face, identity remains on failure]
+  JourneyPlanner:
+    source: src/components/journey-planner.tsx
+    states: [starting, shaping, proposed-plan, copied, copy-failed, handoff-failed]
+    contracts: [no contact intake to explore, proposed not confirmed, review before inquiry inclusion, startup-safe controls, portable brief]
+  GuideQuestionPlan:
+    source: src/components/guide-question-plan.tsx
+    states: [none-selected, selected, copied, manual-copy]
+    contracts: [native buttons with aria-pressed, no qualification inferred, no submission, visible copy status]
+  RelationshipWorkspace:
+    source: src/components/relationship-workspace.tsx
+    states: [loading, missing-record, preparing, shared, responded, proposed, agreed, completed, save-error]
+    contracts: [known context before tasks, draft distinct from shared version, no repeat intake, client-visible projection excludes working notes, local-only demo scope, native feedback buttons, explicit next-action agreement]
+patterns:
+  discovery: homepage and social entry
+  planning: buyer plan, rental/seller/investment/relocation briefs and explicit reviewed inquiry handoff
+  reading: guides and area details
+  exploration: area index and service routes
+  relationship: agent/client context, shortlist task, response and owned next action
+  focused-task: inquiry, visitor sign-in, list builder
+catalog: /design-system

@@ -1,0 +1,23 @@
+{
+  "purpose": "Illustrative stock home photography; not verified DFW properties or current listings.",
+  "license": "Existing project-selected Unsplash photography; retain source identifiers for review.",
+  "downloaded": "2026-10-02",
+  "images": [
+    {
+      "file": "exterior.jpg",
+      "source": "https://images.unsplash.com/photo-1568605114967-8130f3a36994"
+    },
+    {
+      "file": "interior.jpg",
+      "source": "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace"
+    },
+    {
+      "file": "neighborhood.jpg",
+      "source": "https://images.unsplash.com/photo-1570129477492-45c003edd2be"
+    },
+    {
+      "file": "rentals.jpg",
+      "source": "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00"
+    }
+  ]
+}

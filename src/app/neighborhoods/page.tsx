@@ -1,68 +1,7 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import Nav from "@/components/nav";
 import Footer from "@/components/footer";
-import { AGENT } from "@/config/agent";
+import { PageIntro, ActionLink } from "@/components/ui";
 import { NEIGHBORHOODS } from "@/config/neighborhoods";
-
-export const metadata: Metadata = {
-  title: `${AGENT.serviceArea} Neighborhood Guides | Where to Buy, Sell & Lease`,
-  description: `City-by-city guides to buying, selling, and leasing across ${AGENT.serviceArea} — Dallas, Downtown Dallas, Frisco, Plano, Arlington, Fort Worth and more, with local insight from ${AGENT.name}.`,
-  alternates: { canonical: "/neighborhoods" },
-};
-
-export default function NeighborhoodsIndex() {
-  return (
-    <div className="min-h-screen bg-cream">
-      <Nav />
-
-      <section className="pt-32 pb-12 px-5">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-gold text-xs uppercase tracking-[0.2em] font-medium mb-3">Where I work</p>
-          <h1 className="font-display text-4xl md:text-6xl font-semibold text-ink tracking-tight">
-            Explore {AGENT.serviceArea}
-          </h1>
-          <p className="text-muted leading-relaxed mt-5">
-            Every DFW city has its own personality, price point, and school story. Here&apos;s a straight-talk
-            guide to the areas I know best — pick one to see what it&apos;s really like to buy, sell, or lease there.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-5 pb-24">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {NEIGHBORHOODS.map((n) => (
-            <Link
-              key={n.slug}
-              href={`/neighborhoods/${n.slug}`}
-              className="group bg-paper border border-line rounded-3xl p-7 hover:shadow-[0_12px_40px_rgba(28,59,48,0.1)] transition-shadow flex flex-col"
-            >
-              <div className="flex items-baseline justify-between gap-2 mb-1">
-                <h2 className="font-display text-2xl font-semibold text-ink tracking-tight group-hover:text-green transition-colors">
-                  {n.name}
-                </h2>
-                <span className="text-faint text-xs whitespace-nowrap">{n.county.replace(" County", "")}</span>
-              </div>
-              <p className="text-muted text-sm leading-relaxed flex-1">{n.tagline}</p>
-              <p className="text-faint text-xs mt-5 pt-4 border-t border-line">
-                {n.schoolDistrict} · {n.priceBand}
-              </p>
-            </Link>
-          ))}
-        </div>
-
-        <div className="max-w-6xl mx-auto text-center mt-14">
-          <p className="text-muted mb-5">Don&apos;t see your area? I cover the whole Metroplex.</p>
-          <Link
-            href="/start"
-            className="inline-block px-9 py-4 rounded-full bg-green text-cream font-medium hover:bg-green-600 transition-colors"
-          >
-            Tell me where you&apos;re looking →
-          </Link>
-        </div>
-      </section>
-
-      <Footer />
-    </div>
-  );
-}
+export const metadata={title:"Find your corner of DFW | Hop In Real Estate",description:"Explore Dallas–Fort Worth area guides around your commute, space and daily life."};
+export default function AreasPage(){return <><Nav/><main id="main-content" tabIndex={-1} className="hop-wrap"><PageIntro eyebrow="Explore Dallas–Fort Worth" title={<>Find your<br/>corner of DFW.</>} actions={<ActionLink href="/buy">Start with my priorities</ActionLink>}>City energy, more room, a shorter commute. Explore the areas with your own day-to-day in mind. Then verify the details that matter to your move.</PageIntro><div className="hop-area-questions"><p className="hop-eyebrow">Three questions to bring</p><span>Where do I need to be?</span><span>What monthly cost works?</span><span>What does home need to do?</span></div><div className="hop-area-index">{NEIGHBORHOODS.map((n,i)=><Link key={n.slug} href={`/neighborhoods/${n.slug}`} className="hop-area-row"><span className="hop-number">{String(i+1).padStart(2,"0")}</span><div><h2>{n.name}</h2><p>{n.tagline}</p><span className="hop-note">{n.county} · {n.schoolDistrict}</span></div><span className="hop-arrow" aria-hidden="true">↗</span></Link>)}</div><section className="hop-page-section hop-explore-grid"><div><p className="hop-eyebrow">Orientation, then verification</p><h2 className="hop-title mt-4">An area guide<br/>is a beginning.</h2></div><div><p className="hop-lead">Guides are general orientation. They aren’t a live listing feed or a valuation. Confirm school boundaries with the district and ask for a dated comparison for your property type, area and price range.</p><ActionLink href="/start?src=areas" className="mt-6">Talk through my area choices</ActionLink></div></section></main><Footer/></>;}
