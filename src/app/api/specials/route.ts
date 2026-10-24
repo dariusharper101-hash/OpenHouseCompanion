@@ -267,8 +267,9 @@ export async function POST(req: NextRequest) {
     // The id lets "Wrong number? Fix it" name this lead as the one it replaces.
     return NextResponse.json({ ok: true, id: lead.id }, { status: 201 });
   } catch (err) {
-    // Message only (no payload) so renter details stay out of the logs.
-    console.error("Specials lead save failed:", err instanceof Error ? err.message : "unknown");
+    // Error code/name only: driver messages can echo renter details.
+    const code = err && typeof err === "object" && "code" in err && typeof err.code === "string" ? err.code : "";
+    console.error("Specials lead save failed:", code || (err instanceof Error ? err.name : "unknown"));
     return unavailable();
   }
 }
