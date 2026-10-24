@@ -40,7 +40,7 @@ export default function PrivacyPage() {
         <h2>How we use it</h2>
         <ul>
           <li>To send you the guide or information you asked for.</li>
-          <li>To contact you about your search, by text or call only if you opted in.</li>
+          <li>To text you only if you opted in to texts, and to call or email you only about a request you sent us.</li>
           <li>To keep a record of your request and your consent choices.</li>
         </ul>
       </section>
