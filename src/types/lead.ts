@@ -78,22 +78,33 @@ export const PRODUCT_LABELS: Record<LeadProduct, string> = {
   "specials-guide": "Specials Guide",
 };
 
-// TCPA consent record. Stored with the lead so the exact wording the renter
-// saw (and when) can always be produced. `tcpa: false` means they did not opt in.
-export interface LeadConsent {
+// One consent decision: what the renter chose, when, and the exact wording.
+// IP and user agent are kept only for opt-ins (tcpa: true) as proof of consent.
+export interface ConsentEvent {
   tcpa: boolean;
-  at: string;        // ISO timestamp of submission
+  at: string;        // ISO timestamp
   version: string;   // TCPA_CONSENT.version shown on the page
   text: string;      // the exact consent text shown
-  ip: string;
-  userAgent: string;
-  pageUrl: string;
+  ip?: string;
+  userAgent?: string;
 }
 
+// TCPA consent record on a lead. The top level is the CURRENT state;
+// `history` lists every decision in order once it has changed at least once
+// (e.g. an opt-in later revoked by an unchecked resubmit, or a superseded
+// typo'd number). `tcpa: false` means do not text.
+export interface LeadConsent extends ConsentEvent {
+  pageUrl: string;
+  history?: ConsentEvent[];
+  note?: string;     // e.g. "Superseded: renter corrected their number"
+}
+
+// Fields marked optional (?) are buyer/seller-flow answers. The specials guide
+// never asks them, so its leads leave them unset rather than storing guesses.
 export interface LeadFormData {
   // Identity
   role: ClientRole;
-  clientType: ClientType;
+  clientType?: ClientType;
 
   // Contact
   firstName: string;
@@ -102,33 +113,33 @@ export interface LeadFormData {
   phone: string;
 
   // Buyer – property preferences
-  timeline: BuyerTimeline;
-  isPreApproved: boolean;
+  timeline?: BuyerTimeline;
+  isPreApproved?: boolean;
   budgetMin: string;
   budgetMax: string;
-  propertyType: PropertyType;
+  propertyType?: PropertyType;
   bedrooms: string;
   bathrooms: string;
   neighborhoods: string;
 
   // Buyer – program qualifiers
-  purchasePurpose: PurchasePurpose;
-  ownedHomeLast3Years: boolean;
-  isVeteran: boolean;
-  employmentType: EmploymentType;
-  creditRange: CreditRange;
+  purchasePurpose?: PurchasePurpose;
+  ownedHomeLast3Years?: boolean;
+  isVeteran?: boolean;
+  employmentType?: EmploymentType;
+  creditRange?: CreditRange;
 
   // Investor extra
-  investorStrategy: InvestorStrategy;
+  investorStrategy?: InvestorStrategy;
   propertiesOwned: string;
 
   // Seller fields
   sellerAddress: string;
   sellerEstimatedValue: string;
-  sellerMortgageStatus: MortgageStatus;
+  sellerMortgageStatus?: MortgageStatus;
   sellerReason: string;
   sellerTimeline: string;
-  buyingSimultaneously: boolean;
+  buyingSimultaneously?: boolean;
 
   // Legal acknowledgments
   iabsAcknowledged: boolean;

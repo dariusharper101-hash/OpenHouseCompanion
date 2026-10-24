@@ -109,34 +109,25 @@ export async function POST(req: NextRequest) {
     }
 
     const [firstName, ...rest] = input.name.split(" ");
+    // Only what the renter actually told us. Buyer/seller-flow answers
+    // (credit, employment, veteran, timeline, purpose...) are left unset, not
+    // guessed. iabs/buyerRep false is accurate: this form doesn't ask.
     const data: LeadFormData = {
       role: "renting",
-      clientType: "relocating",
       firstName,
       lastName: rest.join(" "),
       email: "",
       phone,
-      timeline: "1-3-months",
-      isPreApproved: false,
       budgetMin: input.budget,
       budgetMax: "",
-      propertyType: "any",
       bedrooms: "",
       bathrooms: "",
       neighborhoods: input.areas.join(", "),
-      purchasePurpose: "primary",
-      ownedHomeLast3Years: false,
-      isVeteran: false,
-      employmentType: "other",
-      creditRange: "660-699",
-      investorStrategy: "other",
       propertiesOwned: "",
       sellerAddress: "",
       sellerEstimatedValue: "",
-      sellerMortgageStatus: "has-mortgage",
       sellerReason: "",
       sellerTimeline: "",
-      buyingSimultaneously: false,
       iabsAcknowledged: false,
       buyerRepAcknowledged: false,
       notes: [`src=${src}`, ...utm, `headline=${variant}`].join(" · "),

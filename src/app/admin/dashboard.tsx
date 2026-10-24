@@ -169,7 +169,7 @@ function LeadDrawer({
             <div className="space-y-0">
               <DetailRow label="Product" value={PRODUCT_LABELS[lead.product] ?? lead.product} />
               <DetailRow label="Role" value={ROLE_LABELS[lead.role]} />
-              {isBuyer && <DetailRow label="Client Type" value={CLIENT_TYPE_LABELS[lead.clientType]} />}
+              {isBuyer && <DetailRow label="Client Type" value={CLIENT_TYPE_LABELS[lead.clientType ?? ""]} />}
             </div>
           </div>
 
@@ -243,14 +243,16 @@ function LeadDrawer({
             </div>
           )}
 
-          {/* Legal */}
-          <div>
-            <h3 className="text-white font-semibold text-sm mb-2">Legal Acknowledgments</h3>
-            <div className="space-y-0">
-              <DetailRow label="IABS" value={lead.iabsAcknowledged} />
-              <DetailRow label="Buyer Rep" value={lead.buyerRepAcknowledged} />
+          {/* Legal (not asked by the specials guide, so hidden for those leads) */}
+          {lead.product !== "specials-guide" && (
+            <div>
+              <h3 className="text-white font-semibold text-sm mb-2">Legal Acknowledgments</h3>
+              <div className="space-y-0">
+                <DetailRow label="IABS" value={lead.iabsAcknowledged} />
+                <DetailRow label="Buyer Rep" value={lead.buyerRepAcknowledged} />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Notes */}
           {lead.notes && (
@@ -514,7 +516,7 @@ export default function AdminPage() {
                           </span>
                         </div>
                         {(lead.role === "buying" || lead.role === "both") && (
-                          <p className="text-slate-500 text-xs">{CLIENT_TYPE_LABELS[lead.clientType]}</p>
+                          <p className="text-slate-500 text-xs">{CLIENT_TYPE_LABELS[lead.clientType ?? ""]}</p>
                         )}
                       </td>
                       <td className="px-4 py-3 text-slate-300">{ROLE_LABELS[lead.role]}</td>

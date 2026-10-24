@@ -251,10 +251,26 @@ function csvEscape(value: unknown): string {
   return str;
 }
 
+// Columns the specials guide never asks about. Blank for those rows so the
+// export never shows an answer the renter didn't give.
+const NOT_ASKED_BY_SPECIALS = new Set<keyof Lead>([
+  "clientType", "timeline", "isPreApproved", "budgetMax", "propertyType",
+  "bedrooms", "bathrooms", "purchasePurpose", "ownedHomeLast3Years", "isVeteran",
+  "employmentType", "creditRange", "investorStrategy", "propertiesOwned",
+  "sellerAddress", "sellerEstimatedValue", "sellerMortgageStatus", "sellerReason",
+  "sellerTimeline", "buyingSimultaneously", "iabsAcknowledged", "buyerRepAcknowledged",
+  "email",
+]);
+
+function csvCell(lead: Lead, c: (typeof CSV_COLUMNS)[number]): unknown {
+  if (lead.product === "specials-guide" && NOT_ASKED_BY_SPECIALS.has(c.key)) return "";
+  return c.get ? c.get(lead) : lead[c.key];
+}
+
 export function leadsToCsv(leads: Lead[]): string {
   const header = CSV_COLUMNS.map((c) => csvEscape(c.label)).join(",");
   const rows = leads.map((lead) =>
-    CSV_COLUMNS.map((c) => csvEscape(c.get ? c.get(lead) : lead[c.key])).join(",")
+    CSV_COLUMNS.map((c) => csvEscape(csvCell(lead, c))).join(",")
   );
   return [header, ...rows].join("\r\n");
 }
