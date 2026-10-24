@@ -15,6 +15,7 @@ import { cleanText, normalizeUsPhone, formatUsPhone, validateSpecials } from "@/
 import { TCPA_CONSENT } from "@/config/consent";
 import { SPECIALS_GUIDE, todayInDallas } from "@/config/specials";
 import { AGENT } from "@/config/agent";
+import { leadsEnabled } from "@/lib/site-mode";
 import type { ConsentEvent, Lead, LeadFormData } from "@/types/lead";
 
 // ─── POST /api/specials ───────────────────────────────────────────────────────
@@ -68,6 +69,10 @@ function clientIp(req: NextRequest): string {
 }
 
 export async function POST(req: NextRequest) {
+  // Same site-wide switch as /start and /api/leads (src/lib/site-mode.ts):
+  // with lead capture off, renters get the call/text fallback.
+  if (!leadsEnabled) return unavailable();
+
   let body: Record<string, unknown>;
   try {
     const parsed = await req.json();
