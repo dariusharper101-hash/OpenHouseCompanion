@@ -27,6 +27,7 @@ export default function PrivacyPage() {
         <ul>
           <li>What you type into a form: for example your name, phone number, email, move timing, budget range and the areas you&apos;re considering.</li>
           <li>If you opt in to texts: the consent wording you agreed to, the date and time, and the IP address and browser you used, kept as a record of your consent.</li>
+          <li>We use your IP address briefly to block spam; it isn&apos;t kept unless you opt in to texts.</li>
           <li>Basic, anonymous usage statistics (pages viewed) to see whether the site is useful.</li>
         </ul>
         <p className="mt-3">

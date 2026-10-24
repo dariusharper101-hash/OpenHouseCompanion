@@ -7,7 +7,7 @@ import { cleanText, normalizeUsPhone, formatUsPhone, validateSpecials } from "@/
 import { TCPA_CONSENT } from "@/config/consent";
 import { SPECIALS_GUIDE, todayInDallas } from "@/config/specials";
 import { AGENT } from "@/config/agent";
-import type { LeadFormData } from "@/types/lead";
+import type { ConsentEvent, LeadFormData } from "@/types/lead";
 
 // ─── POST /api/specials ───────────────────────────────────────────────────────
 // Dedicated endpoint for the DFW specials guide (leaves /api/leads alone).
@@ -103,6 +103,19 @@ export async function POST(req: NextRequest) {
   const variant = body.variant === "b" ? "B" : "A";
   const now = new Date().toISOString();
 
+  // IP + user agent are proof of an opt-in, so they're kept ONLY when the
+  // renter checked the box. Otherwise the IP is used in memory for the rate
+  // limit above and then dropped.
+  const consentEvent: ConsentEvent = {
+    tcpa: input.textConsent,
+    at: now,
+    version: TCPA_CONSENT.version,
+    text: TCPA_CONSENT.text,
+    ...(input.textConsent
+      ? { ip, userAgent: (req.headers.get("user-agent") ?? "").slice(0, 300) }
+      : {}),
+  };
+
   try {
     if (await findRecentByPhone(phone, PRODUCT, DEDUPE_DAYS)) {
       return NextResponse.json({ ok: true, duplicate: true }, { status: 200 });
@@ -135,12 +148,7 @@ export async function POST(req: NextRequest) {
       product: PRODUCT,
       moveMonth: input.moveMonth,
       consent: {
-        tcpa: input.textConsent,
-        at: now,
-        version: TCPA_CONSENT.version,
-        text: TCPA_CONSENT.text,
-        ip,
-        userAgent: (req.headers.get("user-agent") ?? "").slice(0, 300),
+        ...consentEvent,
         pageUrl: cleanText(body.pageUrl, 300),
       },
     };
