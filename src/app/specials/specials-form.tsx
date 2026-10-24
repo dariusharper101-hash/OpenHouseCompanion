@@ -441,7 +441,7 @@ function ThankYou({
           <p className="text-ink mt-4 leading-relaxed">
             {result.duplicate
               ? "Your guide is below, updated with the latest specials."
-              : <>I&apos;ll send you a personal text at <strong>{phone}</strong> {textPromise} to help with your search.</>}{" "}
+              : <>I&apos;ll send you a personal text at <strong className="whitespace-nowrap">{phone}</strong> {textPromise} to help with your search.</>}{" "}
             No spam. You can opt out of texts anytime by replying STOP.
           </p>
           <ol className="mt-6 space-y-2 list-decimal pl-5 text-ink leading-relaxed">
