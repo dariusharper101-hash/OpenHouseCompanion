@@ -11,8 +11,8 @@ import type { DfwArea } from "@/config/rental";
 //   - Darius checks every property against the Block/Grey list himself.
 //   - No commission or locator-fee figures, ever.
 //   - Every entry needs verifiedOn + expiresOn. Expired entries hide
-//     automatically; with fewer than MIN_TO_SHOW left the page says
-//     "Guide being refreshed".
+//     automatically; with fewer than MIN_TO_SHOW left the page hides the
+//     form and shows the call/text state.
 //   - Naming a community may need its permission under the broker's locator
 //     agreements. Ask the broker before publishing real names.
 //   - Fair Housing: describe the special and the property, never the people.
@@ -36,7 +36,7 @@ export interface Special {
 }
 
 export const SPECIALS_GUIDE = {
-  // Kill switch: false shows "Guide being refreshed" and hides the form.
+  // Kill switch: false hides the form and shows the call/text state.
   enabled: true,
   // true while every entry is a placeholder; shows a SAMPLE banner on the page.
   sample: true,

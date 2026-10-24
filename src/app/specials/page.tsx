@@ -42,17 +42,22 @@ const INSIDE = [
   { n: "04", title: "A December timeline", desc: "When to tour, apply and give notice." },
 ];
 
-function Refreshing() {
+// Shown whenever the form is off: guide switched off, too few current
+// specials, SAMPLE data in production, or site-wide lead capture off.
+function Unavailable() {
   return (
     <main id="main-content" tabIndex={-1} className="hop-wrap py-16 md:py-24">
       <div className="max-w-2xl">
         <p className="hop-eyebrow">DFW move-in specials</p>
         <h1 className="hop-title mt-4">
-          Guide being refreshed
+          The guide isn&apos;t available here right now
         </h1>
         <p className="hop-lead mt-6">
-          I&apos;m re-checking this month&apos;s specials so everything in the guide is current. Check back
-          soon{tel ? <>, or <a href={`tel:${tel}`} className="underline underline-offset-4">call or text {AGENT.phone}</a></> : null}.
+          {tel ? (
+            <>I can still walk you through this month&apos;s specials. <a href={`tel:${tel}`} className="underline underline-offset-4">Call or text {AGENT.phone}</a>, or check back soon.</>
+          ) : (
+            <>Check back soon for this month&apos;s specials.</>
+          )}
         </p>
       </div>
     </main>
@@ -71,7 +76,7 @@ export default function SpecialsPage() {
       <Nav />
 
       {!live ? (
-        <Refreshing />
+        <Unavailable />
       ) : (
         <main id="main-content" tabIndex={-1}>
           {SPECIALS_GUIDE.sample && (
