@@ -25,6 +25,8 @@
  *      Execute as:      Me
  *      Who has access:  Anyone
  *    Authorize when prompted. Copy the Web app URL (ends in /exec).
+ *    NEVER paste the /exec URL anywhere public (posts, chats, docs, code,
+ *    commits). Treat it like a password; it only belongs in Vercel env vars.
  * 6. In Vercel → project "open-house-companion" → Settings → Environment
  *    Variables (Preview + Production), add:
  *      SHEET_WEBHOOK_URL    = <the /exec URL>
@@ -101,10 +103,11 @@ function norm_(s) {
 }
 
 // Plain text only, capped, and neutralize spreadsheet formula injection
-// (a value starting with = + - @ would otherwise run as a formula).
+// (a value starting with = + - @, tab or CR would otherwise run as a formula).
 function clean_(v) {
   var s = String(v).slice(0, 500);
-  if (/^[=+\-@]/.test(s)) s = "'" + s;
+  // Same rule as the /admin CSV export (src/lib/leads.ts csvEscape).
+  if (/^[\s\u0000-\u001f]*[=+@-]/.test(s) || /^[\t\r\n]/.test(s)) s = "'" + s;
   return s;
 }
 
