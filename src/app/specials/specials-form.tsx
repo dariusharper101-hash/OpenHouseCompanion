@@ -384,8 +384,8 @@ export default function SpecialsForm({
                 {phase === "sending" ? "Sending…" : "Send me the guide"}
               </button>
               <p className="text-muted text-xs leading-relaxed">
-                Free to you. No questions about your household or credit, just what you need to see the
-                right specials.
+                Free to you: apartment communities pay locators, not renters. No questions about your
+                household or credit, just what you need to see the right specials.
               </p>
             </form>
           )}
@@ -449,7 +449,7 @@ function ThankYou({
           <p className="text-ink mt-4 leading-relaxed">
             {result.duplicate
               ? "Your guide is below, updated with the latest specials."
-              : <>I&apos;ll send you a personal text at <strong className="whitespace-nowrap">{phone}</strong> {textPromise} to help with your search.</>}{" "}
+              : <>I&apos;ll send a personal text to <strong className="whitespace-nowrap">{phone}</strong> {textPromise}.</>}{" "}
             No spam. You can opt out of texts anytime by replying STOP.
           </p>
           <ol className="mt-6 space-y-2 list-decimal pl-5 text-ink leading-relaxed">

@@ -19,7 +19,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = {
   title: `DFW December Move-In Specials Guide | ${AGENT.appName}`,
   description:
-    "A dated snapshot of apartment move-in specials across Dallas–Fort Worth, gathered by a licensed apartment locator. Free to you.",
+    "A dated snapshot of apartment move-in specials across Dallas–Fort Worth, gathered by a licensed apartment locator. Free to renters; apartment communities pay locators.",
   alternates: { canonical: "/specials" },
   // TODO(ship step): remove once the broker has approved the page in writing.
   robots: { index: false, follow: false },
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 const tel = AGENT.phone ? AGENT.phone.replace(/[^0-9+]/g, "") : "";
 
 const VALUE_PROPS = [
-  { title: "Free to you", desc: "The guide and my help cost you nothing." },
+  { title: "Free to you", desc: "The guide and my help cost you nothing. Apartment communities pay locators, not renters." },
   { title: "Specials with a date on them", desc: "Every special shows the day it was verified. Expired ones come off automatically." },
   { title: "A real person on the other end", desc: "Questions go to me, a licensed apartment locator, not a bot." },
 ];
@@ -92,7 +92,7 @@ export default function SpecialsPage() {
               </p>
               <p className="text-muted mt-3 max-w-xl leading-relaxed">
                 Move-in specials from apartment communities across DFW, gathered into one guide by a licensed
-                apartment locator. Free to you.
+                apartment locator. Free to you: apartment communities pay locators, not renters.
               </p>
               <a
                 href="#guide-form"

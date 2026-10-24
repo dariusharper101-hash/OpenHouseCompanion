@@ -4,15 +4,16 @@
 // so what we saved always matches what the renter saw.
 //
 // RULE: if you change one word of `text`, bump `version`.
-// Status: v1 is a DRAFT for broker / counsel review (PLAN §8, §11).
+// Status: DRAFT for broker / counsel review (PLAN §8, §11).
+// v2: removed "including with automated technology" (Darius texts by hand).
 // TODO(Darius): if Apartment Hunters' licensed name differs, update the text
 // and bump the version.
 
 export const TCPA_CONSENT = {
-  version: "specials-v1-2026-10-22",
+  version: "specials-v2-2026-10-23",
   text:
     "Yes, Darius Harper with Apartment Hunters may text and call me at the number above about " +
-    "apartment specials and my move, including with automated technology. Consent isn't required " +
+    "apartment specials and my move. Consent isn't required " +
     "to get the guide. Msg frequency varies; msg & data rates may apply. Reply STOP to opt out, " +
     "HELP for help. See SMS Terms and Privacy Policy.",
 } as const;

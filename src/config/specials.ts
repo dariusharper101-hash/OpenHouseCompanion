@@ -43,8 +43,9 @@ export const SPECIALS_GUIDE = {
   lastUpdated: "2026-10-23",
   approvedBy: "", // TODO(Darius): broker approver name once approved in writing
   approvedOn: "", // TODO(Darius): YYYY-MM-DD of written broker approval
-  // TODO(Darius): switch to "within 2 hours, 9 am–8 pm" only if you can keep it.
-  textPromise: "today",
+  // When Darius promises the first text. Reads after "I'll send a personal
+  // text to (214) 555-0123 ...", so keep it a phrase that ends the sentence.
+  textPromise: "within one business day, between 9 am and 9 pm (noon to 9 pm Sunday)",
 } as const;
 
 export const MIN_TO_SHOW = 5;
