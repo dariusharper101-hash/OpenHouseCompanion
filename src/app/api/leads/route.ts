@@ -2,42 +2,17 @@ import { storageMode, StorageConfigurationError } from "@/lib/storage-config";
 import { NextRequest, NextResponse } from "next/server";
 import { addLead } from "@/lib/leads";
 import { notifyNewLead } from "@/lib/notify";
-import type { LeadFormData, LeadProduct } from "@/types/lead";
+import { pickLead } from "@/lib/lead-input";
+import type { LeadProduct } from "@/types/lead";
 
 // ─── POST /api/leads ──────────────────────────────────────────────────────────
 // Intake for the /start form and the open-house sign-in. The saved record is
-// built ONLY from the allowlist below, so a caller can't forge fields this
-// form never collects (specials-guide product, TCPA consent, moveMonth...).
+// built ONLY from the allowlist in src/lib/lead-input.ts, so a caller can't
+// forge fields this form never collects (specials-guide product, TCPA
+// consent, moveMonth...).
 // The specials guide has its own endpoint: /api/specials.
 
 const ALLOWED_PRODUCTS: LeadProduct[] = ["website", "social", "open-house"];
-
-const STRING_FIELDS = [
-  "role", "clientType", "firstName", "lastName", "email", "phone", "timeline",
-  "budgetMin", "budgetMax", "propertyType", "bedrooms", "bathrooms",
-  "neighborhoods", "purchasePurpose", "employmentType", "creditRange",
-  "investorStrategy", "propertiesOwned", "sellerAddress", "sellerEstimatedValue",
-  "sellerMortgageStatus", "sellerReason", "sellerTimeline", "notes", "source",
-] as const;
-
-const BOOLEAN_FIELDS = [
-  "isPreApproved", "ownedHomeLast3Years", "isVeteran", "buyingSimultaneously",
-  "iabsAcknowledged", "buyerRepAcknowledged",
-] as const;
-
-const MAX_STRING = 2000;
-
-function pickLead(body: Record<string, unknown>, product: LeadProduct): LeadFormData {
-  const out: Record<string, unknown> = { product };
-  for (const k of STRING_FIELDS) {
-    const v = body[k];
-    if (typeof v === "string") out[k] = v.slice(0, MAX_STRING);
-  }
-  for (const k of BOOLEAN_FIELDS) {
-    if (typeof body[k] === "boolean") out[k] = body[k];
-  }
-  return out as unknown as LeadFormData;
-}
 
 export async function POST(req: NextRequest) {
   let body: Record<string, unknown>;

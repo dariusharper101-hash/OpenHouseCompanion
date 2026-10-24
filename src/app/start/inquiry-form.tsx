@@ -7,6 +7,7 @@ import { BrandMasthead } from "@/components/brand";
 import { JOURNEY_PLAN_KEY, parseJourneyBrief, journeyToInquiry, type JourneyBrief } from "@/lib/journey-brief";
 import { BUYER_PLAN_KEY, parseBuyerPlan, planToInquiry } from "@/lib/buyer-plan";
 import { RENT_BUDGETS } from "@/config/rental";
+import { MAX_NOTES, NOTES_USER_MAX } from "@/lib/lead-input";
 import type {
   LeadFormData,
   ClientRole,
@@ -787,6 +788,7 @@ function StartForm() {
 
                 <Field label="Anything else I should know? (optional)">
                   <textarea rows={3} placeholder="Special circumstances, questions, concerns…"
+                    maxLength={journeyIncluded ? MAX_NOTES : NOTES_USER_MAX}
                     value={form.notes} onChange={(e) => set("notes", e.target.value)}
                     className={inputCls() + " resize-none"} />
                 </Field>
