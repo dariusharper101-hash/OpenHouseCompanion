@@ -153,7 +153,7 @@ export default function SpecialsPage() {
         </main>
       )}
 
-      <Footer />
+      <Footer legalLinks />
     </>
   );
 }
