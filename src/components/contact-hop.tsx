@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Nav from "@/components/nav";
 import Footer from "@/components/footer";
 import { PageIntro } from "@/components/ui";
@@ -17,10 +17,13 @@ function readPlan(): string {
   return "";
 }
 
+// The saved plan lives in sessionStorage, which only exists in the browser.
+// Reading it as an external store (server snapshot "") avoids setState in an effect.
+const noSubscribe = () => () => {};
+
 export default function ContactHop() {
-  const [plan, setPlan] = useState("");
+  const plan = useSyncExternalStore(noSubscribe, readPlan, () => "");
   const [copied, setCopied] = useState(false);
-  useEffect(() => { setPlan(readPlan()); }, []);
   const tel = AGENT.phone.replace(/[^0-9+]/g, "");
   const intro = `Hi Darius, I found you on the Hop In Real Estate site.`;
   const body = plan ? `${intro}\n\nHere's my plan so far:\n${plan}` : intro;
