@@ -156,3 +156,12 @@ html{scroll-padding-top:32px}body{font-size:1rem;line-height:1.6}
 .hop-home-details summary{cursor:pointer;min-height:48px;display:list-item;padding:12px 0;font-weight:600}.hop-home-details[open] .hop-work-fields{margin-top:16px}
 
 .hop-work-entry-paths{display:grid;gap:6px}.hop-work-entry-paths .hop-action{justify-content:space-between;width:100%}
+
+/* /specials sticky mobile CTA: keep the footer clear of the fixed bar
+   (bar height + safe area). The footer itself grows, so its charcoal runs to
+   the bottom of the page. Toggled by specials-form.tsx until submit. */
+@media (max-width: 767px) {
+  body.has-sticky-cta .hop-footer {
+    padding-bottom: calc(32px + 6rem + env(safe-area-inset-bottom));
+  }
+}

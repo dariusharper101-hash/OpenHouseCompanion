@@ -145,6 +145,14 @@ export default function SpecialsForm({
     return () => io.disconnect();
   }, []);
 
+  // While the sticky CTA can appear (until submit), reserve room under the
+  // page on mobile so it never covers the footer. CSS: globals.css.
+  useEffect(() => {
+    if (phase === "done") return;
+    document.body.classList.add("has-sticky-cta");
+    return () => document.body.classList.remove("has-sticky-cta");
+  }, [phase]);
+
   useEffect(() => {
     if (phase === "done") {
       doneRef.current?.focus({ preventScroll: true });
