@@ -6,7 +6,7 @@ import type { DfwArea } from "@/config/rental";
 //
 // CONTENT RULES (PLAN §7) — read before adding an entry:
 //   - Public sources only: the property's own website/listing, or a call to
-//     the leasing office. NEVER from Apartment Hunters' IG/TT sheets, NestQuest,
+//     the leasing office. NEVER from a locator company's IG/TT sheets, NestQuest,
 //     Lead Availability or any other broker file.
 //   - Darius checks every property against the Block/Grey list himself.
 //   - No commission or locator-fee figures, ever.
