@@ -29,9 +29,12 @@ function row(label: string, value: unknown): string {
   return `<tr><td style="padding:4px 12px 4px 0;color:#64748b;font-size:13px;">${label}</td><td style="padding:4px 0;color:#0f172a;font-size:13px;font-weight:500;">${v}</td></tr>`;
 }
 
-function buildHtml(lead: Lead): string {
+export function buildHtml(lead: Lead): string {
   const isBuyer = lead.role === "buying" || lead.role === "both";
   const isSeller = lead.role === "selling" || lead.role === "both";
+  // Rental leads reuse the shared fields the way the inquiry form stores them:
+  // budgetMin = monthly range, timeline = move-in window, neighborhoods = areas.
+  const isRenter = lead.role === "renting";
   return `
   <div style="font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;max-width:560px;">
     <h2 style="color:#2563eb;margin:0 0 4px;">New lead: ${esc(lead.firstName)} ${esc(lead.lastName)}</h2>
@@ -48,6 +51,10 @@ function buildHtml(lead: Lead): string {
       ${isBuyer ? row("Budget", [lead.budgetMin, lead.budgetMax].filter(Boolean).join(" – ")) : ""}
       ${isBuyer ? row("Areas", lead.neighborhoods) : ""}
       ${isBuyer ? row("Veteran", lead.isVeteran) : ""}
+      ${isRenter ? row("Monthly budget", lead.budgetMin) : ""}
+      ${isRenter ? row("Move-in", lead.timeline) : ""}
+      ${isRenter ? row("Areas", lead.neighborhoods) : ""}
+      ${isRenter ? row("Bedrooms", lead.bedrooms) : ""}
       ${isSeller ? row("Property", lead.sellerAddress) : ""}
       ${isSeller ? row("Est. value", lead.sellerEstimatedValue) : ""}
       ${isSeller ? row("Sell timeline", lead.sellerTimeline) : ""}
